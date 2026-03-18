@@ -12,7 +12,7 @@ body {
     color: #333;
     line-height: 1.6;
 } 
-
+/*Styling the Header*/
 /*Putting everything in center so that header looks balanced*/
 header {
     text-align: center;
@@ -26,7 +26,8 @@ header img {
     border-radius: 50%;
     margin-top: 10px;
 }
-/* Using Flexbox to align menu items horizontal and to maintain equal spacing */
+/* Navigation Style
+ Using Flexbox to align menu items horizontal and to maintain equal spacing */
 nav ul {
     display: flex;
     justify-content: center;
@@ -46,4 +47,35 @@ nav ul li a {
 nav ul li a:hover {
     background-color: #3498db;
     border-radius: 5px;
+}
+
+/*Styling Table
+I used full width so the table aligns properly with the section layout 
+   instead of looking in the center
+*/
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+/* I preferred borders here instead of spacing-based separation
+   because it makes the data structure clearer and easier to read */
+table, th, td {
+    border: 1px solid #ddd;
+}
+/* Highlighting header with color so it stands out from normal rows
+     */
+th {
+    background-color: #3498db;
+    color: white;
+    text-align: center;
+}
+/* Padding is added to avoid inconsistent text inside cells,
+   margin wouldn’t work here because it doesn’t apply inside table cells */
+td, th {
+    padding: 10px;
+}
+/* Alternate row colors help in scanning rows quickly,
+   especially when there is more data */
+tr:nth-child(even) {
+    background-color: #f2f2f2;
 }
