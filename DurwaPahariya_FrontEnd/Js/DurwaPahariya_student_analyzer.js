@@ -86,8 +86,28 @@ function subjectAverageMarks(students) {
 
         let avg = total / students.length;
 
-        console.log(`Average ${subject} Score: ${avg}`);
+        //console.log(`Average ${subject} Score: ${avg}`);
     });
 }
 
 subjectAverageMarks(students);
+
+//Identifing Topper
+function findTopper(students) {
+
+    let maxMarks = 0;
+    let topper = "";
+
+    students.forEach(student => {
+        let total = calculateTotalMarks(student);
+
+        if (total > maxMarks) {
+            maxMarks = total;
+            topper = student.name;
+        }
+    });
+
+    console.log(`Class Topper: ${topper} with ${maxMarks} marks`);
+}
+
+findTopper(students);
