@@ -34,3 +34,16 @@ const students = [
     attendance: 70
   }
 ];
+
+// Calculation of total marks of Students 
+function calculateTotalMarks(student) {
+  let total = 0;
+  for (let sub of student.marks) {
+    total += sub.score;
+  }
+  return total;
+}
+console.log("Total marks scored by Lalit:", calculateTotalMarks(students[0]));
+console.log("Total marks scored by Rahul:", calculateTotalMarks(students[1]));
+
+//Calculating Average Marks
