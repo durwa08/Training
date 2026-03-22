@@ -91,3 +91,44 @@ function updateAnalytics() {
     document.getElementById("outOfStock").innerText = out;
 }
 
+function deleteProduct(id) {
+
+    // Removing product by filtering out matching id
+    products = products.filter(p => p.id !== id);
+
+    localStorage.setItem("products", JSON.stringify(products));
+
+    handleFilters();
+}
+
+document.getElementById("productForm").addEventListener("submit", function(e) {
+
+    e.preventDefault();
+
+    let name = document.getElementById("name").value;
+    let price = +document.getElementById("price").value;
+    let stock = +document.getElementById("stock").value;
+    let category = document.getElementById("category").value;
+
+    // Basic validation so wrong data doesn’t enter system
+    if (!name || price <= 0 || stock < 0 || !category) {
+        alert("Please fill valid details");
+        return;
+    }
+
+    let newProduct = {
+        id: Date.now(), // quick unique id
+        name,
+        price,
+        stock,
+        category
+    };
+
+    products.push(newProduct);
+
+    localStorage.setItem("products", JSON.stringify(products));
+
+    applyFilters();
+
+    this.reset(); // clearing form after submission
+});
