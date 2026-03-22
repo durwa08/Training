@@ -137,3 +137,15 @@ document.getElementById("productForm").addEventListener("submit", function(e) {
 document.getElementById("search").addEventListener("input", applyFilters);
 document.getElementById("categoryFilter").addEventListener("change", applyFilters);
 document.getElementById("sort").addEventListener("change", applyFilters);
+
+// Showing loading first, then displaying data
+document.addEventListener("DOMContentLoaded", async () => {
+
+    let loading = document.getElementById("loading");
+
+    let data = await gettingProductsProducts();
+
+    loading.style.display = "none";
+
+    displayProductsProducts(data);
+});
