@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inventory Dashboard</title>
+    <!--This will link html file to css-->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!--First step is to add heading for dashboard-->
+    <!--I added an emoji just to make it look slightly modern and not too plain -->
+    <h1>📦Product Inventory Dashboard</h1>
+
+    <!-- Working on control section by adding search filter and sort options Keeping everything together so user doesn’t have to scroll too much-->
+    <div class="controls">
+        <input type="text" id="search" placeholder="Search product...">
+        <select id="categoryFilter">
+            <option value="all">All Categories</option>
+        </select>
+
+        
+        <button id="lowStockBtn">Low Stock</button>
+
+        <select id="sort">
+            <option value="">Sort</option>
+            <option value="low">Price ↑</option>
+            <option value="high">Price ↓</option>
+            <option value="az">A → Z</option>
+            <option value="za">Z → A</option>
+        </select>
+    </div>
+
+    <!--Analytics for measuring total value and items tha are out of stock it will gives quick summary without checking each product manually-->
+    <div class="analytics">
+        <div>Total: <span id="total"></span></div>
+        <div>Value: ₹<span id="value"></span></div>
+        <div>Out of Stock: <span id="out"></span></div>
+    </div>
+
+    <!--Here products will come dynamically nothing is hardcoded here everything comes from JS-->
+    <div id="productContainer"></div>
+
+    <!-- This is a form by which we can add new products their price and also selects the category -->
+    <form id="form">
+        <h3>Add Product</h3>
+        <input type="text" id="name" placeholder="Product Name">
+        <input type="number" id="price" placeholder="Price">
+        <input type="number" id="stock" placeholder="Stock">
+
+        <select id="category">
+            <option value="">Select Category</option>
+            <option value="electronics">Electronics</option>
+            <option value="clothing">Clothing</option>
+            <option value="books">Books</option>
+            <option value="accessories">Accessories</option>
+        </select>
+
+        <button>Add</button>
+    </form>
+    <!--This is used to link js file to html-->
+
+    <script src="script.js"></script>
+</body>
+</html>
