@@ -132,3 +132,8 @@ document.getElementById("productForm").addEventListener("submit", function(e) {
 
     this.reset(); // clearing form after submission
 });
+
+//Adding EvenListeners -they are used to detect user actions and run some codes when the action is triggered
+document.getElementById("search").addEventListener("input", applyFilters);
+document.getElementById("categoryFilter").addEventListener("change", applyFilters);
+document.getElementById("sort").addEventListener("change", applyFilters);
