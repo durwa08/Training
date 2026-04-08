@@ -22,7 +22,7 @@ public class LinearSearch {
         for (int i = 0; i < size; i++) {
             arr[i] = sc.nextInt();
         }
-        sc.close();
+       // sc.close();
         return arr;
      
     }
