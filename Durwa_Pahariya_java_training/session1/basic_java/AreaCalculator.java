@@ -6,6 +6,7 @@ public class AreaCalculator {
     public double calculateCircleArea(double radius) {
         return PI * radius * radius;
     }
+
     public double calculateRectangleArea(double length, double width) {
         return length * width;
     }
@@ -41,7 +42,7 @@ public static void main(String[] args) {
                 double b = sc.nextDouble();
                 double h = sc.nextDouble();
                 System.out.println("Area: " + calculator.calculateTriangleArea(b, h));
-
+                
                 break;
 
             default:
