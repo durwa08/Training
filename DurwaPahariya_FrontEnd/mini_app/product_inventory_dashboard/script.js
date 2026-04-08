@@ -40,7 +40,7 @@ function displayProducts(data) {
 
     data.forEach(p => {
 
-        // Simple stock color logic so that user can quickly identify
+        // Simple stock color logic  so that user can quickly identify
         let color = p.stock === 0 ? "red" : p.stock < 5 ? "orange" : "green";
 
         let div = document.createElement("div");

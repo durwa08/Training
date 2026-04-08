@@ -1,0 +1,37 @@
+Abstract Class
+A class that can have both abstract methods (no body) and concrete methods (with body).
+Used when classes share a common base + partial implementation.
+
+Example:
+abstract class Animal {
+    abstract void sound();
+
+    void sleep() {
+        System.out.println("Sleeping...");
+    }
+}
+
+class Dog extends Animal {
+    void sound() {
+        System.out.println("Barks");
+    }
+}
+
+Interface:-A contract that only defines what a class must do .
+Used for full abstraction and multiple inheritance support.
+
+Example:
+interface Vehicle {
+    void start();
+}
+
+class Car implements Vehicle {
+    public void start() {
+        System.out.println("Car starts");
+    }
+}
+
+Difference Between Interface and abstract Class is as follows:
+Abstract class Can have both abstract and concrete methods and supports partial implementation with state (variables) Whereas
+Interface Provides full abstraction (mostly) and defines only method signatures (no state, only constants).
+We can also say Abstract class provides partial abstraction while interface provides 100 percent abstraction.
