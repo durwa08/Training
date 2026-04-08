@@ -17,7 +17,7 @@ public class BubbleSort {
                 }
             }
 
-            if (!swapped) break; // optimization
+            if (!swapped) break; 
         }
     }
 
