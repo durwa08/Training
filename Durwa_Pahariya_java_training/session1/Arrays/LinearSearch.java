@@ -4,7 +4,7 @@ public class LinearSearch {
     public int search(int[] arr, int target) {
         for (int i = 0; i < arr.length; i++) {
             if (arr[i] == target) {
-                return i; // index
+                return i; 
             }
         }
         return -1;
@@ -22,7 +22,7 @@ public class LinearSearch {
         for (int i = 0; i < size; i++) {
             arr[i] = sc.nextInt();
         }
-
+        
         return arr;
         
     }
@@ -43,6 +43,7 @@ public class LinearSearch {
         } else {
             System.out.println("Element not found");
         }
+        sc.close();
     }
     
 }

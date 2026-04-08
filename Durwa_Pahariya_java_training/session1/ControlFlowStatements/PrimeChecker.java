@@ -30,5 +30,5 @@ public class PrimeChecker {
         sc.close();
     }
 
-    //Runs in O(√n) instead of O(n)
+    
 }
