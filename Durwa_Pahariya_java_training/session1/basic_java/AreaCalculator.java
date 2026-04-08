@@ -1,38 +1,53 @@
 import java.util.*;
-
 public class AreaCalculator {
 
-    public static void calculation() {
+    private static final double PI = 3.14159;
 
+    public double calculateCircleArea(double radius) {
+        return PI * radius * radius;
+    }
+    public double calculateRectangleArea(double length, double width) {
+        return length * width;
+    }
+
+    public double calculateTriangleArea(double base, double height) {
+        return 0.5 * base * height;
+    }
+
+public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        System.out.println("Choose shape: 1=Circle  2=Rectangle  3=Triangle");
-        int choice = sc.nextInt();
+        AreaCalculator calculator = new AreaCalculator();
 
+        System.out.println("Choose any shape: 1.Circle 2.Rectangle 3.Triangle");
+        int choice = sc.nextInt();
         switch (choice) {
             case 1:
                 System.out.print("Enter radius: ");
-                double radius = sc.nextDouble();
-                System.out.println("Area = " + (Math.PI * radius * radius));
+                double r = sc.nextDouble();
+                System.out.println("Area: " + calculator.calculateCircleArea(r));
+
                 break;
+
             case 2:
                 System.out.print("Enter length and width: ");
-                double length = sc.nextDouble();
-                double width = sc.nextDouble();
-                System.out.println("Area = " + (length * width));
+                double l = sc.nextDouble();
+                double w = sc.nextDouble();
+                System.out.println("Area: " + calculator.calculateRectangleArea(l, w));
+
                 break;
+
             case 3:
                 System.out.print("Enter base and height: ");
-                double base = sc.nextDouble();
-                double height = sc.nextDouble();
-                System.out.println("Area = " + (0.5 * base * height));
-                break;
-            default:
-                System.out.println("No other Choise Exists");
-        }
-        sc.close();
-    }
+                double b = sc.nextDouble();
+                double h = sc.nextDouble();
+                System.out.println("Area: " + calculator.calculateTriangleArea(b, h));
 
-    public static void main(String[] args) {
-        calculation();
+                break;
+
+            default:
+                System.out.println("Invalid choice");
+        }
+
+        sc.close();
     }
 }
