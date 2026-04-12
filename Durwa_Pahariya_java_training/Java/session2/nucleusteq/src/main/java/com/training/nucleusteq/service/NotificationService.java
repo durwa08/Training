@@ -8,7 +8,7 @@ public class NotificationService {
 
     private final NotificationComponent notificationComponent;
 
-    // Constructor Injection ✅
+    // Constructor Injection
     public NotificationService(NotificationComponent notificationComponent) {
         this.notificationComponent = notificationComponent;
     }
