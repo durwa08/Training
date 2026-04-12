@@ -5,8 +5,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class NotificationComponent {
 
-    // Method to generate notification message
-    public String sendNotification(String message) {
-        return "Notification sent: " + message;
+    public String sendNotification() {
+        return "Notification sent";
     }
 }
