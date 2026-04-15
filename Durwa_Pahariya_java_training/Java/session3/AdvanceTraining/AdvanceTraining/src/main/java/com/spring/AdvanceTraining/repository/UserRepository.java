@@ -12,9 +12,9 @@ public class UserRepository {
     private final List<User> users = new ArrayList<>();
 
     public UserRepository() {
-        users.add(new User(1L, "Priya", 30, "USER"));
-        users.add(new User(2L, "Rahul", 25, "ADMIN"));
-        users.add(new User(3L, "Amit", 30, "USER"));
+        users.add(new User(1L, "Durwa", 21, "USER"));
+        users.add(new User(2L, "Dev", 25, "ADMIN"));
+        users.add(new User(3L, "Pransh", 30, "USER"));
         users.add(new User(4L, "Neha", 28, "USER"));
         users.add(new User(5L, "Ravi", 35, "ADMIN"));
     }
