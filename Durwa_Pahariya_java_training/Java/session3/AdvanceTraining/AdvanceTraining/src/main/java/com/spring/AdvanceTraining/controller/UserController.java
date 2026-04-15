@@ -1,7 +1,9 @@
 package com.spring.AdvanceTraining.controller;
 
 import com.spring.AdvanceTraining.model.User;
+import com.spring.AdvanceTraining.model.SubmissionRequest;
 import com.spring.AdvanceTraining.service.UserService;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +20,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    // GET /users/search
+    // GET API
     @GetMapping("/search")
     public ResponseEntity<List<User>> searchUsers(
             @RequestParam(required = false) String name,
@@ -28,7 +30,7 @@ public class UserController {
         return ResponseEntity.ok(userService.searchUsers(name, age, role));
     }
 
-    //DELETE /users/{id}?confirm=true
+    //DELETE API
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(
             @PathVariable Long id,
@@ -42,4 +44,13 @@ public class UserController {
         return ResponseEntity.ok("User deleted successfully");
     }
 
+    @PostMapping("/submit")
+    public ResponseEntity<String> submitData(@RequestBody SubmissionRequest request) {
+
+        if (request.getData() == null || request.getData().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("Invalid input");
+        }
+
+        return ResponseEntity.status(201).body("Data submitted successfully");
+    }
 }

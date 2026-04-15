@@ -10,6 +10,7 @@ public class AdvanceTrainingApplication {
 
 		SpringApplication.run(AdvanceTrainingApplication.class, args);
 		System.out.println("Hey! There I m starting SpringBoot rest API Assignment");
+		System.out.println("Hey there");
 	}
 
 }
