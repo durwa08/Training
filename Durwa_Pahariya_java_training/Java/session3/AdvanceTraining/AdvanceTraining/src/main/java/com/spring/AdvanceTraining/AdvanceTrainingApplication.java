@@ -7,9 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AdvanceTrainingApplication {
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(AdvanceTrainingApplication.class, args);
-		System.out.println("Hello World");
-		System.out.println("Hello Advance");
+		System.out.println("Hey! There I m starting SpringBoot rest API Assignment");
 	}
 
 }
