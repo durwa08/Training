@@ -9,6 +9,7 @@ public class AdvanceTrainingApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AdvanceTrainingApplication.class, args);
 		System.out.println("Hello World");
+		System.out.println("Hello Advance");
 	}
 
 }
