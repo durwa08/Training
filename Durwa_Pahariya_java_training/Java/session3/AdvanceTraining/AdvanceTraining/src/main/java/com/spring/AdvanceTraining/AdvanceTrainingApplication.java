@@ -9,8 +9,7 @@ public class AdvanceTrainingApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(AdvanceTrainingApplication.class, args);
-		System.out.println("Hey! There I m starting SpringBoot rest API Assignment");
-		System.out.println("Hey there");
+		System.out.println("Hey! SpringBoot rest API Assignment");
 	}
 
 }
