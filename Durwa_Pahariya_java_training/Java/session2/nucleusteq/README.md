@@ -1,12 +1,12 @@
-# 📘 Java Fundamentals - Spring Boot Assignment
+#  Java Fundamentals - Spring Boot Assignment
 
-## 📌 Project Overview
+##  Project Overview
 This project is developed as part of the Java Fundamentals Assignment.  
 It demonstrates the use of Spring Boot, REST APIs, and layered architecture with proper implementation of core Spring concepts.
 
 ---
 
-## 🚀 Tech Stack
+##  Tech Stack
 - Java 17  
 - Spring Boot  
 - Maven  
@@ -14,7 +14,7 @@ It demonstrates the use of Spring Boot, REST APIs, and layered architecture with
 
 ---
 
-## 🏗️ Project Structure
+##  Project Structure
 
 controller → Handles API requests  
 service → Contains business logic  
@@ -27,14 +27,14 @@ exception → Global exception handling
 
 ## ⚙️ Features Implemented
 
-### 👤 User Management System
+###  User Management System
 - GET /users → Fetch all users  
 - POST /users → Create a new user  
 - GET /users/{id} → Fetch user by ID  
 
 ---
 
-### 🔔 Notification System
+###  Notification System
 - GET /notify → Triggers notification  
 - Returns: "Notification sent"  
 
@@ -43,7 +43,7 @@ exception → Global exception handling
 
 ---
 
-### 💬 Dynamic Message Formatter
+###  Dynamic Message Formatter
 - GET /message?type=SHORT/LONG  
 
 Returns:  
@@ -56,7 +56,7 @@ Returns:
 
 ---
 
-## 🧠 Concepts Covered
+##  Concepts Covered
 
 - IoC (Inversion of Control)  
 - Dependency Injection (Constructor-based)  
@@ -67,19 +67,19 @@ Returns:
 
 ---
 
-## 📂 Data Handling
+##  Data Handling
 - Uses in-memory data structure (ArrayList)  
 - No external database required  
 
 ---
 
-## ⚠️ Exception Handling
+##  Exception Handling
 - Global exception handler implemented using @RestControllerAdvice  
 - Handles runtime errors gracefully  
 
 ---
 
-## 🔄 How to Run
+##  How to Run
 
 1. Clone the repository  
    git clone <your-repo-link>  
@@ -94,7 +94,7 @@ Returns:
 
 ---
 
-## 🧪 Sample Request (POST /users)
+##  Sample Request (POST /users)
 
 {
   "id": 1,
@@ -104,12 +104,12 @@ Returns:
 
 ---
 
-## 📈 Commit Strategy
+##  Commit Strategy
 - Minimum 10 commits followed  
 - Each commit represents logical progress  
 - Clean and readable commit history maintained  
 
 ---
 
-## 📝 Notes
+##  Notes
 This project is built through a combination of live training sessions and self-learning, focusing on understanding core concepts and clean coding practices.
