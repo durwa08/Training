@@ -10,27 +10,26 @@ public class TodoDTO {
     private String title;
 
     private String description;
-
     private String status; // using String for gaining flexibility
 
     // getters & setters
 
     public String getTitle() {
+
         return title;
     }
 // this refers to current object
     public void setTitle(String title) {
+
         this.title = title;
     }
-
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
+
         this.description = description;
     }
-
     public String getStatus() {
         return status;
     }
