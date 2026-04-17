@@ -15,7 +15,7 @@ public class TodoServiceImpl implements TodoService {
 
     private final TodoRepository repository;
 
-    // constructor injection (important rule)
+    // constructor injection
     public TodoServiceImpl(TodoRepository repository) {
         this.repository = repository;
     }
