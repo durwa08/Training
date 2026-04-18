@@ -5,26 +5,39 @@ import com.todoapp.ToDoApp.entity.Todo;
 import com.todoapp.ToDoApp.exception.ResourceNotFoundException;
 import com.todoapp.ToDoApp.mapper.TodoMapper;
 import com.todoapp.ToDoApp.repository.TodoRepository;
-import org.springframework.stereotype.Service;
 import com.todoapp.ToDoApp.client.NotificationServiceClient;
+
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service // marks as service layer
+@Service // service Layer
 public class TodoServiceImpl implements TodoService {
 
     private final TodoRepository repository;
+    private final NotificationServiceClient notificationClient; // external service
 
-    // constructor injection
-    public TodoServiceImpl(TodoRepository repository) {
+    // constructor injection ->dependencies injection
+    public TodoServiceImpl(TodoRepository repository,
+                           NotificationServiceClient notificationClient) {
         this.repository = repository;
+        this.notificationClient = notificationClient;
     }
 
     @Override
     public TodoDTO createTodo(TodoDTO dto) {
+        // convert DTO to entity
         Todo todo = TodoMapper.toEntity(dto);
-        return TodoMapper.toDTO(repository.save(todo));
+
+        // save in DB
+        Todo saved = repository.save(todo);
+
+        // call dummy external service
+        notificationClient.sendNotification("Notification sent for new TODO");
+
+        // return response
+        return TodoMapper.toDTO(saved);
     }
 
     @Override
