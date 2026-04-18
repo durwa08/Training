@@ -6,6 +6,7 @@ import com.todoapp.ToDoApp.exception.ResourceNotFoundException;
 import com.todoapp.ToDoApp.mapper.TodoMapper;
 import com.todoapp.ToDoApp.repository.TodoRepository;
 import org.springframework.stereotype.Service;
+import com.todoapp.ToDoApp.client.NotificationServiceClient;
 
 import java.util.List;
 import java.util.stream.Collectors;
