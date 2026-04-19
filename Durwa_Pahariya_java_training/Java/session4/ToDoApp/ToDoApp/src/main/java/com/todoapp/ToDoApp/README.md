@@ -127,6 +127,12 @@ POST /todos
 - Basics of JPA and Hibernate
 
 ---
+## Enhancements
+
+- Added logging using SLF4J
+- Implemented unit testing using JUnit and Mockito
+- Simulated external service using NotificationServiceClient
+
 
 ## Conclusion
 
