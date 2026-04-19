@@ -24,9 +24,8 @@ class TodoServiceImplTest {
     private final TodoServiceImpl service =
             new TodoServiceImpl(repository, client);
 
-    // -------------------------------
+
     // CREATE TODO
-    // -------------------------------
     @Test
     void testCreateTodo() {
 
@@ -50,9 +49,9 @@ class TodoServiceImplTest {
         Mockito.verify(client).sendNotification(Mockito.anyString());
     }
 
-    // -------------------------------
+
     // CREATE TODO - EDGE CASE
-    // -------------------------------
+
     @Test
     void testCreateTodo_EmptyTitle() {
 
@@ -73,9 +72,9 @@ class TodoServiceImplTest {
         assertEquals("", result.getTitle());
     }
 
-    // -------------------------------
+
     // GET TODO BY ID
-    // -------------------------------
+
     @Test
     void testGetTodoById() {
 
@@ -94,9 +93,9 @@ class TodoServiceImplTest {
         Mockito.verify(repository).findById(1L);
     }
 
-    // -------------------------------
+
     // GET TODO NOT FOUND
-    // -------------------------------
+
     @Test
     void testGetTodoById_NotFound() {
 
@@ -111,9 +110,9 @@ class TodoServiceImplTest {
     }
 
 
-    // -------------------------------
+
     // DELETE TODO NOT FOUND
-    // -------------------------------
+
     @Test
     void testDeleteTodo_NotFound() {
 
@@ -127,9 +126,8 @@ class TodoServiceImplTest {
         assertTrue(ex.getMessage().contains("not found"));
     }
 
-    // -------------------------------
+
     // UPDATE TODO
-    // -------------------------------
     @Test
     void testUpdateTodo() {
 
@@ -160,9 +158,8 @@ class TodoServiceImplTest {
         Mockito.verify(repository).save(Mockito.any(Todo.class));
     }
 
-    // -------------------------------
     // UPDATE TODO NOT FOUND
-    // -------------------------------
+
     @Test
     void testUpdateTodo_NotFound() {
 
