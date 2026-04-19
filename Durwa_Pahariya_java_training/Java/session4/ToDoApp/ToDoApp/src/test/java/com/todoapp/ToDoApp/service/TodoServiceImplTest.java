@@ -50,7 +50,7 @@ class TodoServiceImplTest {
     }
 
 
-    // CREATE TODO - EDGE CASE
+    // CREATE TODO
 
     @Test
     void testCreateTodo_EmptyTitle() {
