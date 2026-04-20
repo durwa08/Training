@@ -9,6 +9,7 @@ public class RestaurantportalApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(RestaurantportalApplication.class, args);
+		System.out.println("Resturant portal");
 	}
 
 }
