@@ -1,7 +1,7 @@
 package restaurantportal.entity;
 
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.Order;
+import restaurantportal.entity.Order;
 import lombok.*;
 import java.util.List;
 

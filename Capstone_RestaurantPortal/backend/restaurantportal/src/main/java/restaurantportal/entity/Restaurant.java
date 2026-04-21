@@ -1,31 +1,29 @@
 package restaurantportal.entity;
-import jakarta.persistence.*;
-import jdk.jfr.Category;
-import lombok.*;
 
-import java.awt.*;
-import java.util.*;
+import jakarta.persistence.*;
+import lombok.*;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
+@Table(name = "restaurants")
 @Getter
 @Setter
-
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Restaurant {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
-    @Enumerated(EnumType.STRING)
-    private RestaurantStatus status;
 
-    @ManyToOne
-    @JoinColumn(name = "Owner_id")
-    private User owner;
+    private String address;
 
-    @OneToMany(mappedBy = "restaurant")
+
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Category> categories;
-
-    @OneToMany(mappedBy = "restaurant")
-        private List<MenuItem> menuItems;
 }
