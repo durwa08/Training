@@ -1,41 +1,41 @@
 package restaurantportal.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import restaurantportal.dto.RegisterRequest;
 import restaurantportal.dto.UserResponse;
 import restaurantportal.entity.Role;
 import restaurantportal.entity.User;
 import restaurantportal.repository.UserRepository;
+import restaurantportal.security.JwtUtil;
 
-@Service // Handles all the business logic service bean (java object)
+@Service
 public class UserService {
 
-    //Dependencies
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    //Constructor injection- it makes dependencies final(immutable) easier to test
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
-    @Transactional //This method runs inside a database transaction and says either all or none transactions
+    @Transactional
     public UserResponse register(RegisterRequest request) {
 
-        // 1. Check duplicate email
         userRepository.findByEmail(request.getEmail())
-                .ifPresent(user -> {
+                .ifPresent(u -> {
                     throw new IllegalArgumentException("Email already registered");
                 });
 
-        // 2. Validate role
-        Role role = parseRole(request.getRole());
+        Role role = Role.valueOf(request.getRole().toUpperCase());
 
-        // 3. Create User
         User user = User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
@@ -48,28 +48,26 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        return mapToResponse(savedUser);
-    }
-
-    // Clean role parsing
-    private Role parseRole(String role) {
-        try {
-            return Role.valueOf(role.toUpperCase());
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid role: " + role);
-        }
-    }
-
-    // Entity → DTO
-    private UserResponse mapToResponse(User user) {
         return new UserResponse(
-                user.getId(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getPhoneNumber(),
-                user.getRole().name(),
-                user.getWalletBalance()
+                savedUser.getId(),
+                savedUser.getFirstName(),
+                savedUser.getLastName(),
+                savedUser.getEmail(),
+                savedUser.getPhoneNumber(),
+                savedUser.getRole().name(),
+                savedUser.getWalletBalance()
         );
+    }
+
+    public String login(String email, String password) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("Invalid email or password");
+        }
+
+        return jwtUtil.generateToken(user.getEmail(), user.getRole().name());
     }
 }
