@@ -6,17 +6,18 @@ import lombok.*;
 import java.util.List;
 
 
-@Entity
-@Table(name = "users")
+@Entity//Represents table in db
+//lombok annotations
+@Table(name = "users")//table name in db
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor//by default constructor needed by Jpa
+@AllArgsConstructor//constructor with all fields
+@Builder // implements builder patterns
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id // primary key
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // auto generate id and db handles auto-increment
     private Long id;
 
     private String firstName;
@@ -25,10 +26,13 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
+    //Encrypted password no plain password
+    @Column(nullable = false)
     private String password;
 
     private String phoneNumber;
 
+    //Maps enum to db
     @Enumerated(EnumType.STRING)
     private Role role;
 
