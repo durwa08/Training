@@ -33,7 +33,7 @@ public class Restaurant {
     }
 
 
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "restaurant")
     @JsonManagedReference
     private List<Category> categories;
 }

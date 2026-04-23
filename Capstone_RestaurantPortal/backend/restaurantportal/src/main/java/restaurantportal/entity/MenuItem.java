@@ -1,4 +1,5 @@
 package restaurantportal.entity;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,9 +15,10 @@ public class MenuItem {
     private Double price;
     private Boolean isAvailable;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "category_id")
-        private Category category;
+    private Category category;
 
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
