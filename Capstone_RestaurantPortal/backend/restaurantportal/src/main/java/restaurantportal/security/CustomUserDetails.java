@@ -8,6 +8,7 @@ import restaurantportal.entity.User;
 import java.util.Collection;
 import java.util.Collections;
 
+//this class is neede because it converts user entity into a format required by spring security
 public class CustomUserDetails implements UserDetails {
 
     private final User user;

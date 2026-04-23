@@ -13,9 +13,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import restaurantportal.security.JwtFilter;
 
+
+// Security config defines the security rules of the application,including which api are public which requires authentication and how jwt authentication is applied.
 @Configuration
 public class SecurityConfig {
 
+    // custom filter inject JwtFilter
     private final JwtFilter jwtFilter;
 
     public SecurityConfig(JwtFilter jwtFilter) {
@@ -25,6 +28,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
+        // disable csrf since we are using jwt and stateless session management and csrf used for browswer session.
+        // stateless mean every request must carry jwt.
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
@@ -35,7 +40,7 @@ public class SecurityConfig {
 
         return http.build();
     }
-
+// Encrypted password
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
