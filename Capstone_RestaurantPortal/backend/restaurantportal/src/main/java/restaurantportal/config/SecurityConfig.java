@@ -13,12 +13,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import restaurantportal.security.JwtFilter;
 
-
-// Security config defines the security rules of the application,including which api are public which requires authentication and how jwt authentication is applied.
 @Configuration
 public class SecurityConfig {
 
-    // custom filter inject JwtFilter
     private final JwtFilter jwtFilter;
 
     public SecurityConfig(JwtFilter jwtFilter) {
@@ -28,24 +25,46 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        // disable csrf since we are using jwt and stateless session management and csrf used for browswer session.
-        // stateless mean every request must carry jwt.
-        http.csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        http
+                // disable csrf (not needed for REST APIs)
+                .csrf(csrf -> csrf.disable())
+
+                // no session (JWT based)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+
+                // authorization rules
                 .authorizeHttpRequests(auth -> auth
+
+                        // public APIs (no login required)
                         .requestMatchers("/api/users/register", "/api/users/login").permitAll()
+
+                        // USER role APIs
+                        .requestMatchers("/api/cart/**", "/api/orders/**")
+                        .hasAuthority("USER")
+
+                        // RESTAURANT OWNER APIs
+                        .requestMatchers("/api/restaurants/**")
+                        .hasAuthority("RESTAURANT_OWNER")
+
+                        // any other request must be authenticated
                         .anyRequest().authenticated()
                 )
+
+                // add JWT filter before Spring Security filter
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-// Encrypted password
+
+    // password encoder (for hashing passwords)
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // authentication manager (used internally by Spring Security)
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

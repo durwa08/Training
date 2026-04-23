@@ -10,13 +10,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-
-// Jwt Filter intercepts all the incoming request extracts and validates the token and sets the authentication in the security context
-//without Jwt filter JWT is just a string.Jwt filter connects jwt with spring security it runs once for every http request
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    // Parsing and extracting user from db
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
 
@@ -24,30 +20,35 @@ public class JwtFilter extends OncePerRequestFilter {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
     }
-    // This runs once for every request
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
-// gets header
+
         String header = request.getHeader("Authorization");
 
         String email = null;
         String token = null;
 
-        // extract token
-        if (header != null && header.startsWith("Bearer ")) {
-            token = header.substring(7);
-            email = jwtUtil.extractEmail(token);
+        try {
+            // extract token from header
+            if (header != null && header.startsWith("Bearer ")) {
+                token = header.substring(7);
+                email = jwtUtil.extractEmail(token); // may throw exception
+            }
+        } catch (Exception e) {
+            // invalid token → ignore and continue
+            // request will be treated as unauthorized
         }
 
-        // authenticate user
+        // authenticate user if valid
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             var userDetails = userDetailsService.loadUserByUsername(email);
 
-            if (jwtUtil.isTokenValid(token)) {
+            if (token != null && jwtUtil.isTokenValid(token)) {
 
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
@@ -62,6 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
 
+        // continue filter chain
         filterChain.doFilter(request, response);
     }
 }
