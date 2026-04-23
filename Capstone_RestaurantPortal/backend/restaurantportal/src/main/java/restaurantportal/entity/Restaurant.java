@@ -1,5 +1,6 @@
 package restaurantportal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
@@ -36,4 +37,10 @@ public class Restaurant {
     @OneToMany(mappedBy = "restaurant")
     @JsonManagedReference
     private List<Category> categories;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
+
 }
