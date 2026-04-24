@@ -26,118 +26,104 @@ public class RestaurantService {
         this.userRepository = userRepository;
     }
 
-    // CREATE the restaurant,only logged-in user can create a restaurant and that restaurant will be associated with that user as owner.
-    // Hence, we need to fetch the logged-in user from DB and set it as owner of restaurant before saving the restaurant to DB.
+    // CREATE
     public RestaurantResponse create(RestaurantRequest request) {
 
-        // get logged-in user email from JWT
         String email = SecurityUtil.getCurrentUserEmail();
 
-        // fetch user from DB
         User owner = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // convert request → entity
         Restaurant restaurant = new Restaurant();
         restaurant.setName(request.getName());
         restaurant.setAddress(request.getAddress());
 
-        // convert String → Enum
-        restaurant.setStatus(
-                RestaurantStatus.valueOf(request.getStatus().toUpperCase())
-        );
+        // SAFE ENUM
+        try {
+            restaurant.setStatus(
+                    RestaurantStatus.valueOf(request.getStatus().toUpperCase())
+            );
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid status value");
+        }
 
-        // set owner of restaurant
+        // IMPORTANT: set owner
         restaurant.setOwner(owner);
 
-        // save to DB
         Restaurant saved = restaurantRepository.save(restaurant);
 
-        // return response DTO
         return mapToResponse(saved);
     }
 
-    //  GET ALL
+    // GET ALL
     public List<RestaurantResponse> getAll() {
-
-        // fetch all restaurants and convert to DTO
         return restaurantRepository.findAll()
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
-    //  GET BY ID
+    // GET BY ID
     public RestaurantResponse getById(Long id) {
-
-        // find restaurant or throw error
         Restaurant restaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found"));
 
         return mapToResponse(restaurant);
     }
 
-    //  UPDATE
+    // UPDATE
     public RestaurantResponse update(Long id, RestaurantRequest request) {
 
-        // find restaurant
         Restaurant restaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found"));
 
-        // get logged-in user
         String email = SecurityUtil.getCurrentUserEmail();
 
-        // check if same owner
-        if (!restaurant.getOwner().getEmail().equals(email)) {
+        //  SAFE OWNER CHECK - only owner can update restaurant
+        if (restaurant.getOwner() == null ||
+                restaurant.getOwner().getEmail() == null ||
+                !restaurant.getOwner().getEmail().equals(email)) {
+
             throw new RuntimeException("You are not allowed to update this restaurant");
         }
 
-        // update fields
         restaurant.setName(request.getName());
         restaurant.setAddress(request.getAddress());
-        restaurant.setStatus(
-                RestaurantStatus.valueOf(request.getStatus().toUpperCase())
-        );
 
-        // save updated data
+        // SAFE ENUM  - validate status value before setting it to restaurant, if invalid throw exception
+        try {
+            restaurant.setStatus(
+                    RestaurantStatus.valueOf(request.getStatus().toUpperCase())
+            );
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid status value");
+        }
+
         Restaurant updated = restaurantRepository.save(restaurant);
 
         return mapToResponse(updated);
     }
 
-    //  DELETE
+    // DELETE
     public void delete(Long id) {
 
-        // find restaurant
         Restaurant restaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found"));
 
-        // get logged-in user
         String email = SecurityUtil.getCurrentUserEmail();
 
-        // allow only owner to delete
-        if (!restaurant.getOwner().getEmail().equals(email)) {
+        // SAFE OWNER CHECK
+        if (restaurant.getOwner() == null ||
+                restaurant.getOwner().getEmail() == null ||
+                !restaurant.getOwner().getEmail().equals(email)) {
+
             throw new RuntimeException("You are not allowed to delete this restaurant");
         }
 
         restaurantRepository.deleteById(id);
     }
 
-    // OPTIONAL: GET MY RESTAURANTS
-    public List<RestaurantResponse> getMyRestaurants() {
-
-        String email = SecurityUtil.getCurrentUserEmail();
-
-        // return only restaurants created by current user
-        return restaurantRepository.findAll()
-                .stream()
-                .filter(r -> r.getOwner().getEmail().equals(email))
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
-    }
-
-    //  MAPPER
-    // converts Entity → Response DTO
+    // MAPPER
     private RestaurantResponse mapToResponse(Restaurant restaurant) {
         return new RestaurantResponse(
                 restaurant.getId(),
