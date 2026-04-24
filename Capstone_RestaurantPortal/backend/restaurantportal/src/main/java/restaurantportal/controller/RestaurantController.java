@@ -10,7 +10,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/restaurants")
-// RestaurantController to handle restaurant related endpoints like create restaurant get all restaurants get restaurant by id update restaurant delete restaurant etc.
+// RestaurantController to handle restaurant related endpoints like create restaurant get all restaurants get restaurant by id
+// update restaurant delete restaurant etc.
 public class RestaurantController {
 
     private final RestaurantService service;

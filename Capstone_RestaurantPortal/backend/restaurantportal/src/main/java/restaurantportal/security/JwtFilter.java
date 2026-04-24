@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+// JWT filter to intercept incoming HTTP requests, extract the JWT token from the Authorization header, validate it, and set the authentication in the security context if the token is valid.
+// This allows the application to authenticate users based on the JWT token they provide in their requests.
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 

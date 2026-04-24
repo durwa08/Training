@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 @Service // handles all business logic related to restaurants
 public class RestaurantService {
 
+    // Dependency injection of RestaurantRepository and UserRepository to interact with the database for restaurant
+    // and user related operations.
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
 

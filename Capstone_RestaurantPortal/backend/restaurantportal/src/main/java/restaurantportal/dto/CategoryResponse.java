@@ -1,5 +1,6 @@
 package restaurantportal.dto;
 
+// CategoryResponse is used to send category data back to client after creating/updating/getting category
 public class CategoryResponse {
 
     private Long id;

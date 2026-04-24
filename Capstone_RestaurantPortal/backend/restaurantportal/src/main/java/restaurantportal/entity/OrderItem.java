@@ -6,6 +6,8 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
+//The OrderItem entity represents an item in an order.
+// It includes the quantity, price, and references to the order and menu item it belongs to.
 public class OrderItem {
 
     @Id

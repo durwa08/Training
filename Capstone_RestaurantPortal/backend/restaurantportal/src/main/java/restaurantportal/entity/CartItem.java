@@ -6,6 +6,7 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
+// cart item entity represents an item in the shopping cart.
 public class CartItem {
 
     @Id

@@ -11,6 +11,8 @@ import restaurantportal.entity.User;
 import restaurantportal.repository.UserRepository;
 import restaurantportal.security.JwtUtil;
 
+//USER SERVICE class to handle business logic related to user registration and login. It
+// interacts with the UserRepository to save and retrieve user data, uses PasswordEncoder to hash passwords, and JwtUtil to generate JWT tokens for authentication.
 @Service
 public class UserService {
 

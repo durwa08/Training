@@ -13,7 +13,8 @@ import java.util.stream.Collectors;
 //CategoryService to handle category related business logic like create category get categories by restaurant delete category etc.
 @Service
 public class CategoryService {
-// Adding Dependency Injection for CategoryRepository and RestaurantRepository to interact with the database for category and restaurant related operations.
+// Adding Dependency Injection for CategoryRepository and RestaurantRepository to interact with the database for category
+// and restaurant related operations.
     private final CategoryRepository categoryRepository;
     private final RestaurantRepository restaurantRepository;
     // Constructor injection for CategoryRepository and RestaurantRepository to initialize the service with the required dependencies.

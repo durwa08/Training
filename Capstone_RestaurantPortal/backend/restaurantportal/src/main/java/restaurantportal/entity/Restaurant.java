@@ -10,6 +10,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+//This entity represents a restaurant in the restaurant portal.
+// It includes the name, address, status and reference to the owner of the restaurant.
 public class Restaurant {
 
     @Id

@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+// This entity represents a category of menu items in a restaurant. Each category has a name and is associated with a restaurant.
 public class Category {
 
     @Id

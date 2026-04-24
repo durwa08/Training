@@ -14,6 +14,10 @@ import java.util.List;
 @NoArgsConstructor//by default constructor needed by Jpa
 @AllArgsConstructor//constructor with all fields
 @Builder // implements builder patterns
+
+// The User entity represents a user in the restaurant portal. I
+// t includes fields for the user's first name, last name, email, password, phone number, role, wallet balance,
+// and references to the user's orders and cart.
 public class User {
 
     @Id // primary key

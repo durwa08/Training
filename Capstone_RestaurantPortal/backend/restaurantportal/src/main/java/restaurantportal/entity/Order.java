@@ -9,6 +9,8 @@ import java.util.List;
 @Table(name = "orders")
 @Getter
 @Setter
+// the order entity represents an order placed by a user.
+// It includes the total amount, status, created at timestamp, and references to the user, restaurant and order items.
 public class Order {
 
     @Id

@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+//  login request is used to receive email & password from client when user tries to login.
 public class LoginRequest {
 
     private String email;

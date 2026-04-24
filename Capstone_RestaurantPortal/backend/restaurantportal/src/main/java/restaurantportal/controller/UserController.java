@@ -12,6 +12,8 @@ import restaurantportal.service.UserService;
 
 @RestController
 @RequestMapping("/api/users")
+//This class is responsible for handling user related endpoints like registration and login.
+// It uses UserService to perform the business logic related to users.
 public class UserController {
 
     private final UserService userService;

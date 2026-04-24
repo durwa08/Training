@@ -11,7 +11,7 @@ import restaurantportal.dto.MenuItemResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 // MenuItem Service class to handle business logic related to menu items, such as creating, retrieving, and deleting menu items for a restaurant.
-// it depends both on category as well as Restaurant, as menu item is associated with both of them. Hence we need to inject both the repositories in this service class.
+// it depends both on category as-well-as Restaurant, as menu item is associated with both of them. Hence we need to inject both the repositories in this service class.
 
 @Service
 public class MenuItemService {

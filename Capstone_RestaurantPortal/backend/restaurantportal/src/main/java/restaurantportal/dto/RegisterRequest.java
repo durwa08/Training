@@ -13,6 +13,8 @@ import lombok.AllArgsConstructor;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+//  register request is used to receive user information from client when user tries to register.
+//  It includes first name, last name, email, password, phone number and role (customer/employee/admin).
 public class RegisterRequest {
 
     @NotBlank

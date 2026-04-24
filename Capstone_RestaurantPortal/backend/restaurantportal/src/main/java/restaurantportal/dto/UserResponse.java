@@ -6,6 +6,8 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+// user response is used to send user data back to client.
+// It includes id, first name, last name, email, phone number, role and wallet balance.
 public class UserResponse {
 
     private Long id;

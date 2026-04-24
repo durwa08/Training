@@ -13,6 +13,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import restaurantportal.security.JwtFilter;
 
+// This class configures Spring Security for the application.
+// It defines the security filter chain, password encoder, and authentication manager.
+
 @Configuration
 public class SecurityConfig {
 

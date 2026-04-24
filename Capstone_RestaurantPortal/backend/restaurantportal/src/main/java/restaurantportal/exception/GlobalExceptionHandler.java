@@ -11,7 +11,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // ---------------- 400: Bad Request ----------------
+    // 400: Bad Request
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity
@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
-    // ---------------- 400: Validation Errors ----------------
+    //  400: Validation Errors
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidation(MethodArgumentNotValidException ex) {
 
@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
                 .body(errors);
     }
 
-    // ---------------- 404: Not Found ----------------
+    //  404: Not Found
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleNotFound(RuntimeException ex) {
         return ResponseEntity
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
-    // ---------------- 500: Server Error ----------------
+    //  500: Server Error
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGeneral(Exception ex) {
         return ResponseEntity

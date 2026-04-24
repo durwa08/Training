@@ -1,5 +1,7 @@
 package restaurantportal.dto;
 // MenuItemResponse is used to send menu item data back to client.
+//  menu item response will contain id, name, price and categoryId.
+//  We will use this class to send menu item data back to client after creating/updating/getting menu item.
 public class MenuItemResponse {
 
     private Long id;
