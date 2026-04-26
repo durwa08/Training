@@ -9,7 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-//the address entity represents the address of a user. It includes street, city, state and pincode.
+//the address entity represents the address of a user.
+// it includes street, city, state and pincode.
 public class Address {
 
     @Id

@@ -10,6 +10,7 @@ public class RestaurantPortalApplication {
 
 		SpringApplication.run(RestaurantPortalApplication.class, args);
 		System.out.println("Restaurant Portal App");
+
 	}
 
 }

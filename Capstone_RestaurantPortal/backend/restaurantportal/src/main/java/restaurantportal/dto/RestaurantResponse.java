@@ -14,10 +14,17 @@ public class RestaurantResponse {
         this.address = address;
         this.status = status;
     }
-
     // getters
-    public Long getId() { return id; }
-    public String getName() { return name; }
-    public String getAddress() { return address; }
-    public String getStatus() { return status; }
+    public Long getId() {
+        return id;
+    }
+    public String getName() {
+        return name;
+    }
+    public String getAddress() {
+        return address;
+    }
+    public String getStatus() {
+        return status;
+    }
 }

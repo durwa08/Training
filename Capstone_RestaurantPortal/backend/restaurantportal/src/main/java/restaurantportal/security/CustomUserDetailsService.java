@@ -1,11 +1,13 @@
 package restaurantportal.security;
 
 import org.springframework.security.core.userdetails.*;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import restaurantportal.entity.User;
 import restaurantportal.repository.UserRepository;
 
-// Loads user from database and converts it to UserDetails which is used by spring security for authentication and authorization
+import java.util.List;
+
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -14,14 +16,19 @@ public class CustomUserDetailsService implements UserDetailsService {
     public CustomUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-// fetch user detail from db if not found authentication not successful.
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
+        // fetch user from DB
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-
-        return new CustomUserDetails(user);
+        //
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+        );
     }
 }

@@ -13,10 +13,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import restaurantportal.security.JwtFilter;
 
-// This class configures Spring Security for the application.
-// It defines the security filter chain, password encoder, and authentication manager.
-
 @Configuration
+//This class configures Spring Security for the application. It defines the security filter chain, password encoder, and authentication manager. The security filter chain specifies which endpoints are public and which require authentication, as well as adding the JWT filter to validate tokens on incoming requests.
+// The password encoder uses BCrypt for hashing passwords securely.
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
@@ -29,45 +28,42 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                // disable csrf (not needed for REST APIs)
+                // disable csrf because we are using JWT (stateless)
                 .csrf(csrf -> csrf.disable())
 
-                // no session (JWT based)
+                // no session, every request must have token
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                // authorization rules
+                // API authorization rules
                 .authorizeHttpRequests(auth -> auth
 
-                        // public APIs (no login required)
-                        .requestMatchers("/api/users/register", "/api/users/login").permitAll()
+                        // public APIs
+                        .requestMatchers("/api/users/register", "/api/users/login")
+                        .permitAll()
 
-                        // USER role APIs
-                        .requestMatchers("/api/cart/**", "/api/orders/**")
-                        .hasAuthority("USER")
+                        // cart APIs → only USER (customer)
+                        .requestMatchers("/api/cart/**")
+                        .hasRole("USER")
 
-                        // RESTAURANT OWNER APIs
-                        .requestMatchers("/api/restaurants/**")
-                        .hasAuthority("RESTAURANT_OWNER")
-
-                        // any other request must be authenticated
-                        .anyRequest().authenticated()
+                        // everything else requires login
+                        .anyRequest()
+                        .authenticated()
                 )
 
-                // add JWT filter before Spring Security filter
+                // add JWT filter before default auth filter
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // password encoder (for hashing passwords)
+    // password encoder (bcrypt)
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // authentication manager (used internally by Spring Security)
+    // authentication manager
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

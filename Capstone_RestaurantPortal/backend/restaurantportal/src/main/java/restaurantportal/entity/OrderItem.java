@@ -6,16 +6,16 @@ import lombok.*;
 @Entity
 @Getter
 @Setter
-//The OrderItem entity represents an item in an order.
-// It includes the quantity, price, and references to the order and menu item it belongs to.
+// snapshot of menu item at order time
 public class OrderItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;   // menu name snapshot
+    private Double price;  // price snapshot
     private int quantity;
-    private Double price;
 
     @ManyToOne
     @JoinColumn(name = "order_id")
@@ -23,5 +23,5 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "menu_item_id")
-    private MenuItem menuItem;
+    private MenuItem menuItem; // reference to the original menu item
 }
