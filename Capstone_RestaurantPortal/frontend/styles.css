@@ -1,0 +1,96 @@
+/*
+  App-specific styles
+  Note: Tailwind handles most of the styling,
+  this file is only for custom tweaks and reusable design tokens.
+*/
+
+:root {
+  /* Base background color (used for dark theme consistency) */
+  --rp-bg: #0b1220;
+
+  /* Primary gold shade (used for accents, borders, glow) */
+  --rp-gold: #d6b25e;
+
+  /* Lighter gold variant (used for text highlights) */
+  --rp-gold-2: #f5d78a;
+}
+
+/*
+  Ensures consistent spacing when validation messages appear/disappear.
+  Prevents layout shift when error text is toggled.
+*/
+.rp-field-message {
+  min-height: 1.25rem;
+}
+
+/*
+  Card component enhancement:
+  Adds glassmorphism effect using backdrop blur.
+  Works well with transparent Tailwind backgrounds.
+*/
+.rp-card {
+  backdrop-filter: blur(10px);
+}
+
+/*
+  Typography for headings / premium branding.
+  Serif font gives a luxury feel to the UI.
+*/
+.rp-font-display {
+  font-family: ui-serif, "Georgia", "Times New Roman", Times, serif;
+  letter-spacing: -0.02em;
+}
+
+/*
+  Gold glow effect:
+  Used for premium buttons or highlighted sections.
+  Combines subtle border + layered shadows for depth.
+*/
+.rp-glow-gold {
+  box-shadow:
+    0 0 0 1px rgba(214, 178, 94, 0.22),
+    0 10px 30px rgba(214, 178, 94, 0.12),
+    0 0 40px rgba(214, 178, 94, 0.10);
+}
+
+/*
+  Gold text utility:
+  Uses lighter gold for better readability on dark background.
+*/
+.rp-text-gold {
+  color: var(--rp-gold-2);
+}
+
+/*
+  Floating animation:
+  Used sparingly for subtle UI movement (e.g., cards, highlights).
+*/
+@keyframes rp-float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px); /* slight upward movement */
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+/* Apply floating animation */
+.rp-float {
+  animation: rp-float 6s ease-in-out infinite;
+}
+
+/*
+  Accessibility: Respect user's reduced motion preference.
+  Disables animations for users who prefer minimal motion.
+*/
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin {
+    animation: none !important;
+  }
+  .rp-float {
+    animation: none !important;
+  }
+}

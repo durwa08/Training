@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Basic meta configuration -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Page title -->
+  <title>Restaurant Portal | Login</title>
+
+  <!-- Tailwind CSS for styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Custom stylesheet -->
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<!-- data-page helps JS identify this as login page -->
+<body data-page="login" class="min-h-screen bg-slate-950 text-slate-100">
+<div class="relative isolate min-h-screen overflow-hidden">
+
+  <!-- Background decorative gradient blobs -->
+  <div class="pointer-events-none absolute inset-0 opacity-70">
+    <div class="absolute -top-40 left-1/2 h-[32rem] w-[32rem] -translate-x-1/2 rounded-full bg-indigo-600/30 blur-3xl"></div>
+    <div class="absolute -bottom-40 right-10 h-[28rem] w-[28rem] rounded-full bg-cyan-500/20 blur-3xl"></div>
+  </div>
+
+  <!-- Main centered login container -->
+  <main class="mx-auto flex min-h-screen max-w-6xl items-center justify-center px-4 py-10">
+    <div class="w-full max-w-md">
+
+      <!-- Login card -->
+      <div class="rp-card rounded-2xl border border-white/10 bg-white/5 p-6 shadow-xl">
+
+        <!-- Header content -->
+        <div class="mb-6">
+          <p class="text-xs font-semibold tracking-wider text-indigo-300">
+            RESTAURANT PORTAL
+          </p>
+          <h1 class="mt-2 text-2xl font-semibold tracking-tight">
+            Welcome back
+          </h1>
+          <p class="mt-1 text-sm text-slate-300">
+            Sign in to continue to your dashboard.
+          </p>
+        </div>
+
+        <!-- Alert box (used dynamically for success/error messages) -->
+        <div id="alert" class="hidden" role="status" aria-live="polite"></div>
+
+        <!-- Login form -->
+        <form id="loginForm" class="mt-4 space-y-4" novalidate>
+
+          <!-- Email field -->
+          <div>
+            <label for="email" class="text-sm font-medium text-slate-200">
+              Email
+            </label>
+            <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    class="mt-1 w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-slate-100 outline-none placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
+                    placeholder="you@example.com"
+                    required
+            />
+            <!-- Validation message shown via JS -->
+            <p id="emailMsg" class="rp-field-message mt-1 text-xs text-rose-200"></p>
+          </div>
+
+          <!-- Password field -->
+          <div>
+            <label for="password" class="text-sm font-medium text-slate-200">
+              Password
+            </label>
+            <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    autocomplete="current-password"
+                    class="mt-1 w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-slate-100 outline-none placeholder:text-slate-400 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/30"
+                    placeholder="Your password"
+                    required
+            />
+            <!-- Validation message -->
+            <p id="passwordMsg" class="rp-field-message mt-1 text-xs text-rose-200"></p>
+          </div>
+
+          <!-- Submit button with loading spinner -->
+          <button
+                  id="submitBtn"
+                  type="submit"
+                  class="group inline-flex w-full items-center justify-center gap-2 rounded-lg bg-indigo-500 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/20 transition hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            <!-- Spinner shown while API call is in progress -->
+            <span
+                    id="spinner"
+                    class="hidden h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
+            ></span>
+            Sign in
+          </button>
+
+          <!-- Redirect to register page -->
+          <p class="text-center text-sm text-slate-300">
+            New here?
+            <a
+                    href="./register.html"
+                    class="font-semibold text-indigo-300 hover:text-indigo-200"
+            >
+              Create an account
+            </a>
+          </p>
+        </form>
+      </div>
+
+      <!-- Backend info -->
+      <p class="mt-6 text-center text-xs text-slate-400">
+        Backend:
+        <span class="font-mono text-slate-300">
+              http://localhost:8080
+            </span>
+      </p>
+    </div>
+  </main>
+</div>
+
+<!-- Main JS file handling form submission & API calls -->
+<script type="module" src="./script.js"></script>
+</body>
+</html>
