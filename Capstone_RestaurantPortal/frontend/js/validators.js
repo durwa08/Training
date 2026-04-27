@@ -11,15 +11,15 @@ export function isEmail(value) {
 /*
   Password validation rules
   Returns:
-  - ok → overall validity
-  - checks → individual rule results (useful for UI hints)
+   ok → overall validity
+  checks → individual rule results
 */
 export function passwordRules(password) {
   const value = String(password || "");
 
   // Individual validation checks
   const checks = {
-    minLength: value.length >= 8,          // At least 8 characters
+    minLength: value.length >= 5,          // At least 8 characters
     hasUpper: /[A-Z]/.test(value),         // At least one uppercase letter
     hasLower: /[a-z]/.test(value),         // At least one lowercase letter
     hasNumber: /[0-9]/.test(value),        // At least one number

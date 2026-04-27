@@ -1,5 +1,5 @@
 /*Resetting the margin and padding so that the browser inconsistincies can be avoided*/
-/* I reset margin and padding to avoid browser inconsistencies */
+
 /* Reset default spacing because different browsers apply their own margins and paddings,
    which can break layout consistency */
 * {
@@ -24,7 +24,7 @@ header {
     padding: 20px;
 }
 
-/* Making the profile image circular gives it a professional portfolio look */
+/* Making the profile image circular gives it a professional  look */
 header img {
     border-radius: 50%;
     margin-top: 10px;

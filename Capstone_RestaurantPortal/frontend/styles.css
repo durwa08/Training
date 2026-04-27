@@ -1,8 +1,4 @@
-/*
-  App-specific styles
-  Note: Tailwind handles most of the styling,
-  this file is only for custom tweaks and reusable design tokens.
-*/
+
 
 :root {
   /* Base background color (used for dark theme consistency) */

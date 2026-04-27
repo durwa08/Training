@@ -1,4 +1,4 @@
-// Import config to access storage key (keeps it centralized & consistent)
+// Import config to access storage key
 import { CONFIG } from "./config.js";
 
 /*

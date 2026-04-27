@@ -1,5 +1,5 @@
 /*
-  Shortcut for querySelector
+
   Helps reduce repetitive document.querySelector calls
   Optionally allows searching within a specific root element
 */
@@ -25,7 +25,7 @@ export function setHidden(el, hidden) {
 }
 
 /*
-  Enable or disable an element (commonly buttons/inputs)
+  Enable or disable an element
   Also updates aria-disabled for accessibility
 */
 export function setDisabled(el, disabled) {
@@ -35,7 +35,7 @@ export function setDisabled(el, disabled) {
 }
 
 /*
-  Mark element as busy (useful for loading states)
+  Mark element as busy
   Helps screen readers understand UI is processing
 */
 export function setBusy(el, busy) {
