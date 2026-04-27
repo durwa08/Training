@@ -5,6 +5,9 @@ import org.springframework.web.bind.annotation.*;
 import restaurantportal.dto.*;
 import restaurantportal.service.CartService;
 
+/**
+ * Handles cart related operations for the user.
+ */
 @RestController
 @RequestMapping("/api/cart")
 public class CartController {
@@ -15,26 +18,34 @@ public class CartController {
         this.cartService = cartService;
     }
 
-    //  add item to cart
+    /**
+     * Adds an item to the user's cart.
+     */
     @PostMapping
     public CartResponse addToCart(@Valid @RequestBody AddToCartRequest request) {
         return cartService.addToCart(request);
     }
 
-    // get current user cart
+    /**
+     * Returns the current user's cart details.
+     */
     @GetMapping
     public CartResponse getCart() {
         return cartService.getMyCart();
     }
 
-    //  remove item
+    /**
+     * Removes a specific item from cart by item id.
+     */
     @DeleteMapping("/{id}")
     public String remove(@PathVariable Long id) {
         cartService.removeItem(id);
         return "Item removed";
     }
 
-    // clear cart
+    /**
+     * Clears all items from the user's cart.
+     */
     @DeleteMapping
     public String clear() {
         cartService.clearCart();

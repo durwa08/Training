@@ -11,8 +11,10 @@ import restaurantportal.entity.User;
 import restaurantportal.repository.UserRepository;
 import restaurantportal.security.JwtUtil;
 
-//USER SERVICE class to handle business logic related to user registration and login. It
-// interacts with the UserRepository to save and retrieve user data, uses PasswordEncoder to hash passwords, and JwtUtil to generate JWT tokens for authentication.
+/**
+ * Service responsible for user-related business logic such as registration and login.
+ * Handles password encryption and JWT token generation.
+ */
 @Service
 public class UserService {
 
@@ -28,6 +30,9 @@ public class UserService {
         this.jwtUtil = jwtUtil;
     }
 
+    /**
+     * Registers a new user and stores encrypted password in database.
+     */
     @Transactional
     public UserResponse register(RegisterRequest request) {
 
@@ -61,6 +66,9 @@ public class UserService {
         );
     }
 
+    /**
+     * Authenticates user and generates JWT token on successful login.
+     */
     public String login(String email, String password) {
 
         User user = userRepository.findByEmail(email)

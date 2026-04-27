@@ -1,4 +1,5 @@
 package restaurantportal.service;
+
 import org.springframework.stereotype.Service;
 import restaurantportal.dto.CartItemResponse;
 import restaurantportal.dto.CheckoutResponse;
@@ -7,10 +8,14 @@ import restaurantportal.entity.User;
 import restaurantportal.repository.CartRepository;
 import restaurantportal.repository.UserRepository;
 import restaurantportal.security.SecurityUtil;
+
 import java.util.stream.Collectors;
 
+/**
+ * Service responsible for handling checkout logic.
+ * It verifies cart details and checks wallet balance before order placement.
+ */
 @Service
-//CheckoutService handles the checkout process, calculating totals and checking wallet balance
 public class CheckoutService {
 
     private final UserRepository userRepository;
@@ -21,6 +26,10 @@ public class CheckoutService {
         this.cartRepository = cartRepository;
     }
 
+    /**
+     * Processes checkout for the logged-in user.
+     * Calculates total amount and verifies wallet balance.
+     */
     public CheckoutResponse checkout() {
 
         String email = SecurityUtil.getCurrentUserEmail();
@@ -49,7 +58,6 @@ public class CheckoutService {
                                 i.getId(),
                                 i.getMenuItem().getName(),
                                 i.getPrice(),
-                                i.getQuantity()))
-                        .collect(Collectors.toList()));
+                                i.getQuantity())).collect(Collectors.toList()));
     }
 }

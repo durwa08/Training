@@ -13,22 +13,25 @@ import restaurantportal.security.SecurityUtil;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service // handles all business logic related to restaurants
+/**
+ * Service responsible for restaurant-related business logic.
+ * Handles creation, updates, retrieval, and deletion of restaurants.
+ */
+@Service
 public class RestaurantService {
 
-    // Dependency injection of RestaurantRepository and UserRepository to interact with the database for restaurant
-    // and user related operations.
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
 
-    // constructor injection
     public RestaurantService(RestaurantRepository restaurantRepository,
                              UserRepository userRepository) {
         this.restaurantRepository = restaurantRepository;
         this.userRepository = userRepository;
     }
 
-    // CREATE
+    /**
+     * Creates a new restaurant for the logged-in user.
+     */
     public RestaurantResponse create(RestaurantRequest request) {
 
         String email = SecurityUtil.getCurrentUserEmail();
@@ -40,7 +43,6 @@ public class RestaurantService {
         restaurant.setName(request.getName());
         restaurant.setAddress(request.getAddress());
 
-        // SAFE ENUM
         try {
             restaurant.setStatus(
                     RestaurantStatus.valueOf(request.getStatus().toUpperCase())
@@ -49,7 +51,6 @@ public class RestaurantService {
             throw new IllegalArgumentException("Invalid status value");
         }
 
-        // IMPORTANT: set owner
         restaurant.setOwner(owner);
 
         Restaurant saved = restaurantRepository.save(restaurant);
@@ -57,7 +58,9 @@ public class RestaurantService {
         return mapToResponse(saved);
     }
 
-    // GET ALL
+    /**
+     * Retrieves all restaurants in the system.
+     */
     public List<RestaurantResponse> getAll() {
         return restaurantRepository.findAll()
                 .stream()
@@ -65,15 +68,20 @@ public class RestaurantService {
                 .collect(Collectors.toList());
     }
 
-    // GET BY ID
+    /**
+     * Retrieves a restaurant by its ID.
+     */
     public RestaurantResponse getById(Long id) {
+
         Restaurant restaurant = restaurantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Restaurant not found"));
 
         return mapToResponse(restaurant);
     }
 
-    // UPDATE
+    /**
+     * Updates an existing restaurant (only by owner).
+     */
     public RestaurantResponse update(Long id, RestaurantRequest request) {
 
         Restaurant restaurant = restaurantRepository.findById(id)
@@ -81,7 +89,6 @@ public class RestaurantService {
 
         String email = SecurityUtil.getCurrentUserEmail();
 
-        //  SAFE OWNER CHECK - only owner can update restaurant
         if (restaurant.getOwner() == null ||
                 restaurant.getOwner().getEmail() == null ||
                 !restaurant.getOwner().getEmail().equals(email)) {
@@ -92,7 +99,6 @@ public class RestaurantService {
         restaurant.setName(request.getName());
         restaurant.setAddress(request.getAddress());
 
-        // SAFE ENUM  - validate status value before setting it to restaurant, if invalid throw exception
         try {
             restaurant.setStatus(
                     RestaurantStatus.valueOf(request.getStatus().toUpperCase())
@@ -106,7 +112,9 @@ public class RestaurantService {
         return mapToResponse(updated);
     }
 
-    // DELETE
+    /**
+     * Deletes a restaurant (only by owner).
+     */
     public void delete(Long id) {
 
         Restaurant restaurant = restaurantRepository.findById(id)
@@ -114,7 +122,6 @@ public class RestaurantService {
 
         String email = SecurityUtil.getCurrentUserEmail();
 
-        // SAFE OWNER CHECK
         if (restaurant.getOwner() == null ||
                 restaurant.getOwner().getEmail() == null ||
                 !restaurant.getOwner().getEmail().equals(email)) {
@@ -125,7 +132,9 @@ public class RestaurantService {
         restaurantRepository.deleteById(id);
     }
 
-    // MAPPER
+    /**
+     * Maps Restaurant entity to RestaurantResponse DTO.
+     */
     private RestaurantResponse mapToResponse(Restaurant restaurant) {
         return new RestaurantResponse(
                 restaurant.getId(),

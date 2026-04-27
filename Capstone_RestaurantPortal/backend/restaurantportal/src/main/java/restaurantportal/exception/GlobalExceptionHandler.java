@@ -8,10 +8,16 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Global exception handler for handling application-wide exceptions.
+ * It provides consistent error responses for all APIs.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 400: Bad Request
+    /**
+     * Handles invalid arguments or business logic errors.
+     */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity
@@ -19,7 +25,9 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
-    //  400: Validation Errors
+    /**
+     * Handles validation errors for request body fields.
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleValidation(MethodArgumentNotValidException ex) {
 
@@ -34,7 +42,9 @@ public class GlobalExceptionHandler {
                 .body(errors);
     }
 
-    //  404: Not Found
+    /**
+     * Handles runtime exceptions when a resource is not found.
+     */
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> handleNotFound(RuntimeException ex) {
         return ResponseEntity
@@ -42,13 +52,13 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", ex.getMessage()));
     }
 
-    //  500: Server Error
+    /**
+     * Handles all unexpected server-side exceptions.
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleGeneral(Exception ex) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("error", "Something went wrong"));
     }
-
-
 }

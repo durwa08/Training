@@ -8,16 +8,24 @@ import restaurantportal.entity.User;
 import java.util.Collection;
 import java.util.Collections;
 
-//this class is needed because it converts user entity into a format required by spring security
+/**
+ * Custom implementation of UserDetails for Spring Security.
+ * It adapts the User entity to Spring Security's authentication model.
+ */
 public class CustomUserDetails implements UserDetails {
 
     private final User user;
 
+    /**
+     * Creates CustomUserDetails from User entity.
+     */
     public CustomUserDetails(User user) {
         this.user = user;
     }
 
-    // return role as authority
+    /**
+     * Returns user authorities (roles).
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(
@@ -25,29 +33,39 @@ public class CustomUserDetails implements UserDetails {
         );
     }
 
+    /**
+     * Returns encrypted password of the user.
+     */
     @Override
     public String getPassword() {
-
         return user.getPassword();
     }
 
+    /**
+     * Returns username (email in this case).
+     */
     @Override
     public String getUsername() {
-
         return user.getEmail();
     }
 
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
-    @Override public boolean isAccountNonExpired() {
+    @Override
+    public boolean isAccountNonLocked() {
         return true;
     }
-    @Override public boolean isAccountNonLocked() {
+
+    @Override
+    public boolean isCredentialsNonExpired() {
         return true;
     }
-    @Override public boolean isCredentialsNonExpired() {
-        return true;
-    }
-    @Override public boolean isEnabled() {
+
+    @Override
+    public boolean isEnabled() {
         return true;
     }
 }

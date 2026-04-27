@@ -9,6 +9,9 @@ import restaurantportal.security.SecurityUtil;
 
 import java.util.List;
 
+/**
+ * Service layer responsible for cart-related business logic.
+ */
 @Service
 public class CartService {
 
@@ -24,7 +27,9 @@ public class CartService {
         this.menuItemRepository = menuItemRepository;
     }
 
-    //  get logged-in user's cart or create new
+    /**
+     * Fetches existing cart for user or creates a new one if not present.
+     */
     private Cart getCart(User user) {
         return cartRepository.findByUser(user)
                 .orElseGet(() -> {
@@ -34,7 +39,9 @@ public class CartService {
                 });
     }
 
-    //  ADD TO CART
+    /**
+     * Adds an item to the user's cart.
+     */
     @Transactional
     public CartResponse addToCart(AddToCartRequest request) {
 
@@ -48,7 +55,6 @@ public class CartService {
         MenuItem menuItem = menuItemRepository.findById(request.getMenuItemId())
                 .orElseThrow(() -> new RuntimeException("Menu item not found"));
 
-        // check if already exists
         CartItem existing = cart.getItems().stream()
                 .filter(i -> i.getMenuItem().getId().equals(menuItem.getId()))
                 .findFirst()
@@ -70,7 +76,9 @@ public class CartService {
         return mapToResponse(cartRepository.save(cart));
     }
 
-    //  GET CART
+    /**
+     * Retrieves the cart of the currently logged-in user.
+     */
     public CartResponse getMyCart() {
 
         String email = SecurityUtil.getCurrentUserEmail();
@@ -84,7 +92,9 @@ public class CartService {
         return mapToResponse(cart);
     }
 
-    //  REMOVE ITEM
+    /**
+     * Removes a specific item from the cart.
+     */
     @Transactional
     public void removeItem(Long id) {
 
@@ -102,7 +112,9 @@ public class CartService {
         cartRepository.save(cart);
     }
 
-    //  CLEAR CART
+    /**
+     * Clears all items from the user's cart.
+     */
     @Transactional
     public void clearCart() {
 
@@ -114,7 +126,9 @@ public class CartService {
         cartRepository.save(cart);
     }
 
-    //  helper
+    /**
+     * Helper method to fetch cart entity of logged-in user.
+     */
     private Cart getCartEntity() {
 
         String email = SecurityUtil.getCurrentUserEmail();
@@ -126,7 +140,9 @@ public class CartService {
                 .orElseThrow(() -> new RuntimeException("Cart not found"));
     }
 
-    //  calculate total
+    /**
+     * Recalculates total cart amount.
+     */
     private void recalculate(Cart cart) {
         double total = cart.getItems().stream()
                 .mapToDouble(i -> i.getPrice() * i.getQuantity())
@@ -135,7 +151,9 @@ public class CartService {
         cart.setTotalAmount(total);
     }
 
-    //  mapper
+    /**
+     * Converts Cart entity to CartResponse DTO.
+     */
     private CartResponse mapToResponse(Cart cart) {
 
         return new CartResponse(
@@ -146,9 +164,6 @@ public class CartService {
                                 i.getId(),
                                 i.getMenuItem().getName(),
                                 i.getPrice(),
-                                i.getQuantity()
-                        ))
-                        .toList()
-        );
+                                i.getQuantity())).toList());
     }
 }

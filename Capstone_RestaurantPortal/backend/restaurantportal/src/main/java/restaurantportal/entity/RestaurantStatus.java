@@ -1,6 +1,8 @@
 package restaurantportal.entity;
 
-// enum to represent the status of a restaurant, which can be either OPEN or CLOSED.
+/**
+ * Represents the operational status of a restaurant.
+ */
 public enum RestaurantStatus {
     OPEN,
     CLOSED

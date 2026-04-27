@@ -5,6 +5,9 @@ import org.springframework.web.bind.annotation.*;
 import restaurantportal.dto.*;
 import restaurantportal.service.WalletService;
 
+/**
+ * Handles wallet-related operations like adding money and checking balance.
+ */
 @RestController
 @RequestMapping("/api/wallet")
 public class WalletController {
@@ -15,13 +18,17 @@ public class WalletController {
         this.service = service;
     }
 
-    //  add money
+    /**
+     * Adds money to the user's wallet.
+     */
     @PostMapping("/add")
     public WalletResponse addMoney(@Valid @RequestBody AddMoneyRequest request) {
         return service.addMoney(request);
     }
 
-    //  get balance
+    /**
+     * Returns the current wallet balance of the user.
+     */
     @GetMapping
     public WalletResponse getBalance() {
         return service.getBalance();

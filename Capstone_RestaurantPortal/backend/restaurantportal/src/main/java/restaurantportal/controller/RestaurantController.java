@@ -8,10 +8,11 @@ import restaurantportal.service.RestaurantService;
 
 import java.util.List;
 
+/**
+ * Handles restaurant-related APIs like create, fetch, update, and delete restaurants.
+ */
 @RestController
 @RequestMapping("/api/restaurants")
-// RestaurantController to handle restaurant related endpoints like create restaurant get all restaurants get restaurant by id
-// update restaurant delete restaurant etc.
 public class RestaurantController {
 
     private final RestaurantService service;
@@ -20,32 +21,42 @@ public class RestaurantController {
         this.service = service;
     }
 
-    //  CREATE
+    /**
+     * Creates a new restaurant.
+     */
     @PostMapping
     public RestaurantResponse create(@Valid @RequestBody RestaurantRequest request) {
         return service.create(request);
     }
 
-    // GET ALL
+    /**
+     * Returns all available restaurants.
+     */
     @GetMapping
     public List<RestaurantResponse> getAll() {
         return service.getAll();
     }
 
-    //  GET BY ID
+    /**
+     * Fetches a restaurant by its id.
+     */
     @GetMapping("/{id}")
     public RestaurantResponse getById(@PathVariable Long id) {
         return service.getById(id);
     }
 
-    // UPDATE
+    /**
+     * Updates an existing restaurant.
+     */
     @PutMapping("/{id}")
     public RestaurantResponse update(@PathVariable Long id,
                                      @RequestBody RestaurantRequest request) {
         return service.update(id, request);
     }
 
-    //  DELETE
+    /**
+     * Deletes a restaurant by its id.
+     */
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         service.delete(id);

@@ -14,16 +14,31 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import restaurantportal.security.JwtFilter;
 
 @Configuration
-//This class configures Spring Security for the application. It defines the security filter chain, password encoder, and authentication manager. The security filter chain specifies which endpoints are public and which require authentication, as well as adding the JWT filter to validate tokens on incoming requests.
-// The password encoder uses BCrypt for hashing passwords securely.
+/**
+ * Configures Spring Security for the application.
+ * Defines the security filter chain, password encoder, and authentication manager.
+ * Specifies public and authenticated endpoints, and adds the JWT filter for token validation.
+ * Uses BCrypt for secure password hashing.
+ */
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
+    /**
+     * Constructor to initialize the JWT filter.
+     *
+     *  JWT filter for token validation
+     */
 
     public SecurityConfig(JwtFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
     }
 
+    /**
+     * Configures the security filter chain.
+     * Disables CSRF, sets session management to stateless, and defines API authorization rules.
+     *
+     * @throws Exception if an error occurs during configuration
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -57,13 +72,24 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // password encoder (bcrypt)
+    /**
+     * Provides a password encoder using BCrypt.
+     *
+     * @return the BCryptPasswordEncoder instance
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // authentication manager
+
+    /**
+     * Provides the authentication manager.
+     *
+     * config the authentication configuration
+     * @return the AuthenticationManager instance
+     * @throws Exception if an error occurs during configuration
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

@@ -1,52 +1,73 @@
 package restaurantportal.entity;
 
 import jakarta.persistence.*;
-import restaurantportal.entity.Order;
 import lombok.*;
 import java.util.List;
 
-
-@Entity//Represents table in db
-//lombok annotations
-@Table(name = "users")//table name in db
+/**
+ * Entity representing a user in the restaurant portal.
+ * A user can place orders, have a cart, and own a wallet.
+ */
+@Entity
+@Table(name = "users")
 @Getter
 @Setter
-@NoArgsConstructor//by default constructor needed by Jpa
-@AllArgsConstructor//constructor with all fields
-@Builder // implements builder patterns
-
-// The User entity represents a user in the restaurant portal. I
-// t includes fields for the user's first name, last name, email, password, phone number, role, wallet balance,
-// and references to the user's orders and cart.
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
 
-    @Id // primary key
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // auto generate id and db handles auto-increment
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * First name of the user.
+     */
     private String firstName;
+
+    /**
+     * Last name of the user.
+     */
     private String lastName;
 
+    /**
+     * Email of the user (unique identifier).
+     */
     @Column(unique = true, nullable = false)
     private String email;
 
-    //Encrypted password no plain password
+    /**
+     * Encrypted password of the user.
+     */
     @Column(nullable = false)
     private String password;
 
+    /**
+     * Contact number of the user.
+     */
     private String phoneNumber;
 
-    //Maps enum to db
+    /**
+     * Role of the user in the system (USER, RESTAURANT_OWNER).
+     */
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    /**
+     * Wallet balance of the user.
+     */
     private Double walletBalance;
 
-    // One user → many orders(one-to-many relationship)
+    /**
+     * Orders placed by the user.
+     */
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
 
-    // One user → one cart(One-to -one relationship)
+    /**
+     * Cart associated with the user.
+     */
     @OneToOne(mappedBy = "user")
     private Cart cart;
 }

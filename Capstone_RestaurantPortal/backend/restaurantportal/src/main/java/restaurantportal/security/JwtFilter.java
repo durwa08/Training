@@ -10,8 +10,10 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-// JWT filter to intercept incoming HTTP requests, extract the JWT token from the Authorization header, validate it, and set the authentication in the security context if the token is valid.
-// This allows the application to authenticate users based on the JWT token they provide in their requests.
+/**
+ * JWT filter that intercepts incoming HTTP requests.
+ * It extracts and validates the JWT token and sets authentication in Spring Security context.
+ */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -23,6 +25,9 @@ public class JwtFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
+    /**
+     * Filters each request to validate JWT and set authentication context.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -35,17 +40,14 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = null;
 
         try {
-            // extract token from header
             if (header != null && header.startsWith("Bearer ")) {
                 token = header.substring(7);
-                email = jwtUtil.extractEmail(token); // may throw exception
+                email = jwtUtil.extractEmail(token);
             }
         } catch (Exception e) {
-            // invalid token → ignore and continue
-            // request will be treated as unauthorized
+            // Invalid token is ignored
         }
 
-        // authenticate user if valid
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             var userDetails = userDetailsService.loadUserByUsername(email);
@@ -65,7 +67,6 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
 
-        // continue filter chain
         filterChain.doFilter(request, response);
     }
 }

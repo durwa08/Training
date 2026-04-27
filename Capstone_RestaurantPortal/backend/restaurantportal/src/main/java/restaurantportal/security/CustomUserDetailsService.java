@@ -8,6 +8,9 @@ import restaurantportal.repository.UserRepository;
 
 import java.util.List;
 
+/**
+ * Service used by Spring Security to load user-specific data during authentication.
+ */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -17,14 +20,15 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Loads user details from database using email.
+     */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        // fetch user from DB
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        //
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),

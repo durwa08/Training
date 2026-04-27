@@ -10,6 +10,10 @@ import restaurantportal.security.SecurityUtil;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Service responsible for order processing logic including placement,
+ * preview, status updates, and cancellation.
+ */
 @Service
 public class OrderService {
 
@@ -25,7 +29,9 @@ public class OrderService {
         this.userRepository = userRepository;
     }
 
-    // ===================== PREVIEW ORDER =====================
+    /**
+     * Generates a preview of the current cart before placing an order.
+     */
     public OrderResponse previewOrder() {
 
         String email = SecurityUtil.getCurrentUserEmail();
@@ -49,12 +55,18 @@ public class OrderService {
                                 i.getId(),
                                 i.getMenuItem().getName(),
                                 i.getPrice(),
-                                i.getQuantity()))
-                        .toList()
+                                i.getQuantity()
+                        ))
+                        .toList(),
+                "Success",
+                LocalDateTime.now().toString()
         );
     }
 
-    // ===================== PLACE ORDER =====================
+    /**
+     * Places an order by converting cart items into an order
+     * and deducting wallet balance.
+     */
     @Transactional
     public OrderResponse placeOrder() {
 
@@ -74,18 +86,15 @@ public class OrderService {
             throw new RuntimeException("Insufficient wallet balance");
         }
 
-        // deduct wallet
-        user.setWalletBalance(
-                user.getWalletBalance() - cart.getTotalAmount());
+        user.setWalletBalance(user.getWalletBalance() - cart.getTotalAmount());
+        userRepository.save(user);
 
-        // create order
         Order order = new Order();
         order.setUser(user);
         order.setTotalAmount(cart.getTotalAmount());
         order.setStatus(OrderStatus.PENDING);
         order.setCreatedAt(LocalDateTime.now());
 
-        // SET RESTAURANT
         Restaurant restaurant = cart.getItems().get(0)
                 .getMenuItem()
                 .getCategory()
@@ -93,7 +102,6 @@ public class OrderService {
 
         order.setRestaurant(restaurant);
 
-        // cart → order items
         for (CartItem c : cart.getItems()) {
             OrderItem item = new OrderItem();
             item.setName(c.getMenuItem().getName());
@@ -105,16 +113,18 @@ public class OrderService {
             order.getItems().add(item);
         }
 
-        // clear cart
         cart.getItems().clear();
         cart.setTotalAmount(0.0);
+        cartRepository.save(cart);
 
         Order saved = orderRepository.save(order);
 
         return mapToResponse(saved);
     }
 
-    // ===================== GET MY ORDERS =====================
+    /**
+     * Fetches all orders placed by the logged-in user.
+     */
     public List<OrderResponse> getMyOrders() {
 
         String email = SecurityUtil.getCurrentUserEmail();
@@ -128,7 +138,37 @@ public class OrderService {
                 .toList();
     }
 
-    // ===================== UPDATE STATUS =====================
+    /**
+     * Fetches all orders for restaurants owned by the logged-in user.
+     */
+    public List<OrderResponse> getOwnerOrders() {
+
+        String email = SecurityUtil.getCurrentUserEmail();
+
+        User owner = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return orderRepository.findByRestaurantOwnerId(owner.getId())
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    /**
+     * Validates allowed order status transitions.
+     */
+    private void validateStatusFlow(OrderStatus current, OrderStatus next) {
+
+        if (current == OrderStatus.PENDING && next == OrderStatus.DELIVERED) return;
+        if (current == OrderStatus.DELIVERED && next == OrderStatus.COMPLETED) return;
+        if (next == OrderStatus.CANCELLED) return;
+
+        throw new RuntimeException("Invalid status transition");
+    }
+
+    /**
+     * Updates the status of an order (only allowed for restaurant owner).
+     */
     @Transactional
     public OrderResponse updateStatus(Long orderId, String status) {
 
@@ -138,21 +178,54 @@ public class OrderService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderId));
 
-        // OWNER CHECK
-        if (!order.getRestaurant().getOwner().getId()
-                .equals(currentUser.getId())) {
-
+        if (!order.getRestaurant().getOwner().getId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not allowed to update this order");
         }
 
-        order.setStatus(OrderStatus.valueOf(status.toUpperCase()));
+        OrderStatus newStatus = OrderStatus.valueOf(status.toUpperCase());
+        validateStatusFlow(order.getStatus(), newStatus);
+
+        order.setStatus(newStatus);
 
         return mapToResponse(orderRepository.save(order));
     }
 
-    // ===================== MAPPER =====================
+    /**
+     * Cancels an order and refunds the amount if eligible.
+     */
+    @Transactional
+    public String cancelOrder(Long orderId) {
+
+        String email = SecurityUtil.getCurrentUserEmail();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (!order.getUser().getId().equals(user.getId())) {
+            throw new RuntimeException("Not your order");
+        }
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new RuntimeException("Cannot cancel now");
+        }
+
+        user.setWalletBalance(user.getWalletBalance() + order.getTotalAmount());
+        order.setStatus(OrderStatus.CANCELLED);
+
+        userRepository.save(user);
+        orderRepository.save(order);
+
+        return "Order cancelled & refunded";
+    }
+
+    /**
+     * Maps Order entity to OrderResponse DTO.
+     */
     private OrderResponse mapToResponse(Order order) {
 
         return new OrderResponse(
@@ -164,7 +237,7 @@ public class OrderService {
                                 i.getId(),
                                 i.getName(),
                                 i.getPrice(),
-                                i.getQuantity()))
-                        .toList());
+                                i.getQuantity())).toList(),
+                "Success", order.getCreatedAt().toString());
     }
 }

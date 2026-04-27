@@ -7,6 +7,9 @@ import restaurantportal.entity.User;
 import restaurantportal.repository.UserRepository;
 import restaurantportal.security.SecurityUtil;
 
+/**
+ * Service responsible for wallet-related operations such as adding money and fetching balance.
+ */
 @Service
 public class WalletService {
 
@@ -16,7 +19,9 @@ public class WalletService {
         this.userRepository = userRepository;
     }
 
-    //  ADD MONEY
+    /**
+     * Adds money to the logged-in user's wallet.
+     */
     @Transactional
     public WalletResponse addMoney(AddMoneyRequest request) {
 
@@ -32,7 +37,9 @@ public class WalletService {
         return new WalletResponse(user.getWalletBalance());
     }
 
-    // GET BALANCE
+    /**
+     * Retrieves wallet balance of the logged-in user.
+     */
     public WalletResponse getBalance() {
 
         String email = SecurityUtil.getCurrentUserEmail();

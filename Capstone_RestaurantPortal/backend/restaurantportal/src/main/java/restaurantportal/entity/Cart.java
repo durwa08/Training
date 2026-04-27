@@ -6,49 +6,60 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Entity representing a shopping cart for a user.
+ * Each user has exactly one cart containing multiple items.
+ */
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-// class cart is the shopping cart of the user. It contains the list of items that the user has added to the cart and the total amount of the cart.
-// Each user has one cart and each cart belongs to one user.
 public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // primary key
+    private Long id;
 
-    // each user has one cart
+    /**
+     * User who owns this cart.
+     */
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-    // cart contains multiple items
+    /**
+     * List of items added to the cart.
+     */
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
     private List<CartItem> items = new ArrayList<>();
 
-    // total cart value (helps avoid recalculation every time)
+    /**
+     * Total amount of the cart.
+     */
     private Double totalAmount = 0.0;
 
-
-    //  HELPER METHODS For add and remove item from cart
-
-    // add item to cart
-    public void addItem(CartItem item) {
-        items.add(item);
-        item.setCart(this);
-    }
-
-    // remove item from cart
-    public void removeItem(CartItem item) {
-        items.remove(item);
-        item.setCart(null);
-
-    }
+    /**
+     * Constructor to create a cart for a specific user.
+     */
     public Cart(User user) {
         this.user = user;
         this.items = new ArrayList<>();
     }
 
+    /**
+     * Adds an item to the cart and sets cart reference in item.
+     */
+    public void addItem(CartItem item) {
+        items.add(item);
+        item.setCart(this);
+    }
+
+    /**
+     * Removes an item from the cart and clears its cart reference.
+     */
+    public void removeItem(CartItem item) {
+        items.remove(item);
+        item.setCart(null);
+    }
 }

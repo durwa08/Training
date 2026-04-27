@@ -1,16 +1,28 @@
 package restaurantportal.dto;
 
 import jakarta.validation.constraints.NotBlank;
-//CategoryRequest is used to receive data from client when creating/updating category
+
+/**
+ * Request DTO used for creating or updating a category.
+ */
 public class CategoryRequest {
 
+    /**
+     * Name of the category.
+     */
     @NotBlank
     private String name;
 
-    // getters & setters
+    /**
+     * Returns the category name.
+     */
     public String getName() {
         return name;
     }
+
+    /**
+     * Sets the category name.
+     */
     public void setName(String name) {
         this.name = name;
     }

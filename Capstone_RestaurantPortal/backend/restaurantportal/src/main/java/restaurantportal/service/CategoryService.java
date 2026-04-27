@@ -10,21 +10,25 @@ import restaurantportal.repository.RestaurantRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
-//CategoryService to handle category related business logic like create category get categories by restaurant delete category etc.
+
+/**
+ * Service layer responsible for category-related business logic.
+ */
 @Service
 public class CategoryService {
-// Adding Dependency Injection for CategoryRepository and RestaurantRepository to interact with the database for category
-// and restaurant related operations.
+
     private final CategoryRepository categoryRepository;
     private final RestaurantRepository restaurantRepository;
-    // Constructor injection for CategoryRepository and RestaurantRepository to initialize the service with the required dependencies.
+
     public CategoryService(CategoryRepository categoryRepository,
                            RestaurantRepository restaurantRepository) {
         this.categoryRepository = categoryRepository;
         this.restaurantRepository = restaurantRepository;
     }
 
-    // CREATE
+    /**
+     * Creates a new category for a restaurant.
+     */
     public CategoryResponse create(Long restaurantId, CategoryRequest request) {
 
         Restaurant restaurant = restaurantRepository.findById(restaurantId)
@@ -39,7 +43,9 @@ public class CategoryService {
         return mapToResponse(saved);
     }
 
-    // GET BY RESTAURANT
+    /**
+     * Fetches all categories of a given restaurant.
+     */
     public List<CategoryResponse> getByRestaurant(Long restaurantId) {
         return categoryRepository.findByRestaurantId(restaurantId)
                 .stream()
@@ -47,17 +53,20 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    // DELETE
+    /**
+     * Deletes a category by its ID.
+     */
     public void delete(Long id) {
         categoryRepository.deleteById(id);
     }
 
-    // MAPPER
+    /**
+     * Maps Category entity to CategoryResponse DTO.
+     */
     private CategoryResponse mapToResponse(Category category) {
         return new CategoryResponse(
                 category.getId(),
                 category.getName(),
-                category.getRestaurant().getId()
-        );
+                category.getRestaurant().getId());
     }
 }

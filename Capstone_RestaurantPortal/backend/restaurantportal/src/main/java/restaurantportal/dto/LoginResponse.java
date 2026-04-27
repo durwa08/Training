@@ -3,11 +3,16 @@ package restaurantportal.dto;
 import lombok.Getter;
 import lombok.AllArgsConstructor;
 
+/**
+ * Response DTO returned after successful login.
+ * It contains the JWT token for authentication.
+ */
 @Getter
 @AllArgsConstructor
-// login response is used to send token back to client after successful login.
-// We will use JWT token for authentication, so we only need to send the token string back to client.
 public class LoginResponse {
 
+    /**
+     * JWT authentication token.
+     */
     private String token;
 }

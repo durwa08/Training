@@ -8,9 +8,11 @@ import restaurantportal.service.CategoryService;
 
 import java.util.List;
 
+/**
+ * Handles category-related APIs like create, fetch, and delete categories.
+ */
 @RestController
 @RequestMapping("/api/categories")
-//CategoryController to handle category related endpoints like create category get categories by restaurant delete category etc.
 public class CategoryController {
 
     private final CategoryService service;
@@ -19,17 +21,26 @@ public class CategoryController {
         this.service = service;
     }
 
+    /**
+     * Creates a new category under a specific restaurant.
+     */
     @PostMapping("/{restaurantId}")
     public CategoryResponse create(@PathVariable Long restaurantId,
                                    @Valid @RequestBody CategoryRequest request) {
         return service.create(restaurantId, request);
     }
 
+    /**
+     * Fetches all categories for a given restaurant.
+     */
     @GetMapping("/{restaurantId}")
     public List<CategoryResponse> getByRestaurant(@PathVariable Long restaurantId) {
         return service.getByRestaurant(restaurantId);
     }
 
+    /**
+     * Deletes a category by its id.
+     */
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         service.delete(id);

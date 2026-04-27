@@ -1,6 +1,8 @@
 package restaurantportal.entity;
 
-// This enum represents the status of an order in the restaurant portal.
+/**
+ * Represents the current status of an order in the system.
+ */
 public enum OrderStatus {
     PLACED,
     PENDING,

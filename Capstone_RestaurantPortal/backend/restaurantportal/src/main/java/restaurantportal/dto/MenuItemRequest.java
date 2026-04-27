@@ -3,19 +3,48 @@ package restaurantportal.dto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 
-//This class is used to receive data from client when creating/updating menu item
+/**
+ * Request DTO used for creating or updating a menu item.
+ */
 public class MenuItemRequest {
 
+    /**
+     * Name of the menu item.
+     */
     @NotBlank
     private String name;
 
+    /**
+     * Price of the menu item.
+     */
     @Positive
     private double price;
 
-    // getters & setters
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    /**
+     * Returns the name of the menu item.
+     */
+    public String getName() {
+        return name;
+    }
 
-    public double getPrice() { return price; }
-    public void setPrice(double price) { this.price = price; }
+    /**
+     * Sets the name of the menu item.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Returns the price of the menu item.
+     */
+    public double getPrice() {
+        return price;
+    }
+
+    /**
+     * Sets the price of the menu item.
+     */
+    public void setPrice(double price) {
+        this.price = price;
+    }
 }

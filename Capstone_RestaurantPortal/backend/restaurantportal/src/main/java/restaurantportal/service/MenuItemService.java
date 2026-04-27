@@ -10,9 +10,11 @@ import restaurantportal.dto.MenuItemResponse;
 
 import java.util.List;
 import java.util.stream.Collectors;
-// MenuItem Service class to handle business logic related to menu items, such as creating, retrieving, and deleting menu items for a restaurant.
-// it depends both on category as-well-as Restaurant, as menu item is associated with both of them. Hence we need to inject both the repositories in this service class.
 
+/**
+ * Service layer responsible for menu item related business logic.
+ * Handles creation, retrieval, and deletion of menu items.
+ */
 @Service
 public class MenuItemService {
 
@@ -25,9 +27,9 @@ public class MenuItemService {
         this.categoryRepository = categoryRepository;
     }
 
-    // create menu item
-
-    // CREATE
+    /**
+     * Creates a new menu item under a category.
+     */
     public MenuItemResponse create(Long categoryId, MenuItemRequest request) {
 
         Category category = categoryRepository.findById(categoryId)
@@ -44,7 +46,9 @@ public class MenuItemService {
         return mapToResponse(saved);
     }
 
-    // GET BY RESTAURANT
+    /**
+     * Retrieves all menu items for a specific restaurant.
+     */
     public List<MenuItemResponse> getByRestaurant(Long restaurantId) {
         return menuItemRepository.findByRestaurantId(restaurantId)
                 .stream()
@@ -52,18 +56,21 @@ public class MenuItemService {
                 .collect(Collectors.toList());
     }
 
-    // DELETE
+    /**
+     * Deletes a menu item by its ID.
+     */
     public void delete(Long id) {
         menuItemRepository.deleteById(id);
     }
 
-    // MAPPER
+    /**
+     * Converts MenuItem entity to MenuItemResponse DTO.
+     */
     private MenuItemResponse mapToResponse(MenuItem item) {
         return new MenuItemResponse(
                 item.getId(),
                 item.getName(),
                 item.getPrice(),
-                item.getCategory().getId()
-        );
+                item.getCategory().getId());
     }
 }

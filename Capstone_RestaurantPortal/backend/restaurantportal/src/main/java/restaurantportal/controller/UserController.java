@@ -10,35 +10,34 @@ import restaurantportal.dto.LoginRequest;
 import restaurantportal.dto.LoginResponse;
 import restaurantportal.service.UserService;
 
+/**
+ * Handles user-related operations like registration and login.
+ */
 @RestController
 @RequestMapping("/api/users")
-//This class is responsible for handling user related endpoints like registration and login.
-// It uses UserService to perform the business logic related to users.
 public class UserController {
 
     private final UserService userService;
 
-    // constructor injection
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    //  REGISTER
-    @PostMapping("/register") // endpoint: POST /api/users/register
+    /**
+     * Registers a new user.
+     */
+    @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@Valid @RequestBody RegisterRequest request) {
-
         UserResponse response = userService.register(request);
-
-        return ResponseEntity.ok(response); // return user details
+        return ResponseEntity.ok(response);
     }
 
-    // LOGIN
-    @PostMapping("/login") // endpoint: POST /api/users/login
+    /**
+     * Authenticates user and returns JWT token.
+     */
+    @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-
-        // call service to generate JWT token
         String token = userService.login(request.getEmail(), request.getPassword());
-
-        return ResponseEntity.ok(new LoginResponse(token)); // return token
+        return ResponseEntity.ok(new LoginResponse(token));
     }
 }
