@@ -18,6 +18,7 @@ public class LoginRequest {
     /**
      * Registered email of the user.
      */
+
     private String email;
 
     /**

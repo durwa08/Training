@@ -13,6 +13,7 @@ import restaurantportal.service.UserService;
 /**
  * Handles user-related operations like registration and login.
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/api/users")
 public class UserController {

@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * Handles menu item related APIs like create, fetch, and delete menu items.
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/api/menu")
 public class MenuItemController {

@@ -9,6 +9,7 @@ import java.util.List;
 /**
  * Handles order-related operations like placing, viewing, and updating orders.
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
