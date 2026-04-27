@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>GreenBite — Explore Restaurants</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            DEFAULT: '#166534',
+                            light: '#22c55e',
+                            dark: '#14532d',
+                        },
+                        forest: '#15803d',
+                        mint: '#dcfce7',
+                        sage: '#f0fdf4',
+                        ink: '#1f2937',
+                        ash: '#6b7280',
+                    },
+                    fontFamily: {
+                        playfair: ['Playfair Display', 'serif'],
+                        dm: ['DM Sans', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'DM Sans', sans-serif; }
+        .font-playfair { font-family: 'Playfair Display', serif; }
+        .font-dm { font-family: 'DM Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-white min-h-screen">
+
+<!-- NAVBAR -->
+<nav class="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+
+        <!-- Brand -->
+        <div class="flex items-center gap-3">
+            <span class="text-3xl">🌿</span>
+            <span class="font-playfair text-2xl font-bold text-emerald">
+          Green<span class="text-emerald-light">Bite</span>
+        </span>
+        </div>
+
+        <!-- Search bar -->
+        <div class="hidden md:flex items-center gap-2 bg-sage border border-emerald-light/30 rounded-full px-4 py-2 w-80">
+            <span class="text-base">&#128269;</span>
+            <input
+                    id="searchInput"
+                    type="text"
+                    placeholder="Find your favorite restaurant..."
+                    class="bg-transparent outline-none text-sm text-ink w-full font-dm"
+                    oninput="filterRestaurants()"
+            />
+        </div>
+
+        <!-- Right side -->
+        <div class="flex items-center gap-4">
+            <!-- Wallet badge -->
+            <div class="hidden md:flex items-center gap-2 bg-mint border border-emerald-light/40 rounded-full px-4 py-2">
+                <span>&#128176;</span>
+                <span class="text-sm font-semibold text-emerald" id="walletBadge">₹--</span>
+            </div>
+
+            <!-- Cart icon -->
+            <a href="cart.html" class="relative">
+                <div class="w-10 h-10 bg-sage border border-emerald-light/30 rounded-full flex items-center justify-center hover:bg-mint transition">
+                    <span class="text-lg">&#128722;</span>
+                </div>
+                <span id="cartCount" class="hidden absolute -top-1 -right-1 bg-emerald text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+            </a>
+
+            <!-- User menu -->
+            <div class="relative" id="userMenu">
+                <button onclick="toggleUserMenu()" class="flex items-center gap-2 bg-emerald text-white rounded-full px-4 py-2 text-sm font-semibold hover:bg-emerald-dark transition">
+                    <span>&#128100;</span>
+                    <span id="userEmailNav">Account</span>
+                    <span class="text-xs">&#9660;</span>
+                </button>
+                <div id="userDropdown" class="hidden absolute right-0 top-12 bg-white border border-gray-100 rounded-2xl shadow-xl w-52 py-2 z-50">
+                    <div class="px-4 py-3 border-b border-gray-100">
+                        <p class="text-xs text-ash">Signed in as</p>
+                        <p class="text-sm font-semibold text-ink truncate" id="userEmailDrop"></p>
+                    </div>
+                    <a href="orders.html" class="flex items-center gap-3 px-4 py-3 text-sm text-ink hover:bg-sage transition">
+                        <span>&#128230;</span> My Orders
+                    </a>
+                    <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition">
+                        <span>&#128682;</span> Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO SECTION - New Layout -->
+<section class="bg-white py-16 px-6 relative overflow-hidden">
+    <!-- Background decoration -->
+    <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-sage to-transparent"></div>
+    <div class="absolute bottom-0 left-1/4 w-96 h-96 rounded-full bg-mint/30 blur-3xl"></div>
+
+    <div class="max-w-7xl mx-auto relative z-10">
+        <div class="flex flex-col lg:flex-row items-center gap-12">
+            <!-- Left content -->
+            <div class="flex-1 text-center lg:text-left">
+                <div class="inline-flex items-center gap-2 bg-mint border border-emerald-light/40 rounded-full px-4 py-1.5 text-sm mb-6">
+                    <span>&#127793;</span>
+                    <span class="font-dm font-medium text-emerald">Farm to Table Freshness</span>
+                </div>
+                <h1 class="font-playfair text-5xl lg:text-6xl font-bold leading-tight mb-6 text-ink">
+                    Discover local<br/>
+                    <span class="text-emerald">culinary gems</span>
+                </h1>
+                <p class="font-dm text-ash text-lg font-light mb-8 max-w-lg mx-auto lg:mx-0">
+                    From cozy cafes to gourmet kitchens, explore handpicked restaurants that serve wholesome, delicious meals made with love.
+                </p>
+                <!-- Stats row -->
+                <div class="flex items-center justify-center lg:justify-start gap-8 flex-wrap">
+                    <div class="text-center">
+                        <div class="font-playfair text-3xl font-bold text-emerald">150+</div>
+                        <div class="text-sm text-ash font-dm">Partner Restaurants</div>
+                    </div>
+                    <div class="w-px h-12 bg-gray-200"></div>
+                    <div class="text-center">
+                        <div class="font-playfair text-3xl font-bold text-emerald">30 min</div>
+                        <div class="text-sm text-ash font-dm">Avg Delivery</div>
+                    </div>
+                    <div class="w-px h-12 bg-gray-200"></div>
+                    <div class="text-center">
+                        <div class="font-playfair text-3xl font-bold text-emerald">4.8</div>
+                        <div class="text-sm text-ash font-dm">User Rating</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Right visual -->
+            <div class="flex-1 flex justify-center">
+                <div class="relative">
+                    <div class="w-72 h-72 lg:w-96 lg:h-96 rounded-full bg-gradient-to-br from-emerald via-forest to-emerald-dark flex items-center justify-center">
+                        <span class="text-8xl lg:text-9xl">&#127869;</span>
+                    </div>
+                    <!-- Floating badges -->
+                    <div class="absolute -top-4 -right-4 bg-white rounded-2xl shadow-lg px-4 py-3 flex items-center gap-2">
+                        <span class="text-2xl">&#9989;</span>
+                        <span class="font-dm text-sm font-semibold text-ink">Verified Quality</span>
+                    </div>
+                    <div class="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-lg px-4 py-3 flex items-center gap-2">
+                        <span class="text-2xl">&#128293;</span>
+                        <span class="font-dm text-sm font-semibold text-ink">Hot & Fresh</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile search -->
+        <div class="md:hidden mt-8 flex items-center gap-2 bg-sage border border-emerald-light/30 rounded-full px-4 py-3">
+            <span>&#128269;</span>
+            <input
+                    id="searchInputMobile"
+                    type="text"
+                    placeholder="Find your favorite restaurant..."
+                    class="bg-transparent outline-none text-sm text-ink w-full font-dm"
+                    oninput="filterRestaurantsMobile()"
+            />
+        </div>
+    </div>
+</section>
+
+<!-- MAIN CONTENT -->
+<main class="max-w-7xl mx-auto px-6 py-12 bg-sage/30 rounded-t-3xl -mt-4">
+
+    <!-- Section Header -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h2 class="font-playfair text-3xl font-bold text-ink">Browse Restaurants</h2>
+            <p class="text-ash text-sm mt-1 font-dm" id="restaurantCount">Finding the best spots near you...</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="text-sm text-ash font-dm">Sort by:</span>
+            <select onchange="sortRestaurants(this.value)" class="border border-emerald-light/30 rounded-lg px-3 py-2 text-sm font-dm text-ink bg-white outline-none focus:border-emerald-light">
+                <option value="default">Recommended</option>
+                <option value="name">Name A-Z</option>
+                <option value="name-desc">Name Z-A</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Loading Skeleton -->
+    <div id="skeletonGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="skeleton-card animate-pulse bg-white rounded-2xl h-72 border border-emerald-light/10"></div>
+        <div class="skeleton-card animate-pulse bg-white rounded-2xl h-72 border border-emerald-light/10"></div>
+        <div class="skeleton-card animate-pulse bg-white rounded-2xl h-72 border border-emerald-light/10"></div>
+        <div class="skeleton-card animate-pulse bg-white rounded-2xl h-72 border border-emerald-light/10"></div>
+        <div class="skeleton-card animate-pulse bg-white rounded-2xl h-72 border border-emerald-light/10"></div>
+        <div class="skeleton-card animate-pulse bg-white rounded-2xl h-72 border border-emerald-light/10"></div>
+    </div>
+
+    <!-- Restaurant Grid -->
+    <div id="restaurantGrid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-24">
+        <div class="text-6xl mb-4">&#127869;</div>
+        <h3 class="font-playfair text-2xl font-bold text-ink mb-2">No restaurants found</h3>
+        <p class="text-ash font-dm">Try adjusting your search or browse all restaurants</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="hidden text-center py-24">
+        <div class="text-6xl mb-4">&#9888;</div>
+        <h3 class="font-playfair text-2xl font-bold text-ink mb-2">Something went wrong</h3>
+        <p class="text-ash font-dm mb-6" id="errorMsg">Could not load restaurants</p>
+        <button onclick="loadRestaurants()" class="bg-emerald text-white px-6 py-3 rounded-full font-dm font-semibold hover:bg-emerald-dark transition">
+            Try Again
+        </button>
+    </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="bg-ink text-white/60 py-8 mt-0">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <span class="text-2xl">🌿</span>
+            <span class="font-playfair text-lg font-bold text-white">Green<span class="text-emerald-light">Bite</span></span>
+        </div>
+        <p class="text-sm font-dm">&copy; 2026 GreenBite. Crafted with care for healthy eating.</p>
+    </div>
+</footer>
+
+<script src="../js/utils.js"></script>
+<script src="../js/restaurants.js"></script>
+</body>
+</html>

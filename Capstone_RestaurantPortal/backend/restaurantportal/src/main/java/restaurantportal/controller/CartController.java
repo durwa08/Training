@@ -8,6 +8,7 @@ import restaurantportal.service.CartService;
 /**
  * Handles cart related operations for the user.
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/api/cart")
 public class CartController {

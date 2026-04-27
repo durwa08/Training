@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * Handles category-related APIs like create, fetch, and delete categories.
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {

@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * Handles restaurant-related APIs like create, fetch, update, and delete restaurants.
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/api/restaurants")
 public class RestaurantController {

@@ -8,6 +8,7 @@ import restaurantportal.service.WalletService;
 /**
  * Handles wallet-related operations like adding money and checking balance.
  */
+@CrossOrigin
 @RestController
 @RequestMapping("/api/wallet")
 public class WalletController {
