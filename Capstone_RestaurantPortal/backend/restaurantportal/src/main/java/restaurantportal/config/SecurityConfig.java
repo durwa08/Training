@@ -14,19 +14,24 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import restaurantportal.security.JwtFilter;
 
 /**
- * Configures Spring Security for the application.
- * Defines authentication rules, JWT filter integration, and password encoding.
- * Ensures stateless session management for REST APIs.
+ * Security configuration for JWT-based authentication.
  */
 @Configuration
 public class SecurityConfig {
 
+    /** JWT filter for request validation */
     private final JwtFilter jwtFilter;
 
+    /**
+     * Constructor injection for JwtFilter.
+     */
     public SecurityConfig(JwtFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
     }
 
+    /**
+     * Defines security rules and filter chain.
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -57,11 +62,17 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Provides password encoder.
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Provides authentication manager.
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

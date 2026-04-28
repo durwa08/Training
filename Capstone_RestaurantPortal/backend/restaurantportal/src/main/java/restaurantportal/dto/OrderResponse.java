@@ -7,6 +7,9 @@ import java.util.List;
  */
 public class OrderResponse {
 
+    /** Unique identifier for the order.
+     *
+     */
     private Long orderId;
     private double totalAmount;
     private String status;

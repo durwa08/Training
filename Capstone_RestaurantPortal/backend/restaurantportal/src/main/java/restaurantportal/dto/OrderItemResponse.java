@@ -4,10 +4,18 @@ package restaurantportal.dto;
  * Response DTO representing a single item inside an order.
  */
 public class OrderItemResponse {
-
+/**     * Unique identifier for the order item.
+     */
     private Long id;
+    /** Name of the menu item ordered.
+     */
     private String menuItemName;
+
+    /** Quantity of the menu item ordered.
+     */
     private int quantity;
+    /** Price of the menu item ordered.
+     */
     private double price;
 
     /**
