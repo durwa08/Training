@@ -16,19 +16,24 @@ public class OrderResponse {
     private String statusMessage;
     private String createdAt;
 
+    private String deliveryAddress;
+    private String phoneNumber;
+
     /**
      * Creates an OrderResponse with all order details.
      */
     public OrderResponse(Long orderId, double totalAmount, String status,
                          List<OrderItemResponse> items,
                          String statusMessage,
-                         String createdAt) {
+                         String createdAt,String deliveryAddress,String phoneNumber) {
         this.orderId = orderId;
         this.totalAmount = totalAmount;
         this.status = status;
         this.items = items;
         this.statusMessage = statusMessage;
         this.createdAt = createdAt;
+        this.deliveryAddress = deliveryAddress;
+        this.phoneNumber = phoneNumber;
     }
 
     /**
@@ -93,7 +98,23 @@ public class OrderResponse {
         return createdAt;
     }
 
-    public void setCreatedAt(String createdAt) {
+    public void setCreatedAt(String createdAt)
+    {
         this.createdAt = createdAt;
+    }
+    public String getDeliveryAddress() {
+        return deliveryAddress;
+    }
+    public void setDeliveryAddress(String deliveryAddress) {
+        this.deliveryAddress = deliveryAddress;
+    }
+
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

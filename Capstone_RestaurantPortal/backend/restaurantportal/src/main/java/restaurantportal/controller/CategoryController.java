@@ -1,6 +1,5 @@
 package restaurantportal.controller;
 
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import restaurantportal.dto.CategoryRequest;
 import restaurantportal.dto.CategoryResponse;
@@ -9,41 +8,40 @@ import restaurantportal.service.CategoryService;
 import java.util.List;
 
 /**
- * Handles category-related APIs like create, fetch, and delete categories.
+ * Controller for managing categories in restaurants.
  */
-@CrossOrigin
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {
 
-    private final CategoryService service;
+    private final CategoryService categoryService;
 
-    public CategoryController(CategoryService service) {
-        this.service = service;
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
     /**
-     * Creates a new category under a specific restaurant.
+     * Creates a new category for a given restaurant.
      */
     @PostMapping("/{restaurantId}")
     public CategoryResponse create(@PathVariable Long restaurantId,
-                                   @Valid @RequestBody CategoryRequest request) {
-        return service.create(restaurantId, request);
+                                   @RequestBody CategoryRequest request) {
+        return categoryService.create(restaurantId, request);
     }
 
     /**
-     * Fetches all categories for a given restaurant.
+     * Fetches all categories of a restaurant.
      */
     @GetMapping("/{restaurantId}")
     public List<CategoryResponse> getByRestaurant(@PathVariable Long restaurantId) {
-        return service.getByRestaurant(restaurantId);
+        return categoryService.getByRestaurant(restaurantId);
     }
 
     /**
-     * Deletes a category by its id.
+     * Deletes a category by ID.
      */
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        service.delete(id);
+        categoryService.delete(id);
     }
 }

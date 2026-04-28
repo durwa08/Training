@@ -73,7 +73,7 @@ function togglePw(inputId, btn) {
         btn.textContent = '🙈';
     } else {
         input.type = 'password';
-        btn.textContent = '👁️';
+        btn.textContent = '🙈';
     }
 }
 
@@ -208,7 +208,7 @@ async function handleRegister() {
         const response = await fetch(`${BASE_URL}/api/users/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ firstName, lastName, email, password, phoneNumber:phone, role })
+            body: JSON.stringify({ firstName, lastName, email, password, phoneNumber:phone, role,walletBalance:1000 })
         });
 
         if (!response.ok) {

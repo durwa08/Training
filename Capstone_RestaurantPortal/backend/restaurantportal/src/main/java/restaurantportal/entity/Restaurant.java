@@ -14,10 +14,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "restaurant")
 public class Restaurant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
 
     /**

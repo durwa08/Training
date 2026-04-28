@@ -15,7 +15,8 @@ import java.util.stream.Collectors;
 
 /**
  * Service responsible for restaurant-related business logic.
- * Handles creation, updates, retrieval, and deletion of restaurants.
+ * Handles creation, retrieval, update, and deletion of restaurant entities.
+ * Ensures only authenticated owners can modify their restaurants.
  */
 @Service
 public class RestaurantService {
@@ -23,6 +24,12 @@ public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
 
+    /**
+     * Constructs RestaurantService with required dependencies.
+     *
+     * @param restaurantRepository repository for restaurant operations
+     * @param userRepository repository for user operations
+     */
     public RestaurantService(RestaurantRepository restaurantRepository,
                              UserRepository userRepository) {
         this.restaurantRepository = restaurantRepository;
@@ -31,6 +38,9 @@ public class RestaurantService {
 
     /**
      * Creates a new restaurant for the logged-in user.
+     *
+     * @param request restaurant creation request
+     * @return created restaurant response
      */
     public RestaurantResponse create(RestaurantRequest request) {
 
@@ -43,13 +53,13 @@ public class RestaurantService {
         restaurant.setName(request.getName());
         restaurant.setAddress(request.getAddress());
 
-        try {
-            restaurant.setStatus(
-                    RestaurantStatus.valueOf(request.getStatus().toUpperCase())
-            );
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid status value");
+        if (request.getStatus() == null) {
+            throw new IllegalArgumentException("Status cannot be null");
         }
+
+        restaurant.setStatus(
+                RestaurantStatus.valueOf(request.getStatus().toUpperCase())
+        );
 
         restaurant.setOwner(owner);
 
@@ -60,6 +70,8 @@ public class RestaurantService {
 
     /**
      * Retrieves all restaurants in the system.
+     *
+     * @return list of restaurant responses
      */
     public List<RestaurantResponse> getAll() {
         return restaurantRepository.findAll()
@@ -70,6 +82,9 @@ public class RestaurantService {
 
     /**
      * Retrieves a restaurant by its ID.
+     *
+     * @param id restaurant identifier
+     * @return restaurant response
      */
     public RestaurantResponse getById(Long id) {
 
@@ -80,7 +95,11 @@ public class RestaurantService {
     }
 
     /**
-     * Updates an existing restaurant (only by owner).
+     * Updates an existing restaurant if the logged-in user is the owner.
+     *
+     * @param id restaurant identifier
+     * @param request updated restaurant data
+     * @return updated restaurant response
      */
     public RestaurantResponse update(Long id, RestaurantRequest request) {
 
@@ -99,13 +118,13 @@ public class RestaurantService {
         restaurant.setName(request.getName());
         restaurant.setAddress(request.getAddress());
 
-        try {
-            restaurant.setStatus(
-                    RestaurantStatus.valueOf(request.getStatus().toUpperCase())
-            );
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid status value");
+        if (request.getStatus() == null) {
+            throw new IllegalArgumentException("Status cannot be null");
         }
+
+        restaurant.setStatus(
+                RestaurantStatus.valueOf(request.getStatus().toUpperCase())
+        );
 
         Restaurant updated = restaurantRepository.save(restaurant);
 
@@ -113,7 +132,9 @@ public class RestaurantService {
     }
 
     /**
-     * Deletes a restaurant (only by owner).
+     * Deletes a restaurant if the logged-in user is the owner.
+     *
+     * @param id restaurant identifier
      */
     public void delete(Long id) {
 
@@ -133,7 +154,10 @@ public class RestaurantService {
     }
 
     /**
-     * Maps Restaurant entity to RestaurantResponse DTO.
+     * Converts Restaurant entity to RestaurantResponse DTO.
+     *
+     * @param restaurant entity object
+     * @return response DTO
      */
     private RestaurantResponse mapToResponse(Restaurant restaurant) {
         return new RestaurantResponse(

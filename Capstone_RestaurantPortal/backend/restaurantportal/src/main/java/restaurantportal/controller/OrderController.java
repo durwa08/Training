@@ -2,6 +2,7 @@ package restaurantportal.controller;
 
 import org.springframework.web.bind.annotation.*;
 import restaurantportal.dto.OrderResponse;
+import restaurantportal.dto.PlaceOrderRequest;
 import restaurantportal.service.OrderService;
 
 import java.util.List;
@@ -33,8 +34,8 @@ public class OrderController {
      * Places a new order (checkout process).
      */
     @PostMapping
-    public OrderResponse placeOrder() {
-        return service.placeOrder();
+    public OrderResponse placeOrder(@RequestBody PlaceOrderRequest request) {
+        return service.placeOrder(request);
     }
 
     /**

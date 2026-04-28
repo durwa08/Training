@@ -9,7 +9,7 @@ public class RestaurantPortalApplication {
 	public static void main(String[] args) {
 
 		/**
-		 * Main method that starts the Spring Boot application.
+		 * main method that starts the Spring Boot application.
 		 */
 
 		SpringApplication.run(RestaurantPortalApplication.class, args);

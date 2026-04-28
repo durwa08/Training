@@ -34,6 +34,8 @@ public class WalletService {
                 user.getWalletBalance() + request.getAmount()
         );
 
+        userRepository.save(user);
+
         return new WalletResponse(user.getWalletBalance());
     }
 

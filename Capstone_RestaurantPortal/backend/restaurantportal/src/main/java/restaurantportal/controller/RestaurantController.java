@@ -9,21 +9,31 @@ import restaurantportal.service.RestaurantService;
 import java.util.List;
 
 /**
- * Handles restaurant-related APIs like create, fetch, update, and delete restaurants.
+ * REST controller for managing restaurant operations.
+ * Provides endpoints for creating, retrieving, updating, and deleting restaurants.
+ * All endpoints are secured based on Spring Security configuration.
  */
-@CrossOrigin
 @RestController
 @RequestMapping("/api/restaurants")
+@CrossOrigin
 public class RestaurantController {
 
     private final RestaurantService service;
 
+    /**
+     * Constructs RestaurantController with RestaurantService dependency.
+     *
+     * @param service service layer handling restaurant business logic
+     */
     public RestaurantController(RestaurantService service) {
         this.service = service;
     }
 
     /**
-     * Creates a new restaurant.
+     * Creates a new restaurant in the system.
+     *
+     * @param request restaurant creation request payload
+     * @return created restaurant details
      */
     @PostMapping
     public RestaurantResponse create(@Valid @RequestBody RestaurantRequest request) {
@@ -31,7 +41,9 @@ public class RestaurantController {
     }
 
     /**
-     * Returns all available restaurants.
+     * Retrieves all restaurants available in the system.
+     *
+     * @return list of restaurants
      */
     @GetMapping
     public List<RestaurantResponse> getAll() {
@@ -39,7 +51,10 @@ public class RestaurantController {
     }
 
     /**
-     * Fetches a restaurant by its id.
+     * Retrieves a specific restaurant by its ID.
+     *
+     * @param id restaurant identifier
+     * @return restaurant details
      */
     @GetMapping("/{id}")
     public RestaurantResponse getById(@PathVariable Long id) {
@@ -47,16 +62,22 @@ public class RestaurantController {
     }
 
     /**
-     * Updates an existing restaurant.
+     * Updates an existing restaurant by ID.
+     *
+     * @param id restaurant identifier
+     * @param request updated restaurant data
+     * @return updated restaurant details
      */
     @PutMapping("/{id}")
     public RestaurantResponse update(@PathVariable Long id,
-                                     @RequestBody RestaurantRequest request) {
+                                     @Valid @RequestBody RestaurantRequest request) {
         return service.update(id, request);
     }
 
     /**
-     * Deletes a restaurant by its id.
+     * Deletes a restaurant by its ID.
+     *
+     * @param id restaurant identifier
      */
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {

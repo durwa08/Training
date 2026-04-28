@@ -9,8 +9,8 @@ import java.security.Key;
 import java.util.Date;
 
 /**
- * Utility class for generating and validating JWT tokens.
- * Used for stateless authentication in the application.
+ * Utility class responsible for JWT generation, parsing, and validation.
+ * Handles secure token creation and extraction of user information.
  */
 @Component
 public class JwtUtil {
@@ -22,7 +22,9 @@ public class JwtUtil {
     private long EXPIRATION;
 
     /**
-     * Generates signing key from secret.
+     * Generates cryptographic signing key from secret.
+     *
+     * @return signing key used for JWT
      */
     private Key getSignKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
@@ -30,6 +32,10 @@ public class JwtUtil {
 
     /**
      * Generates JWT token for authenticated user.
+     *
+     * @param email user email
+     * @param role user role
+     * @return signed JWT token
      */
     public String generateToken(String email, String role) {
         return Jwts.builder()
@@ -42,26 +48,45 @@ public class JwtUtil {
     }
 
     /**
-     * Extracts email  from JWT token.
+     * Extracts email (subject) from JWT token.
+     *
+     * @param token JWT token
+     * @return email stored in token
      */
     public String extractEmail(String token) {
         return getClaims(token).getSubject();
     }
 
     /**
-     * Validates JWT token.
+     * Extracts role from JWT token.
+     *
+     * @param token JWT token
+     * @return role stored in token
+     */
+    public String extractRole(String token) {
+        return getClaims(token).get("role", String.class);
+    }
+
+    /**
+     * Validates JWT token for integrity and expiration.
+     *
+     * @param token JWT token
+     * @return true if valid, false otherwise
      */
     public boolean isTokenValid(String token) {
         try {
-            getClaims(token);
-            return true;
+            Claims claims = getClaims(token);
+            return claims.getExpiration().after(new Date());
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
     }
 
     /**
-     * Parses JWT and returns claims.
+     * Parses JWT token and returns claims.
+     *
+     * @param token JWT token
+     * @return claims body
      */
     private Claims getClaims(String token) {
         return Jwts.parserBuilder()

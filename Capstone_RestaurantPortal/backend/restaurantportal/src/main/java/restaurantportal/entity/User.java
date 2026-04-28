@@ -57,6 +57,7 @@ public class User {
     /**
      * Wallet balance of the user.
      */
+    @Column(name="wallet_balance")
     private Double walletBalance;
 
     /**

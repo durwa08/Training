@@ -13,83 +13,55 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import restaurantportal.security.JwtFilter;
 
-@Configuration
 /**
  * Configures Spring Security for the application.
- * Defines the security filter chain, password encoder, and authentication manager.
- * Specifies public and authenticated endpoints, and adds the JWT filter for token validation.
- * Uses BCrypt for secure password hashing.
+ * Defines authentication rules, JWT filter integration, and password encoding.
+ * Ensures stateless session management for REST APIs.
  */
+@Configuration
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
-    /**
-     * Constructor to initialize the JWT filter.
-     *
-     *  JWT filter for token validation
-     */
 
     public SecurityConfig(JwtFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
     }
 
-    /**
-     * Configures the security filter chain.
-     * Disables CSRF, sets session management to stateless, and defines API authorization rules.
-     *
-     * @throws Exception if an error occurs during configuration
-     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                // disable csrf because we are using JWT (stateless)
                 .csrf(csrf -> csrf.disable())
-
-                // no session, every request must have token
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-                // API authorization rules
                 .authorizeHttpRequests(auth -> auth
 
-                        // public APIs
-                        .requestMatchers("/api/users/register", "/api/users/login")
-                        .permitAll()
+                        .requestMatchers("/api/users/register", "/api/users/login").permitAll()
 
-                        // cart APIs → only USER (customer)
+                        .requestMatchers("/api/restaurants/**")
+                        .hasAnyAuthority("ROLE_USER", "ROLE_RESTAURANT_OWNER")
+
                         .requestMatchers("/api/cart/**")
-                        .hasRole("USER")
+                        .hasAuthority("ROLE_USER")
 
-                        // everything else requires login
-                        .anyRequest()
-                        .authenticated()
+                        .requestMatchers("/api/wallet/**")
+                        .hasAuthority("ROLE_USER")
+
+                        .requestMatchers("/api/orders/owner/**")
+                        .hasAuthority("ROLE_RESTAURANT_OWNER")
+
+                        .anyRequest().authenticated()
                 )
-
-                // add JWT filter before default auth filter
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    /**
-     * Provides a password encoder using BCrypt.
-     *
-     * @return the BCryptPasswordEncoder instance
-     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-
-    /**
-     * Provides the authentication manager.
-     *
-     * config the authentication configuration
-     * @return the AuthenticationManager instance
-     * @throws Exception if an error occurs during configuration
-     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

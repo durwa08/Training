@@ -179,13 +179,13 @@ async function loadCategories() {
 
 // ─────────────────────────────────────────
 //   LOAD MENU ITEMS
-//   GET /api/restaurants/{id}/menu-items
+//   GET /api/restaurants/{id}/menu
 // ─────────────────────────────────────────
 
 async function loadMenuItems() {
     if (!selectedRestaurant) return;
     try {
-        const res = await apiFetch(`/api/restaurants/${selectedRestaurant.id}/menu-items`);
+        const res = await apiFetch(`/api/restaurants/${selectedRestaurant.id}/menu`);
         if (!res.ok) throw new Error(res.status);
         allMenuItems = await res.json();
         renderMenuItemsTable(allMenuItems);
@@ -675,12 +675,12 @@ function confirmDeleteMenuItem(id, name) {
 }
 
 /**
- * DELETE /api/restaurants/{id}/menu-items/{mId}
+ * DELETE /api/restaurants/{id}/menu/{mId}
  */
 async function deleteMenuItem(menuItemId) {
     try {
         const res = await apiFetch(
-            `/api/restaurants/${selectedRestaurant.id}/menu-items/${menuItemId}`,
+            `/api/restaurants/${selectedRestaurant.id}/menu/${menuItemId}`,
             { method: 'DELETE' }
         );
         if (!res.ok) throw new Error(`Error ${res.status}`);

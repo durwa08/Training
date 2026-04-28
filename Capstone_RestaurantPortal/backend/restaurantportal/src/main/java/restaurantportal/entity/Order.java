@@ -20,18 +20,27 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    /**
+     * Delivery address where the order will be sent.
+     */
+    private String deliveryAddress;
+
+    /**
+     * Contact number for order communication.
+     */
+    private String phoneNumber;
 
     /**
      * User who placed the order.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     /**
      * Restaurant from which the order is placed.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
 
@@ -44,7 +53,7 @@ public class Order {
      * Current status of the order (PLACED, PREPARING, DELIVERED, etc.).
      */
     @Enumerated(EnumType.STRING)
-    private OrderStatus status;
+    private OrderStatus status;;
 
     /**
      * Timestamp when the order was created.

@@ -29,6 +29,7 @@ public class OrderService {
         this.userRepository = userRepository;
     }
 
+
     /**
      * Generates a preview of the current cart before placing an order.
      */
@@ -59,7 +60,9 @@ public class OrderService {
                         ))
                         .toList(),
                 "Success",
-                LocalDateTime.now().toString()
+                LocalDateTime.now().toString(),
+                null,
+                null
         );
     }
 
@@ -68,7 +71,7 @@ public class OrderService {
      * and deducting wallet balance.
      */
     @Transactional
-    public OrderResponse placeOrder() {
+    public OrderResponse placeOrder(PlaceOrderRequest request) {
 
         String email = SecurityUtil.getCurrentUserEmail();
 
@@ -94,6 +97,9 @@ public class OrderService {
         order.setTotalAmount(cart.getTotalAmount());
         order.setStatus(OrderStatus.PENDING);
         order.setCreatedAt(LocalDateTime.now());
+
+        order.setDeliveryAddress(request.getDeliveryAddress());
+        order.setPhoneNumber(request.getPhoneNumber());
 
         Restaurant restaurant = cart.getItems().get(0)
                 .getMenuItem()
@@ -154,9 +160,6 @@ public class OrderService {
                 .toList();
     }
 
-    /**
-     * Validates allowed order status transitions.
-     */
     private void validateStatusFlow(OrderStatus current, OrderStatus next) {
 
         if (current == OrderStatus.PENDING && next == OrderStatus.DELIVERED) return;
@@ -166,9 +169,6 @@ public class OrderService {
         throw new RuntimeException("Invalid status transition");
     }
 
-    /**
-     * Updates the status of an order (only allowed for restaurant owner).
-     */
     @Transactional
     public OrderResponse updateStatus(Long orderId, String status) {
 
@@ -192,9 +192,6 @@ public class OrderService {
         return mapToResponse(orderRepository.save(order));
     }
 
-    /**
-     * Cancels an order and refunds the amount if eligible.
-     */
     @Transactional
     public String cancelOrder(Long orderId) {
 
@@ -210,8 +207,15 @@ public class OrderService {
             throw new RuntimeException("Not your order");
         }
 
-        if (order.getStatus() != OrderStatus.PENDING) {
+        if (!order.getStatus().name().equals("PENDING")) {
             throw new RuntimeException("Cannot cancel now");
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        long seconds = java.time.Duration.between(order.getCreatedAt(), now).getSeconds();
+
+        if (seconds > 30) {
+            throw new RuntimeException("Cancellation time expired (30 seconds only)");
         }
 
         user.setWalletBalance(user.getWalletBalance() + order.getTotalAmount());
@@ -223,9 +227,6 @@ public class OrderService {
         return "Order cancelled & refunded";
     }
 
-    /**
-     * Maps Order entity to OrderResponse DTO.
-     */
     private OrderResponse mapToResponse(Order order) {
 
         return new OrderResponse(
@@ -237,7 +238,12 @@ public class OrderService {
                                 i.getId(),
                                 i.getName(),
                                 i.getPrice(),
-                                i.getQuantity())).toList(),
-                "Success", order.getCreatedAt().toString());
+                                i.getQuantity()
+                        )).toList(),
+                "Success",
+                order.getCreatedAt().toString(),
+                order.getDeliveryAddress(),
+                order.getPhoneNumber()
+        );
     }
 }
