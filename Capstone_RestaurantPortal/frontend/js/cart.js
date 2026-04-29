@@ -95,33 +95,78 @@ function renderCart(cart) {
 // ─────────────────────────────────────────
 //   CREATE CART ITEM CARD
 // ─────────────────────────────────────────
+//    function createCartCard(item, index) {
+//    console.log ('Creating card for', item);
+//        const emoji = FOOD_EMOJIS[item.menuItemId % FOOD_EMOJIS.length];
+//        const delay = index * 60;
+//
+//        const card = document.createElement('div');
+//        card.className = 'cart-card fade-in';
+//        card.id = `cart-item-${item.cartItemId}`;
+//        card.style.animationDelay = `${delay}ms`;
+//        card.style.transition = 'opacity .25s, transform .25s';
+//
+//        card.innerHTML = `
+//            <div class="cc-emoji">${emoji}</div>
+//            <div class="cc-info">
+//                <div class="cc-name">${escapeHtml(item.menuItemName)}</div>
+//                <div class="cc-unit">₹${item.price} each</div>
+//            </div>
+//            <div class="cc-qty" id="qty-wrap-${item.cartItemId}">
+//                <button class="cc-qty-btn" id="minus-${item.cartItemId}"
+//                    onclick="changeQty(${item.cartItemId}, ${item.quantity}, -1)"
+//                    ${item.quantity <= 1 ? 'disabled' : ''}>−</button>
+//                <div class="cc-qty-num" id="qty-${item.cartItemId}">${item.quantity}</div>
+//                <button class="cc-qty-btn"
+//                    onclick="changeQty(${item.cartItemId}, ${item.quantity}, 1)">+</button>
+//            </div>
+//            <div class="cc-subtotal" id="sub-${item.cartItemId}">₹${Number(item.subtotal).toFixed(2)}</div>
+//            <button class="cc-remove" onclick="removeItem(${item.cartItemId})" title="Remove">✕</button>
+//        `;
+//        return card;
+//    }
 function createCartCard(item, index) {
-    const emoji = FOOD_EMOJIS[item.menuItemId % FOOD_EMOJIS.length];
+    console.log('Creating card for', item);
+
+    const emoji = FOOD_EMOJIS[item.id % FOOD_EMOJIS.length];
     const delay = index * 60;
+
+    const subtotal = item.price * item.quantity;
 
     const card = document.createElement('div');
     card.className = 'cart-card fade-in';
-    card.id = `cart-item-${item.cartItemId}`;
+    card.id = `cart-item-${item.id}`;
     card.style.animationDelay = `${delay}ms`;
     card.style.transition = 'opacity .25s, transform .25s';
 
     card.innerHTML = `
         <div class="cc-emoji">${emoji}</div>
         <div class="cc-info">
-            <div class="cc-name">${escapeHtml(item.menuItemName)}</div>
-            <div class="cc-unit">₹${Number(item.price).toFixed(2)} each</div>
+            <div class="cc-name">${escapeHtml(item.name)}</div>
+            <div class="cc-unit">₹${item.price} each</div>
         </div>
-        <div class="cc-qty" id="qty-wrap-${item.cartItemId}">
-            <button class="cc-qty-btn" id="minus-${item.cartItemId}"
-                onclick="changeQty(${item.cartItemId}, ${item.quantity}, -1)"
-                ${item.quantity <= 1 ? 'disabled' : ''}>−</button>
-            <div class="cc-qty-num" id="qty-${item.cartItemId}">${item.quantity}</div>
+        <div class="cc-qty" id="qty-wrap-${item.id}">
             <button class="cc-qty-btn"
-                onclick="changeQty(${item.cartItemId}, ${item.quantity}, 1)">+</button>
+                onclick="changeQty(${item.id}, ${item.quantity}, -1)"
+                ${item.quantity <= 1 ? 'disabled' : ''}>−</button>
+
+            <div class="cc-qty-num" id="qty-${item.id}">
+                ${item.quantity}
+            </div>
+
+            <button class="cc-qty-btn"
+                onclick="changeQty(${item.id}, ${item.quantity}, 1)">+</button>
         </div>
-        <div class="cc-subtotal" id="sub-${item.cartItemId}">₹${Number(item.subtotal).toFixed(2)}</div>
-        <button class="cc-remove" onclick="removeItem(${item.cartItemId})" title="Remove">✕</button>
+
+        <div class="cc-subtotal" id="sub-${item.id}">
+            ₹${subtotal.toFixed(2)}
+        </div>
+
+        <button class="cc-remove"
+            onclick="removeItem(${item.id})"
+            title="Remove">✕</button>
     `;
+
     return card;
 }
 
@@ -145,41 +190,52 @@ function updateSummary(cart) {
 //   PUT /api/cart/update/{cartItemId}?quantity=N
 // ─────────────────────────────────────────
 async function changeQty(cartItemId, currentQty, delta) {
-    const newQty = currentQty + delta;
-    if (newQty < 1) return;
+  const newQty = currentQty + delta;
+  if (newQty < 1) return;
+ console.log('Changing qty for', cartItemId, 'from', currentQty, 'to', newQty);
+ console.log('Current cart:', currentCart);
+  // Disable both qty buttons while request is in flight
+  setQtyDisabled(cartItemId, true);
 
-    // Disable both qty buttons while request is in flight
-    setQtyDisabled(cartItemId, true);
-
-    try {
-        const res = await apiFetch(`/api/cart/update/${cartItemId}?quantity=${newQty}`, {
-            method: 'PUT'
-        });
-
-        if (!res.ok) {
-            const err = await res.text();
-            throw new Error(err || `Error ${res.status}`);
-        }
-
-        const updatedCart = await res.json();
-        currentCart = updatedCart;
-
-        // Update only this item's display
-        const updatedItem = updatedCart.items.find(i => i.cartItemId === cartItemId);
-        if (updatedItem) {
-            document.getElementById(`qty-${cartItemId}`).textContent  = updatedItem.quantity;
-            document.getElementById(`sub-${cartItemId}`).textContent  = `₹${Number(updatedItem.subtotal).toFixed(2)}`;
-            // Disable minus if qty=1
-            const minusBtn = document.getElementById(`minus-${cartItemId}`);
-            if (minusBtn) minusBtn.disabled = updatedItem.quantity <= 1;
-        }
-        updateSummary(updatedCart);
-
-    } catch (err) {
-        showToast('error', '❌', err.message || 'Failed to update quantity.');
-    } finally {
-        setQtyDisabled(cartItemId, false);
+  try {
+    const item = currentCart.items.find(i => i.id === cartItemId);
+    if (!item) {
+      showToast("error", "❌", "Item not found.");
+      return;
     }
+
+    const res = await apiFetch('/api/cart', {
+      method: 'POST',
+      body: JSON.stringify({ menuItemId: item.id, quantity: newQty })
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(err || `Error ${res.status}`);
+    }
+
+    const updatedCart = await res.json();
+    currentCart = updatedCart;
+
+    // Update only this item's display
+    const updatedItem = updatedCart.items.find(
+      (i) => i.id === cartItemId,
+    );
+    if (updatedItem) {
+      document.getElementById(`qty-${cartItemId}`).textContent =
+        updatedItem.quantity;
+      document.getElementById(`sub-${cartItemId}`).textContent =
+        `₹${Number(updatedItem.subtotal).toFixed(2)}`;
+      // Disable minus if qty=1
+      const minusBtn = document.getElementById(`minus-${cartItemId}`);
+      if (minusBtn) minusBtn.disabled = updatedItem.quantity <= 1;
+    }
+    updateSummary(updatedCart);
+  } catch (err) {
+    showToast("error", "❌", err.message || "Failed to update quantity.");
+  } finally {
+    setQtyDisabled(cartItemId, false);
+  }
 }
 
 function setQtyDisabled(cartItemId, disabled) {

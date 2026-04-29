@@ -97,8 +97,8 @@ async function loadMenuData() {
     try {
         const [restaurantRes, categoriesRes, menuRes] = await Promise.all([
             apiFetch(`/api/restaurants/${restaurantId}`),
-            apiFetch(`/api/restaurants/${restaurantId}/categories`),
-            apiFetch(`/api/restaurants/${restaurantId}/menu-items`)
+            apiFetch(`/api/categories/${restaurantId}`),
+            apiFetch(`/api/menu-items/restaurant/${restaurantId}`)
         ]);
         if (!restaurantRes.ok) throw new Error(`Restaurant not found (${restaurantRes.status})`);
         if (!categoriesRes.ok) throw new Error(`Categories failed (${categoriesRes.status})`);
@@ -246,7 +246,7 @@ async function addToCart(itemId, itemName, price) {
     }
 
     try {
-        const res = await apiFetch('/api/cart/add', {
+        const res = await apiFetch('/api/cart', {
             method: 'POST',
             body: JSON.stringify({ menuItemId: itemId, quantity: 1 })
         });

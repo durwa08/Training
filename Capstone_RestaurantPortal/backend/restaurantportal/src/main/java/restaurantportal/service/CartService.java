@@ -61,7 +61,7 @@ public class CartService {
                 .orElse(null);
 
         if (existing != null) {
-            existing.setQuantity(existing.getQuantity() + request.getQuantity());
+            existing.setQuantity(request.getQuantity());
         } else {
             CartItem item = new CartItem();
             item.setMenuItem(menuItem);

@@ -1,5 +1,6 @@
 package restaurantportal.service;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import restaurantportal.dto.*;
@@ -46,7 +47,6 @@ public class OrderService {
         if (cart.getItems().isEmpty()) {
             throw new RuntimeException("Cart is empty");
         }
-
         return new OrderResponse(
                 null,
                 cart.getTotalAmount(),
