@@ -12,15 +12,19 @@ const BASE_URL = 'http://localhost:8080';
 // ─────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
-    // If already logged in and token is valid → redirect
+
+    const isAuthPage = window.location.pathname.includes('pages/Auth');
+
+    if (!isAuthPage) return;
+
     const token = localStorage.getItem('fm_token');
+
     if (token && isTokenValid(token)) {
         const role = localStorage.getItem('fm_role');
         redirectByRole(role);
         return;
     }
 
-    // Set up tab indicator initial position
     updateTabIndicator('login');
 });
 

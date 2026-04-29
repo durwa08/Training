@@ -63,10 +63,7 @@ public class RestaurantController {
 
     /**
      * Updates an existing restaurant by ID.
-     *
-     * @param id restaurant identifier
-     * @param request updated restaurant data
-     * @return updated restaurant details
+
      */
     @PutMapping("/{id}")
     public RestaurantResponse update(@PathVariable Long id,

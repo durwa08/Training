@@ -203,7 +203,7 @@ async function loadMenuItems() {
 }
 
 // ─────────────────────────────────────────
-//   UPDATE STATS (overview panel)
+//   UPDATE STATUS (overview panel)
 // ─────────────────────────────────────────
 
 function updateStats() {
