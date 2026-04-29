@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>GreenBite — Orders</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body class="bg-gray-100 font-[DM_Sans]">
+
+<!-- MAIN CONTAINER -->
+<div class="max-w-7xl mx-auto px-6 py-6">
+
+    <!-- HEADER -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-800">📦 Orders Dashboard</h1>
+            <p class="text-gray-500 text-sm mt-1">
+                Manage and track all incoming restaurant orders
+            </p>
+        </div>
+
+        <button onclick="goBack()" class="back-btn">
+            ⬅ Back to Dashboard
+        </button>
+    </div>
+
+    <!-- STATS BAR -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="stat-box">
+            <p>Total Orders</p>
+            <h2 id="totalOrders">0</h2>
+        </div>
+        <div class="stat-box">
+            <p>Pending</p>
+            <h2 id="pendingOrders">0</h2>
+        </div>
+        <div class="stat-box">
+            <p>Completed</p>
+            <h2 id="completedOrders">0</h2>
+        </div>
+        <div class="stat-box">
+            <p>Cancelled</p>
+            <h2 id="cancelledOrders">0</h2>
+        </div>
+    </div>
+
+    <!-- TABLE CARD -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+
+        <!-- TABLE HEADER -->
+        <div class="flex items-center justify-between px-6 py-4 border-b bg-gray-50">
+            <h2 class="font-semibold text-gray-700 text-lg">All Orders</h2>
+        </div>
+
+        <!-- TABLE -->
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+                <tr>
+                    <th class="px-6 py-3 text-left">Order ID</th>
+                    <th class="px-6 py-3 text-left">Customer</th>
+                    <th class="px-6 py-3 text-left">Total</th>
+                    <th class="px-6 py-3 text-left">Status</th>
+                    <th class="px-6 py-3 text-left">Action</th>
+                </tr>
+                </thead>
+
+                <!-- ✅ DYNAMIC DATA -->
+                <tbody id="ordersTbody" class="divide-y">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div id="emptyState" class="hidden text-center mt-12">
+        <div class="text-6xl mb-3">📭</div>
+        <h2 class="text-xl font-semibold text-gray-700">No Orders Yet</h2>
+        <p class="text-gray-500 text-sm mt-1">
+            Orders will appear here once customers start placing them.
+        </p>
+    </div>
+
+</div>
+
+<!-- JS -->
+<script src="../js/utils.js"></script>
+<script src="../js/owner-orders.js"></script>
+
+</body>
+</html>

@@ -432,6 +432,12 @@
                 <button class="sidebar-btn" id="navMenu" onclick="switchPanel('menu')">
                     <span class="sb-icon">&#127869;</span> Food Items
                 </button>
+                <button class="sidebar-btn" onclick="goToOrders()">
+                    <span class="sb-icon">📦</span> Orders
+                </button>
+                <button class="sidebar-btn" onclick="window.location.href='ownerOrders.html'">
+                    <span class="sb-icon">📦</span> Orders
+                </button>
                 <button class="sidebar-btn" id="navRestaurant" onclick="switchPanel('restaurant')">
                     <span class="sb-icon">&#127978;</span> Settings
                 </button>
@@ -556,6 +562,17 @@
                     <label class="form-label">Phone</label>
                     <input type="tel" class="form-input" id="editRestPhone" placeholder="10-digit phone"/>
                 </div>
+
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-input" id="editRestStatus">
+                        <option value="OPEN">🟢 OPEN</option>
+                        <option value="CLOSED">🔴 CLOSED</option>
+                    </select>
+                </div>
+
+
+
                 <div class="flex gap-3 mt-6">
                     <button onclick="updateRestaurant()" class="btn-primary-sm">&#128190; Save Changes</button>
                     <button onclick="confirmDeleteRestaurant()" class="btn-danger-sm">&#128465; Delete Restaurant</button>
@@ -588,6 +605,18 @@
             <label class="form-label">Phone *</label>
             <input type="tel" class="form-input" id="mRestPhone" placeholder="9876543210"/>
         </div>
+
+        <!-- Status Added -->
+        <div class="form-group">
+            <label class="form-label">Status *</label>
+            <select class="form-input" id="mRestStatus">
+                <option value="OPEN">🟢 OPEN</option>
+                <option value="CLOSED">🔴 CLOSED</option>
+            </select>
+        </div>
+
+
+
         <div class="modal-actions">
             <button onclick="submitRestaurant()" class="btn-primary-sm">&#9993; Save</button>
             <button onclick="closeModal('modalRestaurant')" class="btn-secondary-sm">Cancel</button>

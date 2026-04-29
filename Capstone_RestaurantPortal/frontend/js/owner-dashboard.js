@@ -153,7 +153,7 @@ async function selectRestaurant(restaurant) {
     document.getElementById('editRestDesc').value    = restaurant.description || '';
     document.getElementById('editRestAddress').value = restaurant.address || '';
     document.getElementById('editRestPhone').value   = restaurant.phone || '';
-
+     document.getElementById("editRestStatus").value = restaurant.status;
     // Load data and switch to overview
     await Promise.all([loadCategories(), loadMenuItems()]);
     switchPanel('overview');
@@ -207,13 +207,25 @@ async function loadMenuItems() {
 // ─────────────────────────────────────────
 
 function updateStats() {
-    document.getElementById('overviewRestName').textContent   = selectedRestaurant?.name || '--';
-    document.getElementById('statCategories').textContent     = allCategories.length;
-    document.getElementById('statMenuItems').textContent      = allMenuItems.length;
-    const avail = allMenuItems.filter(i => i.available !== false).length;
-    document.getElementById('statAvailable').textContent      = avail;
-}
+    document.getElementById('overviewRestName').textContent = selectedRestaurant?.name || '--';
+    document.getElementById('statCategories').textContent   = allCategories.length;
+    document.getElementById('statMenuItems').textContent    = allMenuItems.length;
 
+    const status = selectedRestaurant?.status || "CLOSED";
+
+    // TEXT
+    document.getElementById('statAvailable').textContent =
+        status === "OPEN" ? "OPEN" : "CLOSED";
+
+    document.querySelector('#statAvailable').nextElementSibling.textContent =
+        "Restaurant Status";
+
+    // ICON
+    const iconBox = document.querySelector('#statAvailable')
+        .parentElement.previousElementSibling;
+
+    iconBox.innerHTML = status === "OPEN" ? "🟢" : "🔴";
+}
 // ─────────────────────────────────────────
 //   PANEL SWITCHING
 // ─────────────────────────────────────────
@@ -373,6 +385,7 @@ async function submitRestaurant() {
     const description = document.getElementById('mRestDesc').value.trim();
     const address     = document.getElementById('mRestAddress').value.trim();
     const phone       = document.getElementById('mRestPhone').value.trim();
+    const status      = document.getElementById("mRestStatus").value; // ✅ correct
 
     if (!name || !address || !phone) {
         showToast('error', '⚠️', 'Name, address and phone are required.');
@@ -382,7 +395,13 @@ async function submitRestaurant() {
     try {
         const res = await apiFetch('/api/restaurants', {
             method: 'POST',
-            body: JSON.stringify({ name, description, address, phone,status:"OPEN" })
+            body: JSON.stringify({
+                name,
+                description,
+                address,
+                phone,
+                status   // ✅ USE THIS (not "OPEN")
+            })
         });
 
         if (!res.ok) {
@@ -394,10 +413,7 @@ async function submitRestaurant() {
         closeModal('modalRestaurant');
         showToast('success', '✅', `"${name}" added successfully!`);
 
-        // Refresh restaurant list
         await loadMyRestaurants();
-
-        // Auto-select the new restaurant
         selectRestaurant(newRestaurant);
 
     } catch (err) {
@@ -411,42 +427,31 @@ async function submitRestaurant() {
  * Header: Authorization: Bearer <token>
  */
 async function updateRestaurant() {
-    if (!selectedRestaurant) return;
-
     const name        = document.getElementById('editRestName').value.trim();
     const description = document.getElementById('editRestDesc').value.trim();
     const address     = document.getElementById('editRestAddress').value.trim();
     const phone       = document.getElementById('editRestPhone').value.trim();
-
-    if (!name || !address || !phone) {
-        showToast('error', '⚠️', 'Name, address and phone are required.');
-        return;
-    }
+    const status      = document.getElementById("editRestStatus").value; // ✅ added
 
     try {
-        const res = await apiFetch(`/api/restaurants/${selectedRestaurant.id}`, {
+        await apiFetch(`/api/restaurants/${selectedRestaurant.id}`, {
             method: 'PUT',
-            body: JSON.stringify({ name, description, address, phone })
+            body: JSON.stringify({
+                name,
+                description,
+                address,
+                phone,
+                status   // ✅ added
+            })
         });
 
-        if (!res.ok) {
-            const err = await res.text();
-            throw new Error(err || `Error ${res.status}`);
-        }
-
-        const updated = await res.json();
-        selectedRestaurant = updated;
-        showToast('success', '✅', 'Restaurant updated successfully!');
-
-        // Refresh sidebar
+        showToast('success', '✅', 'Restaurant updated!');
         await loadMyRestaurants();
-        renderSidebarRestaurants(myRestaurants);
 
     } catch (err) {
-        showToast('error', '❌', err.message || 'Failed to update restaurant.');
+        showToast('error', '❌', 'Update failed');
     }
 }
-
 /**
  * DELETE /api/restaurants/{id}
  */
@@ -633,6 +638,7 @@ async function submitMenuItem() {
     const body = {
         name,
         price
+
     };
 
     try {
@@ -745,4 +751,7 @@ function escapeHtml(str) {
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
+}
+function goToOrders() {
+    window.location.href = 'pages/owner-orders.html';
 }
