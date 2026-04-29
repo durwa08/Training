@@ -24,7 +24,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Step 3: Load restaurants
     loadRestaurants();
-
+const user = apiFetch("/api/users/currentUser")
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("Current user:", data);
+      document.getElementById("walletBadge").textContent = "₹" + data.walletBalance;
+    })
+    .catch((err) => {
+      console.error("Failed to fetch current user:", err);
+      document.getElementById("walletBadge").textContent = "₹--";
+    });
     // Step 4: Close dropdown on outside click
     document.addEventListener('click', (e) => {
         const menu = document.getElementById('userMenu');
@@ -63,7 +72,7 @@ async function loadRestaurants() {
          * Returns: [ { id, name, description, address, phone, ownerId }, ... ]
          * Needs JWT token — apiFetch adds it automatically
          */
-        const response = await apiFetch('/api/restaurants/getAll');
+        const response = await apiFetch('/api/restaurants');
 
         if (!response.ok) {
             throw new Error(`Server error: ${response.status}`);

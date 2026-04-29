@@ -8,6 +8,9 @@ import restaurantportal.dto.RegisterRequest;
 import restaurantportal.dto.UserResponse;
 import restaurantportal.dto.LoginRequest;
 import restaurantportal.dto.LoginResponse;
+import restaurantportal.entity.User;
+import restaurantportal.repository.UserRepository;
+import restaurantportal.security.SecurityUtil;
 import restaurantportal.service.UserService;
 
 /**
@@ -20,8 +23,11 @@ public class UserController {
 
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    private final UserRepository userRepository;
+
+    public UserController(UserService userService, UserRepository userRepository) {
         this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -40,5 +46,15 @@ public class UserController {
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
         String token = userService.login(request.getEmail(), request.getPassword());
         return ResponseEntity.ok(new LoginResponse(token));
+    }
+    @GetMapping("/currentUser")
+    public User currentUser() {
+
+        String email = SecurityUtil.getCurrentUserEmail();
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return user;
     }
 }
