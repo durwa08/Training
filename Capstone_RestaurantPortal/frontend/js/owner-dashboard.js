@@ -167,7 +167,7 @@ async function selectRestaurant(restaurant) {
 async function loadCategories() {
     if (!selectedRestaurant) return;
     try {
-        const res = await apiFetch(`/api/restaurants/${selectedRestaurant.id}/categories`);
+        const res = await apiFetch(`/api/categories/${selectedRestaurant.id}`);
         if (!res.ok) throw new Error(res.status);
         allCategories = await res.json();
         renderCategoriesTable(allCategories);
@@ -184,12 +184,19 @@ async function loadCategories() {
 
 async function loadMenuItems() {
     if (!selectedRestaurant) return;
+
     try {
-        const res = await apiFetch(`/api/restaurants/${selectedRestaurant.id}/menu`);
-        if (!res.ok) throw new Error(res.status);
+        const res = await apiFetch(
+            `/api/menu-items/restaurant/${selectedRestaurant.id}`
+        );
+
+        if (!res.ok) throw new Error(`Error ${res.status}`);
+
         allMenuItems = await res.json();
+
         renderMenuItemsTable(allMenuItems);
         updateStats();
+
     } catch (err) {
         console.error('Failed to load menu items:', err);
     }
@@ -375,7 +382,7 @@ async function submitRestaurant() {
     try {
         const res = await apiFetch('/api/restaurants', {
             method: 'POST',
-            body: JSON.stringify({ name, description, address, phone })
+            body: JSON.stringify({ name, description, address, phone,status:"OPEN" })
         });
 
         if (!res.ok) {
@@ -506,11 +513,11 @@ async function submitCategory() {
         let res;
         if (editingCategoryId) {
             /**
-             * PUT /api/restaurants/{id}/categories/{cId}
+             * PUT /api/restaurant/{id}/categories/{cId}
              * Body: { name }
              * Header: Authorization
              */
-            res = await apiFetch(`/api/restaurants/${rid}/categories/${editingCategoryId}`, {
+            res = await apiFetch(`/api/restaurant/${rid}/categories/${editingCategoryId}`, {
                 method: 'PUT',
                 body: JSON.stringify({ name })
             });
@@ -520,7 +527,7 @@ async function submitCategory() {
              * Body: { name }
              * Header: Authorization
              */
-            res = await apiFetch(`/api/restaurants/${rid}/categories`, {
+            res = await apiFetch(`/api/categories/${rid}`, {
                 method: 'POST',
                 body: JSON.stringify({ name })
             });
@@ -588,7 +595,7 @@ function openAddMenuItemModal() {
     document.getElementById('mItemName').value      = '';
     document.getElementById('mItemDesc').value      = '';
     document.getElementById('mItemPrice').value     = '';
-    document.getElementById('mItemAvailable').value = 'true';
+    //document.getElementById('mItemAvailable').value = 'true';
     populateCategoryDropdown(null);
     openModal('modalMenuItem');
 }
@@ -603,56 +610,43 @@ function openEditMenuItemModal(itemId) {
     document.getElementById('mItemDesc').value      = item.description || '';
     document.getElementById('mItemPrice').value     = item.price || '';
     document.getElementById('mItemAvailable').value = item.available !== false ? 'true' : 'false';
-    populateCategoryDropdown(item.categoryId);
+   populateCategoryDropdown(item.categoryId);
     openModal('modalMenuItem');
 }
 
 async function submitMenuItem() {
-    const name        = document.getElementById('mItemName').value.trim();
-    const description = document.getElementById('mItemDesc').value.trim();
-    const price       = parseFloat(document.getElementById('mItemPrice').value);
-    const categoryId  = document.getElementById('mItemCategory').value || null;
-    const available   = document.getElementById('mItemAvailable').value === 'true';
+    const name  = document.getElementById('mItemName').value.trim();
+    const price = parseFloat(document.getElementById('mItemPrice').value);
+    const categoryId = document.getElementById('mItemCategory').value;
 
+    //  Validation
     if (!name || isNaN(price) || price < 0) {
         showToast('error', '⚠️', 'Name and a valid price are required.');
         return;
     }
 
-    if (!selectedRestaurant) return;
-    const rid = selectedRestaurant.id;
+    if (!categoryId) {
+        showToast('error', '⚠️', 'Category is required.');
+        return;
+    }
 
     const body = {
         name,
-        description,
-        price,
-        available,
-        categoryId: categoryId ? parseInt(categoryId) : null
+        price
     };
 
     try {
-        let res;
+        //  UPDATE not supported in backend → block it
         if (editingMenuItemId) {
-            /**
-             * PUT /api/restaurants/{rid}/menu-items/{mId}
-             * Body: { name, description, price, available, categoryId }
-             * Header: Authorization
-             */
-            res = await apiFetch(`/api/restaurants/${rid}/menu-items/${editingMenuItemId}`, {
-                method: 'PUT',
-                body: JSON.stringify(body)
-            });
-        } else {
-            /**
-             * POST /api/restaurants/{rid}/menu-items
-             * Body: { name, description, price, available, categoryId }
-             * Header: Authorization
-             */
-            res = await apiFetch(`/api/restaurants/${rid}/menu-items`, {
-                method: 'POST',
-                body: JSON.stringify(body)
-            });
+            showToast('error', '⚠️', 'Update feature not implemented yet.');
+            return;
         }
+
+        //  CREATE API
+        const res = await apiFetch(`/api/menu-items/${categoryId}`, {
+            method: 'POST',
+            body: JSON.stringify(body)
+        });
 
         if (!res.ok) {
             const err = await res.text();
@@ -660,14 +654,13 @@ async function submitMenuItem() {
         }
 
         closeModal('modalMenuItem');
-        showToast('success', '✅', editingMenuItemId ? 'Item updated!' : 'Item added!');
+        showToast('success', '✅', 'Item added!');
         await loadMenuItems();
 
     } catch (err) {
         showToast('error', '❌', err.message || 'Failed to save menu item.');
     }
 }
-
 function confirmDeleteMenuItem(id, name) {
     document.getElementById('confirmMsg').textContent = `Delete menu item "${name}"?`;
     confirmCallback = () => deleteMenuItem(id);
@@ -680,9 +673,10 @@ function confirmDeleteMenuItem(id, name) {
 async function deleteMenuItem(menuItemId) {
     try {
         const res = await apiFetch(
-            `/api/restaurants/${selectedRestaurant.id}/menu/${menuItemId}`,
+            `/api/menu-items/${menuItemId}`,
             { method: 'DELETE' }
         );
+
         if (!res.ok) throw new Error(`Error ${res.status}`);
 
         closeModal('modalConfirm');

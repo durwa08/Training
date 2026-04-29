@@ -57,9 +57,9 @@ public class RestaurantService {
             throw new IllegalArgumentException("Status cannot be null");
         }
 
-        restaurant.setStatus(
+       restaurant.setStatus(
                 RestaurantStatus.valueOf(request.getStatus().toUpperCase())
-        );
+       );
 
         restaurant.setOwner(owner);
 

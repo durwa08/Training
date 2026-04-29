@@ -15,7 +15,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/restaurants")
-@CrossOrigin
+@CrossOrigin(origins = "*", allowedHeaders = "*") // Allow CORS for all origins and headers
 public class RestaurantController {
 
     private final RestaurantService service;
@@ -46,7 +46,7 @@ public class RestaurantController {
      * @return list of restaurants
      */
     @GetMapping
-    public List<RestaurantResponse> getAll() {
+    public List<RestaurantResponse> get() {
         return service.getAll();
     }
 

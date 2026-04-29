@@ -3,240 +3,618 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>GreenBite — Explore Restaurants</title>
+    <title>GreenBite — Sign In</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        emerald: {
-                            DEFAULT: '#166534',
-                            light: '#22c55e',
-                            dark: '#14532d',
-                        },
-                        forest: '#15803d',
-                        mint: '#dcfce7',
-                        sage: '#f0fdf4',
-                        ink: '#1f2937',
-                        ash: '#6b7280',
-                    },
-                    fontFamily: {
-                        playfair: ['Playfair Display', 'serif'],
-                        dm: ['DM Sans', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
     <style>
-        body { font-family: 'DM Sans', sans-serif; }
-        .font-playfair { font-family: 'Playfair Display', serif; }
-        .font-dm { font-family: 'DM Sans', sans-serif; }
+
+        :root {
+            --emerald: #166534;
+            --emerald-light: #22c55e;
+            --emerald-dark: #14532d;
+            --forest: #15803d;
+            --mint: #dcfce7;
+            --sage: #f0fdf4;
+            --white: #ffffff;
+            --off-white: #fafffe;
+            --gray-100: #f1f5f3;
+            --gray-200: #e2e8e4;
+            --gray-500: #6b7280;
+            --gray-700: #374151;
+            --gray-900: #1f2937;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Main layout - split screen */
+        .split-container {
+            flex: 1;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Left panel - Decorative */
+        .left-panel {
+            flex: 1;
+            background: linear-gradient(145deg, var(--emerald-dark) 0%, var(--emerald) 50%, var(--forest) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .left-panel::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.08) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .left-panel::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            right: -20%;
+            width: 80%;
+            height: 80%;
+            background: radial-gradient(circle, rgba(34,197,94,0.2) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        /* Floating food icons */
+        .floating-icons {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .float-icon {
+            position: absolute;
+            font-size: 40px;
+            opacity: 0.15;
+            animation: float 6s ease-in-out infinite;
+        }
+        .float-icon:nth-child(1) { top: 10%; left: 15%; animation-delay: 0s; }
+        .float-icon:nth-child(2) { top: 25%; right: 20%; animation-delay: 1s; font-size: 32px; }
+        .float-icon:nth-child(3) { bottom: 30%; left: 10%; animation-delay: 2s; font-size: 36px; }
+        .float-icon:nth-child(4) { bottom: 15%; right: 15%; animation-delay: 0.5s; }
+        .float-icon:nth-child(5) { top: 50%; left: 25%; animation-delay: 1.5s; font-size: 28px; }
+        .float-icon:nth-child(6) { top: 40%; right: 10%; animation-delay: 2.5s; font-size: 34px; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        .left-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 420px;
+        }
+
+        .brand-icon {
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin: 0 auto 32px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .left-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--white);
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .left-subtitle {
+            font-size: 18px;
+            color: rgba(255,255,255,0.75);
+            line-height: 1.7;
+            margin-bottom: 48px;
+        }
+
+        /* Feature list */
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            text-align: left;
+        }
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 14px;
+            padding: 16px 20px;
+            backdrop-filter: blur(8px);
+        }
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        .feature-text {
+            color: var(--white);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        /* Right panel - Form */
+        .right-panel {
+            width: 520px;
+            flex-shrink: 0;
+            background: var(--white);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+            position: relative;
+        }
+
+        .right-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--emerald-light), var(--emerald), var(--forest));
+        }
+
+        /* Form card */
+        .form-wrapper {
+            max-width: 380px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .form-header {
+            margin-bottom: 32px;
+        }
+
+        .form-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        .form-brand-icon { font-size: 28px; }
+        .form-brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--emerald);
+        }
+        .form-brand-name strong { color: var(--emerald-light); }
+
+        /* Tabs */
+        .tab-bar {
+            display: flex;
+            background: var(--sage);
+            border-radius: 14px;
+            padding: 5px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+        .tab {
+            flex: 1;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-500);
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.25s;
+            z-index: 1;
+        }
+        .tab.active { color: var(--white); }
+        .tab-indicator {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: calc(50% - 5px);
+            height: calc(100% - 10px);
+            background: linear-gradient(135deg, var(--emerald), var(--forest));
+            border-radius: 10px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 0;
+        }
+        .tab-indicator.right { transform: translateX(100%); }
+
+        /* Alert */
+        .alert {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .alert.hidden { display: none; }
+        .alert.error { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; }
+        .alert.success { background: var(--mint); color: var(--emerald-dark); border: 1px solid var(--emerald-light); }
+
+        /* Form */
+        .form-body { display: none; }
+        .form-body.active { display: block; }
+        .form-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 6px;
+        }
+        .form-subtitle {
+            font-size: 14px;
+            color: var(--gray-500);
+            margin-bottom: 28px;
+        }
+
+        .field { margin-bottom: 18px; }
+        .field-row { display: flex; gap: 12px; }
+        .field-row .field { flex: 1; }
+        .field-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-700);
+            margin-bottom: 6px;
+        }
+        .field-wrap {
+            display: flex;
+            align-items: center;
+            background: var(--sage);
+            border: 1.5px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 0 14px;
+            transition: all 0.2s;
+        }
+        .field-wrap:focus-within {
+            border-color: var(--emerald-light);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+        }
+        .field-icon { font-size: 16px; margin-right: 10px; }
+        .field-input {
+            flex: 1;
+            padding: 12px 0;
+            border: none;
+            background: transparent;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            color: var(--gray-900);
+            outline: none;
+        }
+        .field-input::placeholder { color: var(--gray-500); }
+        .toggle-pw {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        .toggle-pw:hover { opacity: 1; }
+
+        /* Role selection */
+        .role-grid { display: flex; gap: 12px; }
+        .role-option { flex: 1; }
+        .role-option input { display: none; }
+        .role-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 12px;
+            border: 2px solid var(--gray-200);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .role-option input:checked + .role-box {
+            border-color: var(--emerald);
+            background: var(--mint);
+        }
+        .role-emoji { font-size: 28px; margin-bottom: 8px; }
+        .role-name { font-size: 13px; font-weight: 600; color: var(--gray-900); }
+        .role-desc { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+
+        /* Button */
+        .btn-primary {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, var(--emerald), var(--forest));
+            color: var(--white);
+            border: none;
+            border-radius: 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 4px 15px rgba(22, 101, 52, 0.3);
+            margin-top: 8px;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(22, 101, 52, 0.4);
+        }
+        .btn-primary:active { transform: translateY(0); }
+        .btn-loader {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        .btn-loader.hidden { display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+        .form-footer a {
+            color: var(--emerald);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .form-footer a:hover { text-decoration: underline; }
+
+        /* Bottom branding */
+        .bottom-brand {
+            text-align: center;
+            padding-top: 32px;
+            margin-top: 32px;
+            border-top: 1px solid var(--gray-200);
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .split-container { flex-direction: column; }
+            .left-panel {
+                padding: 40px 24px;
+                min-height: auto;
+            }
+            .left-title { font-size: 32px; }
+            .features { flex-direction: row; flex-wrap: wrap; gap: 12px; }
+            .feature-item { flex: 1; min-width: 200px; }
+            .right-panel {
+                width: 100%;
+                padding: 40px 24px;
+            }
+            .right-panel::before { display: none; }
+        }
+        @media (max-width: 640px) {
+            .features { flex-direction: column; }
+            .feature-item { min-width: auto; }
+        }
     </style>
 </head>
-<body class="bg-white min-h-screen">
+<body>
 
-<!-- NAVBAR -->
-<nav class="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-
-        <!-- Brand -->
-        <div class="flex items-center gap-3">
-            <span class="text-3xl">🌿</span>
-            <span class="font-playfair text-2xl font-bold text-emerald">
-          Green<span class="text-emerald-light">Bite</span>
-        </span>
+<div class="split-container">
+    <!-- LEFT PANEL - Decorative -->
+    <div class="left-panel">
+        <!-- Floating food icons -->
+        <div class="floating-icons">
+            <span class="float-icon">🥗</span>
+            <span class="float-icon">🍕</span>
+            <span class="float-icon">🍜</span>
+            <span class="float-icon"></span>
+            <span class="float-icon">🍰</span>
+            <span class="float-icon">🍱</span>
         </div>
 
-        <!-- Search bar -->
-        <div class="hidden md:flex items-center gap-2 bg-sage border border-emerald-light/30 rounded-full px-4 py-2 w-80">
-            <span class="text-base">&#128269;</span>
-            <input
-                    id="searchInput"
-                    type="text"
-                    placeholder="Find your favorite restaurant..."
-                    class="bg-transparent outline-none text-sm text-ink w-full font-dm"
-                    oninput="filterRestaurants()"
-            />
-        </div>
+        <div class="left-content">
+            <div class="brand-icon">🌿</div>
+            <h1 class="left-title">Fresh meals, delivered to your door</h1>
+            <p class="left-subtitle">Thousands already trust GreenBite for healthy, delicious food—why not you?.</p>
 
-        <!-- Right side -->
-        <div class="flex items-center gap-4">
-            <!-- Wallet badge -->
-            <div class="hidden md:flex items-center gap-2 bg-mint border border-emerald-light/40 rounded-full px-4 py-2">
-                <span>&#128176;</span>
-                <span class="text-sm font-semibold text-emerald" id="walletBadge">₹--</span>
+            <div class="features">
+                <div class="feature-item">
+                    <div class="feature-icon">🎯</div>
+                    <span class="feature-text">Lightning-fast delivery in 20 mins</span>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🌱</div>
+                    <span class="feature-text">100% fresh, quality ingredients</span>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">💰</div>
+                    <span class="feature-text">Best prices, no hidden fees</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL - Form -->
+    <div class="right-panel">
+        <div class="form-wrapper">
+            <!-- Brand -->
+            <div class="form-header">
+                <div class="form-brand">
+                    <span class="form-brand-icon">🌿</span>
+                    <span class="form-brand-name">Green<strong>Bite</strong></span>
+                </div>
             </div>
 
-            <!-- Cart icon -->
-            <a href="cart.html" class="relative">
-                <div class="w-10 h-10 bg-sage border border-emerald-light/30 rounded-full flex items-center justify-center hover:bg-mint transition">
-                    <span class="text-lg">&#128722;</span>
-                </div>
-                <span id="cartCount" class="hidden absolute -top-1 -right-1 bg-emerald text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
-            </a>
+            <!-- TAB SWITCHER -->
+            <div class="tab-bar">
+                <button class="tab active" id="tabLogin" onclick="switchTab('login')">Login</button>
+                <button class="tab" id="tabRegister" onclick="switchTab('register')">Register</button>
+                <div class="tab-indicator" id="tabIndicator"></div>
+            </div>
 
-            <!-- User menu -->
-            <div class="relative" id="userMenu">
-                <button onclick="toggleUserMenu()" class="flex items-center gap-2 bg-emerald text-white rounded-full px-4 py-2 text-sm font-semibold hover:bg-emerald-dark transition">
-                    <span>&#128100;</span>
-                    <span id="userEmailNav">Account</span>
-                    <span class="text-xs">&#9660;</span>
+            <!-- ALERT -->
+            <div class="alert hidden" id="alertBox">
+                <span id="alertIcon"></span>
+                <span id="alertMsg"></span>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form class="form-body active" id="loginForm" onsubmit="return false">
+                <div class="form-title">Welcome back! Great to see you again.</div>
+                <div class="form-subtitle">Sign in to continue ordering your favorites</div>
+
+                <div class="field">
+                    <label class="field-label">Email Address</label>
+                    <div class="field-wrap">
+                        <span class="field-icon">&#128231;</span>
+                        <input class="field-input" type="email" id="loginEmail" placeholder="name@gmail.com" autocomplete="email"/>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">Password</label>
+                    <div class="field-wrap">
+                        <span class="field-icon">&#128275;</span>
+                        <input class="field-input" type="password" id="loginPassword" placeholder="Password" autocomplete="current-password"/>
+                        <button type="button" class="toggle-pw" onclick="togglePw('loginPassword', this)">&#128584;</button>
+                    </div>
+                </div>
+
+                <button class="btn-primary" id="loginBtn" type="button" onclick="handleLogin()">
+                    <span class="btn-text">Sign In</span>
+                    <span class="btn-icon">&#8594;</span>
+                    <span class="btn-loader hidden"></span>
                 </button>
-                <div id="userDropdown" class="hidden absolute right-0 top-12 bg-white border border-gray-100 rounded-2xl shadow-xl w-52 py-2 z-50">
-                    <div class="px-4 py-3 border-b border-gray-100">
-                        <p class="text-xs text-ash">Signed in as</p>
-                        <p class="text-sm font-semibold text-ink truncate" id="userEmailDrop"></p>
+
+                <p class="form-footer">New here? <a href="#" onclick="switchTab('register')">Create a free account</a></p>
+            </form>
+
+            <!-- REGISTER FORM -->
+            <form class="form-body" id="registerForm" onsubmit="return false">
+                <div class="form-title">Create your account</div>
+                <div class="form-subtitle">Get started with free delivery on your first order</div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label class="field-label">First Name</label>
+                        <div class="field-wrap">
+                            <span class="field-icon">&#128100;</span>
+                            <input class="field-input" type="text" id="regFirstName" placeholder="Durwa" autocomplete="given-name"/>
+                        </div>
                     </div>
-                    <a href="orders.html" class="flex items-center gap-3 px-4 py-3 text-sm text-ink hover:bg-sage transition">
-                        <span>&#128230;</span> My Orders
-                    </a>
-                    <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition">
-                        <span>&#128682;</span> Sign Out
-                    </button>
+                    <div class="field">
+                        <label class="field-label">Last Name</label>
+                        <div class="field-wrap">
+                            <span class="field-icon">&#128100;</span>
+                            <input class="field-input" type="text" id="regLastName" placeholder="Pahariya" autocomplete="family-name"/>
+                        </div>
+                    </div>
                 </div>
+
+                <div class="field">
+                    <label class="field-label">Email Address</label>
+                    <div class="field-wrap">
+                        <span class="field-icon">&#9993;</span>
+                        <input class="field-input" type="email" id="regEmail" placeholder="durwa@gmail.com" autocomplete="email"/>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">Phone Number</label>
+                    <div class="field-wrap">
+                        <span class="field-icon">&#128241;</span>
+                        <input class="field-input" type="tel" id="regPhone" placeholder="9744588902" autocomplete="tel"/>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">Password</label>
+                    <div class="field-wrap">
+                        <span class="field-icon">&#128275;</span>
+                        <input class="field-input" type="password" id="regPassword" placeholder="Minimum 8 characters" autocomplete="new-password"/>
+                        <button type="button" class="toggle-pw" onclick="togglePw('regPassword', this)">&#128584;</button>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">I am joining as</label>
+                    <div class="role-grid">
+                        <label class="role-option">
+                            <input type="radio" name="role" value="USER" checked/>
+                            <div class="role-box">
+                                <span class="role-emoji">&#127859;</span>
+                                <span class="role-name">Customer</span>
+                                <span class="role-desc">Order food fast and fresh</span>
+                            </div>
+                        </label>
+                        <label class="role-option">
+                            <input type="radio" name="role" value="RESTAURANT_OWNER"/>
+                            <div class="role-box">
+                                <span class="role-emoji">&#129489;&#8205;&#127859;</span>
+                                <span class="role-name">Restaurant Owner</span>
+                                <span class="role-desc">Manage your Restaurant</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn-primary" id="registerBtn" type="button" onclick="handleRegister()">
+                    <span class="btn-text">Create My Account</span>
+                    <span class="btn-icon">&#8594;</span>
+                    <span class="btn-loader hidden"></span>
+                </button>
+
+                <p class="form-footer">Already have an account? <a href="#" onclick="switchTab('login')">Sign in here</a></p>
+            </form>
+
+            <div class="bottom-brand">
+                &copy; 2026 GreenBite. Made with care for food lovers.
             </div>
         </div>
     </div>
-</nav>
+</div>
 
-<!-- HERO SECTION - New Layout -->
-<section class="bg-white py-16 px-6 relative overflow-hidden">
-    <!-- Background decoration -->
-    <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-sage to-transparent"></div>
-    <div class="absolute bottom-0 left-1/4 w-96 h-96 rounded-full bg-mint/30 blur-3xl"></div>
-
-    <div class="max-w-7xl mx-auto relative z-10">
-        <div class="flex flex-col lg:flex-row items-center gap-12">
-            <!-- Left content -->
-            <div class="flex-1 text-center lg:text-left">
-                <div class="inline-flex items-center gap-2 bg-mint border border-emerald-light/40 rounded-full px-4 py-1.5 text-sm mb-6">
-                    <span>&#127793;</span>
-                    <span class="font-dm font-medium text-emerald">Farm to Table Freshness</span>
-                </div>
-                <h1 class="font-playfair text-5xl lg:text-6xl font-bold leading-tight mb-6 text-ink">
-                    Discover local<br/>
-                    <span class="text-emerald">culinary gems</span>
-                </h1>
-                <p class="font-dm text-ash text-lg font-light mb-8 max-w-lg mx-auto lg:mx-0">
-                    From cozy cafes to gourmet kitchens, explore handpicked restaurants that serve wholesome, delicious meals made with love.
-                </p>
-                <!-- Stats row -->
-                <div class="flex items-center justify-center lg:justify-start gap-8 flex-wrap">
-                    <div class="text-center">
-                        <div class="font-playfair text-3xl font-bold text-emerald">150+</div>
-                        <div class="text-sm text-ash font-dm">Partner Restaurants</div>
-                    </div>
-                    <div class="w-px h-12 bg-gray-200"></div>
-                    <div class="text-center">
-                        <div class="font-playfair text-3xl font-bold text-emerald">30 min</div>
-                        <div class="text-sm text-ash font-dm">Avg Delivery</div>
-                    </div>
-                    <div class="w-px h-12 bg-gray-200"></div>
-                    <div class="text-center">
-                        <div class="font-playfair text-3xl font-bold text-emerald">4.8</div>
-                        <div class="text-sm text-ash font-dm">User Rating</div>
-                    </div>
-                </div>
-            </div>
-            <!-- Right visual -->
-            <div class="flex-1 flex justify-center">
-                <div class="relative">
-                    <div class="w-72 h-72 lg:w-96 lg:h-96 rounded-full bg-gradient-to-br from-emerald via-forest to-emerald-dark flex items-center justify-center">
-                        <span class="text-8xl lg:text-9xl">&#127869;</span>
-                    </div>
-                    <!-- Floating badges -->
-                    <div class="absolute -top-4 -right-4 bg-white rounded-2xl shadow-lg px-4 py-3 flex items-center gap-2">
-                        <span class="text-2xl">&#9989;</span>
-                        <span class="font-dm text-sm font-semibold text-ink">Verified Quality</span>
-                    </div>
-                    <div class="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-lg px-4 py-3 flex items-center gap-2">
-                        <span class="text-2xl">&#128293;</span>
-                        <span class="font-dm text-sm font-semibold text-ink">Hot & Fresh</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Mobile search -->
-        <div class="md:hidden mt-8 flex items-center gap-2 bg-sage border border-emerald-light/30 rounded-full px-4 py-3">
-            <span>&#128269;</span>
-            <input
-                    id="searchInputMobile"
-                    type="text"
-                    placeholder="Find your favorite restaurant..."
-                    class="bg-transparent outline-none text-sm text-ink w-full font-dm"
-                    oninput="filterRestaurantsMobile()"
-            />
-        </div>
-    </div>
-</section>
-
-<!-- MAIN CONTENT -->
-<main class="max-w-7xl mx-auto px-6 py-12 bg-sage/30 rounded-t-3xl -mt-4">
-
-    <!-- Section Header -->
-    <div class="flex items-center justify-between mb-8">
-        <div>
-            <h2 class="font-playfair text-3xl font-bold text-ink">Browse Restaurants</h2>
-            <p class="text-ash text-sm mt-1 font-dm" id="restaurantCount">Finding the best spots near you...</p>
-        </div>
-        <div class="flex items-center gap-2">
-            <span class="text-sm text-ash font-dm">Sort by:</span>
-            <select onchange="sortRestaurants(this.value)" class="border border-emerald-light/30 rounded-lg px-3 py-2 text-sm font-dm text-ink bg-white outline-none focus:border-emerald-light">
-                <option value="default">Recommended</option>
-                <option value="name">Name A-Z</option>
-                <option value="name-desc">Name Z-A</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- Loading Skeleton -->
-    <div id="skeletonGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div class="skeleton-card animate-pulse bg-white rounded-2xl h-72 border border-emerald-light/10"></div>
-        <div class="skeleton-card animate-pulse bg-white rounded-2xl h-72 border border-emerald-light/10"></div>
-        <div class="skeleton-card animate-pulse bg-white rounded-2xl h-72 border border-emerald-light/10"></div>
-        <div class="skeleton-card animate-pulse bg-white rounded-2xl h-72 border border-emerald-light/10"></div>
-        <div class="skeleton-card animate-pulse bg-white rounded-2xl h-72 border border-emerald-light/10"></div>
-        <div class="skeleton-card animate-pulse bg-white rounded-2xl h-72 border border-emerald-light/10"></div>
-    </div>
-
-    <!-- Restaurant Grid -->
-    <div id="restaurantGrid" class="hidden grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-
-    <!-- Empty State -->
-    <div id="emptyState" class="hidden text-center py-24">
-        <div class="text-6xl mb-4">&#127869;</div>
-        <h3 class="font-playfair text-2xl font-bold text-ink mb-2">No restaurants found</h3>
-        <p class="text-ash font-dm">Try adjusting your search or browse all restaurants</p>
-    </div>
-
-    <!-- Error State -->
-    <div id="errorState" class="hidden text-center py-24">
-        <div class="text-6xl mb-4">&#9888;</div>
-        <h3 class="font-playfair text-2xl font-bold text-ink mb-2">Something went wrong</h3>
-        <p class="text-ash font-dm mb-6" id="errorMsg">Could not load restaurants</p>
-        <button onclick="loadRestaurants()" class="bg-emerald text-white px-6 py-3 rounded-full font-dm font-semibold hover:bg-emerald-dark transition">
-            Try Again
-        </button>
-    </div>
-
-</main>
-
-<!-- FOOTER -->
-<footer class="bg-ink text-white/60 py-8 mt-0">
-    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div class="flex items-center gap-3">
-            <span class="text-2xl">🌿</span>
-            <span class="font-playfair text-lg font-bold text-white">Green<span class="text-emerald-light">Bite</span></span>
-        </div>
-        <p class="text-sm font-dm">&copy; 2026 GreenBite. Crafted with care for healthy eating.</p>
-    </div>
-</footer>
-
-<script src="../js/utils.js"></script>
-<script src="../js/restaurants.js"></script>
+<script src="../js/auth.js"></script>
 </body>
 </html>
