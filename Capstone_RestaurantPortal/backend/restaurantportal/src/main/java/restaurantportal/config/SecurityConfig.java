@@ -1,5 +1,7 @@
 package restaurantportal.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,8 +14,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-
-
 import org.springframework.web.cors.CorsConfiguration;
 import restaurantportal.security.JwtFilter;
 
@@ -24,6 +24,8 @@ import java.util.List;
  */
 @Configuration
 public class SecurityConfig {
+
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
     /** JWT filter for request validation */
     private final JwtFilter jwtFilter;
@@ -41,10 +43,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
+        log.info("Initializing SecurityFilterChain...");
 
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> {})
+                .cors(cors -> {
+                    log.debug("CORS enabled in SecurityConfig");
+                })
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
@@ -67,27 +72,36 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
+        log.info("SecurityFilterChain initialized successfully.");
+
         return http.build();
     }
 
     /**
-     * Provides password encoder.
+     * Password encoder bean using BCrypt.
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
+        log.debug("Creating PasswordEncoder bean (BCrypt)");
         return new BCryptPasswordEncoder();
     }
 
     /**
-     * Provides authentication manager.
+     * Authentication manager bean.
      */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        log.debug("Creating AuthenticationManager bean");
         return config.getAuthenticationManager();
     }
 
+    /**
+     * Global CORS configuration source.
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
+        log.info("Initializing CORS configuration source...");
 
         CorsConfiguration configuration = new CorsConfiguration();
 
@@ -100,6 +114,8 @@ public class SecurityConfig {
                 new UrlBasedCorsConfigurationSource();
 
         source.registerCorsConfiguration("/**", configuration);
+
+        log.info("CORS configuration source initialized.");
 
         return source;
     }

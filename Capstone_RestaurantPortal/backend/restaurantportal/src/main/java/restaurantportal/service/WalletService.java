@@ -1,5 +1,7 @@
 package restaurantportal.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import restaurantportal.dto.*;
@@ -12,6 +14,8 @@ import restaurantportal.security.SecurityUtil;
  */
 @Service
 public class WalletService {
+
+    private static final Logger log = LoggerFactory.getLogger(WalletService.class);
 
     private final UserRepository userRepository;
 
@@ -26,15 +30,22 @@ public class WalletService {
     public WalletResponse addMoney(AddMoneyRequest request) {
 
         String email = SecurityUtil.getCurrentUserEmail();
+        log.info("Wallet top-up request initiated by user: {}, amount: {}", email, request.getAmount());
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    log.error("User not found during wallet top-up: {}", email);
+                    return new RuntimeException("User not found");
+                });
 
-        user.setWalletBalance(
-                user.getWalletBalance() + request.getAmount()
-        );
+        double oldBalance = user.getWalletBalance();
+
+        user.setWalletBalance(oldBalance + request.getAmount());
 
         userRepository.save(user);
+
+        log.info("Wallet updated successfully for user: {} | oldBalance: {}, newBalance: {}",
+                email, oldBalance, user.getWalletBalance());
 
         return new WalletResponse(user.getWalletBalance());
     }
@@ -45,9 +56,15 @@ public class WalletService {
     public WalletResponse getBalance() {
 
         String email = SecurityUtil.getCurrentUserEmail();
+        log.info("Wallet balance request for user: {}", email);
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    log.error("User not found during balance fetch: {}", email);
+                    return new RuntimeException("User not found");
+                });
+
+        log.info("Wallet balance fetched for user: {} | balance: {}", email, user.getWalletBalance());
 
         return new WalletResponse(user.getWalletBalance());
     }

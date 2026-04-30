@@ -147,15 +147,16 @@ function createCartCard(item, index) {
         </div>
         <div class="cc-qty" id="qty-wrap-${item.id}">
             <button class="cc-qty-btn"
-                onclick="changeQty(${item.id}, ${item.quantity}, -1)"
-                ${item.quantity <= 1 ? 'disabled' : ''}>−</button>
+    id="minus-${item.id}"
+    onclick="changeQty(${item.id}, -1)"
+    ${item.quantity <= 1 ? 'disabled' : ''}>−</button>
 
             <div class="cc-qty-num" id="qty-${item.id}">
                 ${item.quantity}
             </div>
 
             <button class="cc-qty-btn"
-                onclick="changeQty(${item.id}, ${item.quantity}, 1)">+</button>
+    onclick="changeQty(${item.id}, 1)">+</button>
         </div>
 
         <div class="cc-subtotal" id="sub-${item.id}">
@@ -183,61 +184,131 @@ function updateSummary(cart) {
     document.getElementById('summarySubtotal').textContent = `₹${subtotal.toFixed(2)}`;
     document.getElementById('summaryTax').textContent      = `₹${tax.toFixed(2)}`;
     document.getElementById('summaryTotal').textContent    = `₹${grandTotal.toFixed(2)}`;
+
 }
 
 // ─────────────────────────────────────────
 //   CHANGE QUANTITY
 //   PUT /api/cart/update/{cartItemId}?quantity=N
 // ─────────────────────────────────────────
-async function changeQty(cartItemId, currentQty, delta) {
-  const newQty = currentQty + delta;
-  if (newQty < 1) return;
- console.log('Changing qty for', cartItemId, 'from', currentQty, 'to', newQty);
- console.log('Current cart:', currentCart);
-  // Disable both qty buttons while request is in flight
-  setQtyDisabled(cartItemId, true);
+// async function changeQty(cartItemId, currentQty, delta) {
+//   const newQty = currentQty + delta;
+//   if (newQty < 1) return;
+//  console.log('Changing qty for', cartItemId, 'from', currentQty, 'to', newQty);
+//  console.log('Current cart:', currentCart);
+//   // Disable both qty buttons while request is in flight
+//   setQtyDisabled(cartItemId, true);
+//
+//   try {
+//     const item = currentCart.items.find(i => i.id === cartItemId);
+//     if (!item) {
+//       showToast("error", "❌", "Item not found.");
+//       return;
+//     }
+// console.log('new quantity:', newQty);
+//     const res = await apiFetch('/api/cart', {
+//       method: 'POST',
+//       body: JSON.stringify({ menuItemId: item.id, quantity: newQty })
+//     });
+//
+//     if (!res.ok) {
+//       const err = await res.text();
+//       throw new Error(err || `Error ${res.status}`);
+//     }
+//
+//     const updatedCart = await res.json();
+//     currentCart = updatedCart;
+//
+//     // Update only this item's display
+//     const updatedItem = updatedCart.items.find(
+//       (i) => i.id === cartItemId,
+//     );
+//     console.log(updatedItem);
+//
+//     if (updatedItem) {
+//       document.getElementById(`qty-${cartItemId}`).textContent =
+//         updatedItem.quantity;
+//       document.getElementById(`sub-${cartItemId}`).textContent =
+//         `₹${Number(updatedItem.price * updatedItem.quantity).toFixed(2)}`;
+//       // Disable minus if qty=1
+//       const minusBtn = document.getElementById(`minus-${cartItemId}`);
+//       if (minusBtn) minusBtn.disabled = updatedItem.quantity <= 1;
+//     }
+//     updateSummary(updatedCart);
+//   } catch (err) {
+//     showToast("error", "❌", err.message || "Failed to update quantity.");
+//   } finally {
+//     setQtyDisabled(cartItemId, false);
+//
+//   }
+// }
+async function changeQty(cartItemId, delta) {
 
-  try {
     const item = currentCart.items.find(i => i.id === cartItemId);
+
     if (!item) {
-      showToast("error", "❌", "Item not found.");
-      return;
+        showToast("error", "❌", "Item not found.");
+        return;
     }
 
-    const res = await apiFetch('/api/cart', {
-      method: 'POST',
-      body: JSON.stringify({ menuItemId: item.id, quantity: newQty })
-    });
+    const currentQty = item.quantity;
+    const newQty = currentQty + delta;
 
-    if (!res.ok) {
-      const err = await res.text();
-      throw new Error(err || `Error ${res.status}`);
+    if (newQty < 1) return;
+
+    console.log('Changing qty for', cartItemId, 'from', currentQty, 'to', newQty);
+
+    setQtyDisabled(cartItemId, true);
+
+    try {
+
+        const res = await apiFetch('/api/cart', {
+            method: 'POST',
+            body: JSON.stringify({
+                menuItemId: item.id,
+                quantity: newQty
+            })
+        });
+
+        if (!res.ok) {
+            const err = await res.text();
+            throw new Error(err || `Error ${res.status}`);
+        }
+
+        const updatedCart = await res.json();
+        currentCart = updatedCart;
+
+        const updatedItem = updatedCart.items.find(
+            i => i.id === cartItemId
+        );
+
+        if (updatedItem) {
+
+            document.getElementById(`qty-${cartItemId}`).textContent =
+                updatedItem.quantity;
+
+            document.getElementById(`sub-${cartItemId}`).textContent =
+                `₹${(updatedItem.price * updatedItem.quantity).toFixed(2)}`;
+
+            const minusBtn = document.getElementById(`minus-${cartItemId}`);
+
+            if (minusBtn) {
+                minusBtn.disabled = updatedItem.quantity <= 1;
+            }
+        }
+
+        updateSummary(updatedCart);
+
+    } catch (err) {
+
+        showToast("error", "❌", err.message || "Failed to update quantity.");
+
+    } finally {
+
+        setQtyDisabled(cartItemId, false);
+
     }
-
-    const updatedCart = await res.json();
-    currentCart = updatedCart;
-
-    // Update only this item's display
-    const updatedItem = updatedCart.items.find(
-      (i) => i.id === cartItemId,
-    );
-    if (updatedItem) {
-      document.getElementById(`qty-${cartItemId}`).textContent =
-        updatedItem.quantity;
-      document.getElementById(`sub-${cartItemId}`).textContent =
-        `₹${Number(updatedItem.subtotal).toFixed(2)}`;
-      // Disable minus if qty=1
-      const minusBtn = document.getElementById(`minus-${cartItemId}`);
-      if (minusBtn) minusBtn.disabled = updatedItem.quantity <= 1;
-    }
-    updateSummary(updatedCart);
-  } catch (err) {
-    showToast("error", "❌", err.message || "Failed to update quantity.");
-  } finally {
-    setQtyDisabled(cartItemId, false);
-  }
 }
-
 function setQtyDisabled(cartItemId, disabled) {
     const card = document.getElementById(`cart-item-${cartItemId}`);
     if (!card) return;

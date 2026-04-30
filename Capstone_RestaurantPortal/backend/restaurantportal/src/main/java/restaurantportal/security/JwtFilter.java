@@ -2,6 +2,8 @@ package restaurantportal.security;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -18,14 +20,13 @@ import java.io.IOException;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
+    private static final Logger log = LoggerFactory.getLogger(JwtFilter.class);
+
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
 
     /**
      * Constructs JwtFilter with required dependencies.
-     *
-     * @param jwtUtil utility class for JWT operations
-     * @param userDetailsService service for loading user details from database
      */
     public JwtFilter(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
@@ -34,13 +35,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
     /**
      * Filters incoming requests and validates JWT token.
-     * If token is valid, sets authentication in SecurityContext.
-     *
-     * @param request incoming HTTP request
-     * @param response HTTP response
-     * @param filterChain filter chain
-     * @throws ServletException if servlet error occurs
-     * @throws IOException if I/O error occurs
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -53,17 +47,27 @@ public class JwtFilter extends OncePerRequestFilter {
         String email = null;
         String token = null;
 
+        log.debug("Incoming request: {} {}", request.getMethod(), request.getRequestURI());
+
         if (header != null && header.startsWith("Bearer ")) {
             token = header.substring(7);
 
             try {
                 email = jwtUtil.extractEmail(token);
+                log.debug("JWT token parsed successfully");
+
             } catch (Exception e) {
+                log.warn("Invalid JWT token received");
                 filterChain.doFilter(request, response);
                 return;
             }
+        } else {
+            log.debug("No Authorization header found");
         }
+
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+            log.info("Authenticating user: {}", email);
 
             var userDetails = userDetailsService.loadUserByUsername(email);
 
@@ -79,7 +83,10 @@ public class JwtFilter extends OncePerRequestFilter {
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            log.info("User authenticated successfully: {}", email);
         }
+
         filterChain.doFilter(request, response);
     }
 }
