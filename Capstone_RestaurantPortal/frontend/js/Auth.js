@@ -179,7 +179,9 @@ async function handleRegister() {
     const roleInput = document.querySelector('input[name="role"]:checked');
     const role      = roleInput ? roleInput.value : 'USER';
 
+    // ======================
     // Validation
+    // ======================
     if (!firstName || !lastName || !email || !phone || !password) {
         showAlert('error', '⚠️', 'Please fill in all fields.');
         return;
@@ -190,8 +192,23 @@ async function handleRegister() {
         return;
     }
 
-    if (password.length < 6) {
-        showAlert('error', '⚠️', 'Password must be at least 6 characters.');
+    // STRONG PASSWORD VALIDATION Added
+    const isStrongPassword = (pwd) => {
+        const minLength = pwd.length >= 8;
+        const hasUpperCase = /[A-Z]/.test(pwd);
+        const hasLowerCase = /[a-z]/.test(pwd);
+        const hasNumber = /[0-9]/.test(pwd);
+        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(pwd);
+
+        return minLength && hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
+    };
+
+    if (!isStrongPassword(password)) {
+        showAlert(
+            'error',
+            '⚠️',
+            'Password must be 8+ chars with uppercase, lowercase, number & special character.'
+        );
         return;
     }
 
@@ -200,42 +217,55 @@ async function handleRegister() {
         return;
     }
 
+    // ======================
+    // API CALL
+    // ======================
     setLoading('registerBtn', true);
     clearAlert();
 
     try {
         /**
          * POST /api/users/register
-         * Body: { firstName, lastName, email, password, phone, role }
-         * Response: "User registered successfully" (string)
+         * Body: { firstName, lastName, email, password, phoneNumber, role, walletBalance }
          */
         const response = await fetch(`${BASE_URL}/api/users/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ firstName, lastName, email, password, phoneNumber:phone, role,walletBalance:1000 })
+            body: JSON.stringify({
+                firstName,
+                lastName,
+                email,
+                password,
+                phoneNumber: phone,
+                role,
+                walletBalance: 1000
+            })
         });
 
+        const responseText = await response.text();
+
         if (!response.ok) {
-            const errorText = await response.text();
-            if (response.status === 409 || errorText.toLowerCase().includes('exist')) {
+            if (response.status === 409 || responseText.toLowerCase().includes('exist')) {
                 showAlert('error', '❌', 'An account with this email already exists.');
             } else {
-                showAlert('error', '❌', errorText || `Registration failed (${response.status}).`);
+                showAlert('error', '❌', responseText || `Registration failed (${response.status}).`);
             }
             return;
         }
 
-        // Success — backend returns a string message
-        showAlert('success', '✅', 'Account created! You can now sign in.');
+        // ======================
+        // SUCCESS
+        // ======================
+        showAlert('success', '✅', 'Account created successfully! You can now sign in.');
 
-        // Clear fields
+        // Clear form
         document.getElementById('regFirstName').value = '';
         document.getElementById('regLastName').value  = '';
         document.getElementById('regEmail').value     = '';
         document.getElementById('regPhone').value     = '';
         document.getElementById('regPassword').value  = '';
 
-        // Switch to login tab after 1.5s
+        // Switch to login
         setTimeout(() => {
             switchTab('login');
             document.getElementById('loginEmail').value = email;

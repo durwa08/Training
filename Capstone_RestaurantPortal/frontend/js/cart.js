@@ -289,15 +289,31 @@ function closeClearModal() { document.getElementById('modalClear').classList.add
 
 async function clearCart() {
     closeClearModal();
+
     try {
-        const res = await apiFetch('/api/cart/clear', { method: 'DELETE' });
-        if (!res.ok) { const e = await res.text(); throw new Error(e || `Error ${res.status}`); }
+        const cartId = currentCart?.cartId; // only needed if using id-based API
+
+        const res = await apiFetch(
+            cartId ? `/api/cart/${cartId}` : '/api/cart/clear',
+            { method: 'DELETE' }
+        );
+
+        if (!res.ok) {
+            const e = await res.text();
+            throw new Error(e || `Error ${res.status}`);
+        }
+
 
         currentCart = null;
-        document.getElementById('cartContent').style.display = 'none';
+
+        const cartContent = document.getElementById('cartContent');
+        if (cartContent) cartContent.style.display = 'none';
+
         showEmpty();
         showToast('info', '🗑️', 'Cart cleared.');
+
     } catch (err) {
+        console.error('Clear cart failed:', err);
         showToast('error', '❌', err.message || 'Failed to clear cart.');
     }
 }
