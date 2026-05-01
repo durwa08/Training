@@ -49,15 +49,33 @@ public class CategoryService {
     public List<CategoryResponse> getByRestaurant(Long restaurantId) {
         return categoryRepository.findByRestaurantId(restaurantId)
                 .stream()
+                .filter(category -> !Boolean.TRUE.equals(category.getDeleted()))
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
     /**
-     * Deletes a category by its ID.
+     * Updates an existing category.
+     */
+    public CategoryResponse update(Long id, CategoryRequest request) {
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        category.setName(request.getName());
+
+        Category updated = categoryRepository.save(category);
+
+        return mapToResponse(updated);
+    }
+
+    /**
+     * Soft deletes a category by its ID (marks as deleted).
      */
     public void delete(Long id) {
-        categoryRepository.deleteById(id);
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+        category.setDeleted(true);
+        categoryRepository.save(category);
     }
 
     /**

@@ -4,6 +4,9 @@ package restaurantportal.dto;
  * Response DTO used to send restaurant details back to the client.
  */
 public class RestaurantResponse {
+    /**
+     * this is a response dto class used to send restaurant details back to the client.
+     **/
 
     private Long id;
     private String name;

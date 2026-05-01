@@ -24,7 +24,6 @@ public class JwtUtil {
     /**
      * Generates cryptographic signing key from secret.
      *
-     * @return signing key used for JWT
      */
     private Key getSignKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());

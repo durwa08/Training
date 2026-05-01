@@ -31,9 +31,6 @@ public class RestaurantController {
 
     /**
      * Creates a new restaurant in the system.
-     *
-     * @param request restaurant creation request payload
-     * @return created restaurant details
      */
     @PostMapping
     public RestaurantResponse create(@Valid @RequestBody RestaurantRequest request) {
@@ -42,8 +39,6 @@ public class RestaurantController {
 
     /**
      * Retrieves all restaurants available in the system.
-     *
-     * @return list of restaurants
      */
     @GetMapping
     public List<RestaurantResponse> get() {

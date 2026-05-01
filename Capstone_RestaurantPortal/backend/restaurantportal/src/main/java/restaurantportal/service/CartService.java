@@ -14,7 +14,9 @@ import java.util.List;
  */
 @Service
 public class CartService {
-
+    /**
+     * CartService handles all operations related to the shopping cart.
+     */
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final MenuItemRepository menuItemRepository;

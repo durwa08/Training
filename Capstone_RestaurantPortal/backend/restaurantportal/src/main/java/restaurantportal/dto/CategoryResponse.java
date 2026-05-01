@@ -5,6 +5,9 @@ package restaurantportal.dto;
  */
 public class CategoryResponse {
 
+    /**
+     * Unique identifier of the category.
+     */
     private Long id;
     private String name;
     private Long restaurantId;

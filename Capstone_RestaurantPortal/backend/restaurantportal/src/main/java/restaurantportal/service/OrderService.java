@@ -26,7 +26,10 @@ import restaurantportal.security.SecurityUtil;
  */
 @Service
 public class OrderService {
-
+/**
+     * OrderService handles all operations related to order processing.
+      * It manages an order from preview to placement, status updates, and cancellation.
+      */
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;

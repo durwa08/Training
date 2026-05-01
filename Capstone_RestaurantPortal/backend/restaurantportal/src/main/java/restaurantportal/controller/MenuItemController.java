@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Controller for handling menu item related operations.
- * Provides APIs to create, fetch, and delete menu items.
+ * Provides APIs to create, fetch, update, and delete menu items.
  */
 @RestController
 @RequestMapping("/api/menu-items")
@@ -37,6 +37,19 @@ public class MenuItemController {
     public MenuItemResponse create(@PathVariable Long categoryId,
                                    @RequestBody MenuItemRequest request) {
         return menuItemService.create(categoryId, request);
+    }
+
+    /**
+     * Updates an existing menu item.
+     *
+     * @param id ID of the menu item to update
+     * @param request updated menu item details
+     * @return updated menu item response
+     */
+    @PutMapping("/{id}")
+    public MenuItemResponse update(@PathVariable Long id,
+                                   @RequestBody MenuItemRequest request) {
+        return menuItemService.update(id, request);
     }
 
     /**

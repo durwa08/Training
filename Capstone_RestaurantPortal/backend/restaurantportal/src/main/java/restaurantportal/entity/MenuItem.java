@@ -28,9 +28,19 @@ public class MenuItem {
     private Double price;
 
     /**
+     * Description of the menu item.
+     */
+    private String description;
+
+    /**
      * Availability status of the menu item.
      */
-    private Boolean isAvailable;
+    private Boolean available;
+
+    /**
+     * Flag to indicate if the menu item is deleted (soft delete).
+     */
+    private Boolean deleted = false;
 
     /**
      * Category to which this menu item belongs.

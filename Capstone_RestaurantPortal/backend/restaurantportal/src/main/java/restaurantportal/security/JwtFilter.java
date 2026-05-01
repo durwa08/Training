@@ -24,8 +24,6 @@ public class JwtFilter extends OncePerRequestFilter {
     /**
      * Constructs JwtFilter with required dependencies.
      *
-     * @param jwtUtil utility class for JWT operations
-     * @param userDetailsService service for loading user details from database
      */
     public JwtFilter(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;

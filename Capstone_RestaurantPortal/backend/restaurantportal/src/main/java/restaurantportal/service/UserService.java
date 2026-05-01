@@ -17,7 +17,10 @@ import restaurantportal.security.JwtUtil;
  */
 @Service
 public class UserService {
-
+/**
+     * UserService manages user registration and authentication.
+      * It ensures secure password storage and generates JWT tokens for authenticated users.
+     */
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;

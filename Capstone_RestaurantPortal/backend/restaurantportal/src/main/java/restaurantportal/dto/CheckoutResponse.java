@@ -6,7 +6,9 @@ import java.util.List;
  * Response DTO used during checkout to show order summary and payment status.
  */
 public class CheckoutResponse {
-
+/**
+ *  user's wallet balance, total amount of the cart, and whether they can place the order or not.
+ **/
     private double totalAmount;
     private double walletBalance;
     private boolean canPlaceOrder;

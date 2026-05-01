@@ -38,6 +38,8 @@ public class MenuItemService {
         MenuItem item = new MenuItem();
         item.setName(request.getName());
         item.setPrice(request.getPrice());
+        item.setDescription(request.getDescription());
+        item.setAvailable(request.getAvailable() != null ? request.getAvailable() : true);
         item.setCategory(category);
         item.setRestaurant(category.getRestaurant());
 
@@ -47,20 +49,42 @@ public class MenuItemService {
     }
 
     /**
+     * Updates an existing menu item.
+     */
+    public MenuItemResponse update(Long id, MenuItemRequest request) {
+        MenuItem item = menuItemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Menu item not found"));
+
+        item.setName(request.getName());
+        item.setPrice(request.getPrice());
+        item.setDescription(request.getDescription());
+        if (request.getAvailable() != null) {
+            item.setAvailable(request.getAvailable());
+        }
+
+        MenuItem updated = menuItemRepository.save(item);
+        return mapToResponse(updated);
+    }
+
+    /**
      * Retrieves all menu items for a specific restaurant.
      */
     public List<MenuItemResponse> getByRestaurant(Long restaurantId) {
         return menuItemRepository.findByRestaurantId(restaurantId)
                 .stream()
+                .filter(item -> !Boolean.TRUE.equals(item.getDeleted()))
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
 
     /**
-     * Deletes a menu item by its ID.
+     * Soft deletes a menu item by its ID (marks as deleted).
      */
     public void delete(Long id) {
-        menuItemRepository.deleteById(id);
+        MenuItem item = menuItemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Menu item not found"));
+        item.setDeleted(true);
+        menuItemRepository.save(item);
     }
 
     /**
@@ -71,6 +95,8 @@ public class MenuItemService {
                 item.getId(),
                 item.getName(),
                 item.getPrice(),
+                item.getDescription(),
+                item.getAvailable(),
                 item.getCategory().getId());
     }
 }

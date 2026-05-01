@@ -38,6 +38,15 @@ public class CategoryController {
     }
 
     /**
+     * Updates an existing category.
+     */
+    @PutMapping("/{id}")
+    public CategoryResponse update(@PathVariable Long id,
+                                   @RequestBody CategoryRequest request) {
+        return categoryService.update(id, request);
+    }
+
+    /**
      * Deletes a category by ID.
      */
     @DeleteMapping("/{id}")

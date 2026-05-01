@@ -105,32 +105,49 @@ public class OrderResponse {
     public String getCreatedAt() {
         return createdAt;
     }
+    /**
+     * Sets order creation timestamp.
+     */
 
     public void setCreatedAt(String createdAt)
     {
         this.createdAt = createdAt;
     }
 
+    /**
+     * Returns name of the customer who placed the order.
+     */
     public String getCustomerName() {
         return customerName;
     }
-
+/**
+     * Sets name of the customer who placed the order.
+     */
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
     }
-
+/**
+     * Returns delivery address for the order.
+     */
     public String getDeliveryAddress() {
         return deliveryAddress;
     }
+    /**
+     * Sets delivery address for the order.
+     */
     public void setDeliveryAddress(String deliveryAddress) {
         this.deliveryAddress = deliveryAddress;
     }
 
-
+   /**
+     * Returns phone number associated with the order.
+     */
     public String getPhoneNumber() {
         return phoneNumber;
     }
-
+  /**
+     * Sets phone number associated with the order.
+     */
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }

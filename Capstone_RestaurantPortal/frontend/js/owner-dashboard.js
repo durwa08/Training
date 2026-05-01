@@ -142,8 +142,9 @@ async function selectRestaurant(restaurant) {
     const card = document.getElementById(`rest-card-${restaurant.id}`);
     if (card) card.classList.add('selected');
 
-    // Show nav
-    document.getElementById('sidebarNav').classList.remove('hidden');
+    // Show top nav
+    document.getElementById('topNav').classList.add('show');
+    document.getElementById('topNavRestName').textContent = restaurant.name;
 
     // Hide prompt
     document.getElementById('panelSelectPrompt').classList.add('hidden');
@@ -241,7 +242,15 @@ function switchPanel(panelName) {
     const el = document.getElementById(`panel${capitalize(panelName)}`);
     if (el) { el.classList.remove('hidden'); el.classList.add('active'); }
 
-    // Update sidebar button states
+    // Update top nav button states
+    ['navOverviewTop','navCategoriesTop','navMenuTop','navRestaurantTop'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.classList.remove('active');
+    });
+    const activeTopBtn = document.getElementById(`nav${capitalize(panelName)}Top`);
+    if (activeTopBtn) activeTopBtn.classList.add('active');
+
+    // Update sidebar button states (if they exist)
     ['Overview','Categories','Menu','Restaurant'].forEach(p => {
         const btn = document.getElementById(`nav${p}`);
         if (btn) btn.classList.remove('active');
@@ -480,7 +489,8 @@ async function deleteRestaurant() {
 
         await loadMyRestaurants();
 
-        // Show prompt
+        // Hide top nav and show prompt
+        document.getElementById('topNav').classList.remove('show');
         document.getElementById('sidebarNav').classList.add('hidden');
         switchPanel('SelectPrompt');
 
@@ -518,17 +528,17 @@ async function submitCategory() {
         let res;
         if (editingCategoryId) {
             /**
-             * PUT /api/restaurant/{id}/categories/{cId}
+             * PUT /api/categories/{id}
              * Body: { name }
              * Header: Authorization
              */
-            res = await apiFetch(`/api/restaurant/${rid}/categories/${editingCategoryId}`, {
+            res = await apiFetch(`/api/categories/${editingCategoryId}`, {
                 method: 'PUT',
                 body: JSON.stringify({ name })
             });
         } else {
             /**
-             * POST /api/restaurants/{id}/categories
+             * POST /api/categories/{restaurantId}
              * Body: { name }
              * Header: Authorization
              */
@@ -559,12 +569,12 @@ function confirmDeleteCategory(id, name) {
 }
 
 /**
- * DELETE /api/restaurants/{id}/categories/{cId}
+ * DELETE /api/categories/{id}
  */
 async function deleteCategory(categoryId) {
     try {
         const res = await apiFetch(
-            `/api/restaurants/${selectedRestaurant.id}/categories/${categoryId}`,
+            `/api/categories/${categoryId}`,
             { method: 'DELETE' }
         );
         if (!res.ok) throw new Error(`Error ${res.status}`);
@@ -620,53 +630,59 @@ function openEditMenuItemModal(itemId) {
 }
 
 async function submitMenuItem() {
-    const name  = document.getElementById('mItemName').value.trim();
-    const price = parseFloat(document.getElementById('mItemPrice').value);
-    const categoryId = document.getElementById('mItemCategory').value;
+     const name  = document.getElementById('mItemName').value.trim();
+     const description = document.getElementById('mItemDesc').value.trim();
+     const price = parseFloat(document.getElementById('mItemPrice').value);
+     const categoryId = document.getElementById('mItemCategory').value;
+     const available = document.getElementById('mItemAvailable').value === 'true';
 
-    //  Validation
-    if (!name || isNaN(price) || price < 0) {
-        showToast('error', '⚠️', 'Name and a valid price are required.');
-        return;
-    }
+     //  Validation
+     if (!name || isNaN(price) || price < 0) {
+         showToast('error', '⚠️', 'Name and a valid price are required.');
+         return;
+     }
 
-    if (!categoryId) {
-        showToast('error', '⚠️', 'Category is required.');
-        return;
-    }
+     if (!categoryId) {
+         showToast('error', '⚠️', 'Category is required.');
+         return;
+     }
 
-    const body = {
-        name,
-        price
+     const body = {
+         name,
+         description,
+         price,
+         available
+     };
 
-    };
+     try {
+         let res;
+         if (editingMenuItemId) {
+             //  UPDATE API
+             res = await apiFetch(`/api/menu-items/${editingMenuItemId}`, {
+                 method: 'PUT',
+                 body: JSON.stringify(body)
+             });
+         } else {
+             //  CREATE API
+             res = await apiFetch(`/api/menu-items/${categoryId}`, {
+                 method: 'POST',
+                 body: JSON.stringify(body)
+             });
+         }
 
-    try {
-        //  UPDATE not supported in backend → block it
-        if (editingMenuItemId) {
-            showToast('error', '⚠️', 'Update feature not implemented yet.');
-            return;
-        }
+         if (!res.ok) {
+             const err = await res.text();
+             throw new Error(err || `Error ${res.status}`);
+         }
 
-        //  CREATE API
-        const res = await apiFetch(`/api/menu-items/${categoryId}`, {
-            method: 'POST',
-            body: JSON.stringify(body)
-        });
+         closeModal('modalMenuItem');
+         showToast('success', '✅', editingMenuItemId ? 'Item updated!' : 'Item added!');
+         await loadMenuItems();
 
-        if (!res.ok) {
-            const err = await res.text();
-            throw new Error(err || `Error ${res.status}`);
-        }
-
-        closeModal('modalMenuItem');
-        showToast('success', '✅', 'Item added!');
-        await loadMenuItems();
-
-    } catch (err) {
-        showToast('error', '❌', err.message || 'Failed to save menu item.');
-    }
-}
+     } catch (err) {
+         showToast('error', '❌', err.message || 'Failed to save menu item.');
+     }
+ }
 function confirmDeleteMenuItem(id, name) {
     document.getElementById('confirmMsg').textContent = `Delete menu item "${name}"?`;
     confirmCallback = () => deleteMenuItem(id);
@@ -751,7 +767,4 @@ function escapeHtml(str) {
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
-}
-function goToOrders() {
-    window.location.href = 'pages/owner-orders.html';
 }

@@ -31,7 +31,7 @@ async function loadOrders() {
 }
 
 // ─────────────────────────────────────────
-//   RENDER ORDERS TABLE
+//   RENDER ORDERS TABLE & UPDATE STATS
 // ─────────────────────────────────────────
 function renderOrders(orders) {
   const tbody = document.getElementById("ordersTbody");
@@ -44,12 +44,32 @@ function renderOrders(orders) {
                     No orders found
                 </td>
             </tr>`;
+    updateOrderStats(orders);
     return;
   }
 
   orders.forEach((order) => {
     tbody.appendChild(createOrderRow(order));
   });
+
+  updateOrderStats(orders);
+}
+
+// ─────────────────────────────────────────
+//   UPDATE STATS CARDS
+// ─────────────────────────────────────────
+function updateOrderStats(orders) {
+  if (!orders) orders = [];
+
+  const total = orders.length;
+  const pending = orders.filter((o) => o.status === "PENDING" || o.status === "PLACED").length;
+  const completed = orders.filter((o) => o.status === "COMPLETED" || o.status === "DELIVERED").length;
+  const cancelled = orders.filter((o) => o.status === "CANCELLED").length;
+
+  document.getElementById("totalOrders").textContent = total;
+  document.getElementById("pendingOrders").textContent = pending;
+  document.getElementById("completedOrders").textContent = completed;
+  document.getElementById("cancelledOrders").textContent = cancelled;
 }
 
 function createOrderRow(order) {
@@ -58,21 +78,21 @@ function createOrderRow(order) {
   tr.dataset.orderId = orderId;
 
   tr.innerHTML = `
-            <td class="font-semibold">#${orderId}</td>
+            <td class="font-semibold text-center">#${orderId}</td>
 
-            <td>${order.customerName || "User"}</td>
+            <td class="text-center">${order.customerName || "User"}</td>
 
-            <td class="font-semibold text-emerald order-total-cell">
+            <td class="font-semibold text-emerald text-center order-total-cell">
                 ₹${Number(order.totalAmount || 0).toFixed(2)}
             </td>
 
-            <td class="order-status-cell">
+            <td class="text-center order-status-cell">
                 <span class="status-badge status-${order.status}">
                     ${getStatusIcon(order.status)} ${order.status}
                 </span>
             </td>
 
-            <td class="order-action-cell">
+            <td class="text-center order-action-cell">
                 ${renderActionButtons(orderId, order)}
             </td>
         `;
@@ -130,36 +150,26 @@ function getStatusIcon(status) {
 //   ACTION BUTTONS BASED ON STATUS
 // ─────────────────────────────────────────
 function renderActionButtons(orderId, order) {
+  const btnAccept = `<button onclick="updateOrderStatus(${orderId}, 'PENDING')" class="px-4 py-2 bg-emerald text-white rounded-lg font-semibold text-sm hover:bg-emerald-dark transition">Accept</button>`;
+  const btnCancel = `<button onclick="updateOrderStatus(${orderId}, 'CANCELLED')" class="px-4 py-2 bg-red-500 text-white rounded-lg font-semibold text-sm hover:bg-red-600 transition">Cancel</button>`;
+  const btnDeliver = `<button onclick="updateOrderStatus(${orderId}, 'DELIVERED')" class="px-4 py-2 bg-blue-500 text-white rounded-lg font-semibold text-sm hover:bg-blue-600 transition">Mark Delivered</button>`;
+  const btnComplete = `<button onclick="updateOrderStatus(${orderId}, 'COMPLETED')" class="px-4 py-2 bg-emerald text-white rounded-lg font-semibold text-sm hover:bg-emerald-dark transition">Complete</button>`;
+
   switch (order.status) {
     case "PLACED":
-      return `
-                <button onclick="updateOrderStatus(${orderId}, 'PENDING')" class="btn-secondary-sm">
-                    Accept
-                </button>
-                <button onclick="updateOrderStatus(${orderId}, 'CANCELLED')" class="btn-danger-sm">
-                    Cancel
-                </button>
-            `;
+      return `<div class="flex gap-2 justify-center flex-wrap">${btnAccept}${btnCancel}</div>`;
 
     case "PENDING":
-      return `
-                <button onclick="updateOrderStatus(${orderId}, 'DELIVERED')" class="btn-secondary-sm">
-                    Mark Delivered
-                </button>
-            `;
+      return `<div class="flex gap-2 justify-center flex-wrap">${btnDeliver}</div>`;
 
     case "DELIVERED":
-      return `
-                <button onclick="updateOrderStatus(${orderId}, 'COMPLETED')" class="btn-primary-sm">
-                    Complete
-                </button>
-            `;
+      return `<span class="inline-block px-3 py-2 bg-green-100 text-green-700 rounded-lg font-semibold text-sm">✔ Done</span>`;
 
     case "COMPLETED":
-      return `<span class="text-green-600 font-semibold">✔ Done</span>`;
+      return `<span class="inline-block px-3 py-2 bg-green-100 text-green-700 rounded-lg font-semibold text-sm">✔ Done</span>`;
 
     case "CANCELLED":
-      return `<span class="text-red-600 font-semibold">✖ Cancelled</span>`;
+      return `<span class="inline-block px-3 py-2 bg-red-100 text-red-700 rounded-lg font-semibold text-sm">✖ Cancelled</span>`;
 
     default:
       return "";
@@ -183,7 +193,9 @@ async function updateOrderStatus(orderId, status) {
 
     const updatedOrder = await res.json();
     showToast("success", "✅", `Order ${status}`);
-    updateOrderRow(updatedOrder);
+
+    // Reload all orders to reflect changes immediately
+    await loadOrders();
   } catch (err) {
     showToast("error", "❌", err.message || "Failed to update order");
   }

@@ -8,15 +8,19 @@ public class MenuItemResponse {
     private Long id;
     private String name;
     private double price;
+    private String description;
+    private Boolean available;
     private Long categoryId;
 
     /**
      * Creates a MenuItemResponse with all required fields.
      */
-    public MenuItemResponse(Long id, String name, double price, Long categoryId) {
+    public MenuItemResponse(Long id, String name, double price, String description, Boolean available, Long categoryId) {
         this.id = id;
         this.name = name;
         this.price = price;
+        this.description = description;
+        this.available = available;
         this.categoryId = categoryId;
     }
 
@@ -39,6 +43,20 @@ public class MenuItemResponse {
      */
     public double getPrice() {
         return price;
+    }
+
+    /**
+     * Returns menu item description.
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Returns menu item availability status.
+     */
+    public Boolean getAvailable() {
+        return available;
     }
 
     /**

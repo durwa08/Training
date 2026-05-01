@@ -71,6 +71,7 @@ public class User {
     /**
      * Cart associated with the user.
      */
+    @JsonIgnore
     @OneToOne(mappedBy = "user")
     private Cart cart;
 }

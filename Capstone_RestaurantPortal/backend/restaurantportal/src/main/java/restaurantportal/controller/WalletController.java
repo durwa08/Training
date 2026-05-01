@@ -13,8 +13,10 @@ import restaurantportal.service.WalletService;
 @RequestMapping("/api/wallet")
 public class WalletController {
 
+    /** Service layer for wallet operations */
     private final WalletService service;
 
+    /** Constructor injection for WalletService */
     public WalletController(WalletService service) {
         this.service = service;
     }
@@ -24,6 +26,7 @@ public class WalletController {
      */
     @PostMapping("/add")
     public WalletResponse addMoney(@Valid @RequestBody AddMoneyRequest request) {
+
         return service.addMoney(request);
     }
 
@@ -32,6 +35,7 @@ public class WalletController {
      */
     @GetMapping
     public WalletResponse getBalance() {
+
         return service.getBalance();
     }
 }

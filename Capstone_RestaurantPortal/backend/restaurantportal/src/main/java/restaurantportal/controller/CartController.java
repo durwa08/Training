@@ -13,6 +13,7 @@ import restaurantportal.service.CartService;
 @RequestMapping("/api/cart")
 public class CartController {
 
+    /** Service layer for cart operations */
     private final CartService cartService;
 
     public CartController(CartService cartService) {

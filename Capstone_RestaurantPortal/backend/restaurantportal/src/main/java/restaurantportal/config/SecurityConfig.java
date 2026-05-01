@@ -47,12 +47,9 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-
-                        .requestMatchers("/api/users/register", "/api/users/login", "/pages/**", "/js/**", "/css/**").permitAll()
-
-                        .requestMatchers("/api/restaurants/**")
-                        .hasAnyAuthority("ROLE_USER", "ROLE_RESTAURANT_OWNER")
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/users/register", "/api/users/login", "/pages/**", "/js/**", "/css/**")
+                        .permitAll()
+                        .requestMatchers("/api/restaurants/**").hasAnyAuthority("ROLE_USER", "ROLE_RESTAURANT_OWNER")
 
                         .requestMatchers("/api/cart/**")
                         .hasAuthority("ROLE_USER")
@@ -63,11 +60,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/orders/owner/**")
                         .hasAuthority("ROLE_RESTAURANT_OWNER")
 
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                        .anyRequest().authenticated()).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
+                         return http.build();
     }
 
     /**
@@ -96,8 +91,7 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
         source.registerCorsConfiguration("/**", configuration);
 

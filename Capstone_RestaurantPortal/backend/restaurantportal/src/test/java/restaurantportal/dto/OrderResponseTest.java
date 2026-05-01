@@ -20,6 +20,7 @@ class OrderResponseTest {
                 "Order placed successfully",
                 "2026-01-01",
                 "Bhopal",
+                "123 Main Street",
                 "9999999999"
         );
 

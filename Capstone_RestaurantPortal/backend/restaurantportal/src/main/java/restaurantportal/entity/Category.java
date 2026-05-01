@@ -27,6 +27,11 @@ public class Category {
     private String name;
 
     /**
+     * Flag to indicate if the category is deleted (soft delete).
+     */
+    private Boolean deleted = false;
+
+    /**
      * Restaurant to which this category belongs.
      */
     @ManyToOne

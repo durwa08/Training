@@ -17,7 +17,10 @@ import java.util.stream.Collectors;
  */
 @Service
 public class CheckoutService {
-
+/**
+     * CheckoutService handles the checkout process for users.
+     * It calculates the total amount of the cart and checks if the user has sufficient wallet balance to place the order.
+     */
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
 

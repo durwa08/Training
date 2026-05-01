@@ -26,9 +26,6 @@ public class RestaurantService {
 
     /**
      * Constructs RestaurantService with required dependencies.
-     *
-     * @param restaurantRepository repository for restaurant operations
-     * @param userRepository repository for user operations
      */
     public RestaurantService(RestaurantRepository restaurantRepository,
                              UserRepository userRepository) {

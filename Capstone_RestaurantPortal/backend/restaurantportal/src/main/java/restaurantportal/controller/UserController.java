@@ -47,6 +47,9 @@ public class UserController {
         String token = userService.login(request.getEmail(), request.getPassword());
         return ResponseEntity.ok(new LoginResponse(token));
     }
+    /**
+     * Retrieves the currently authenticated user's details.
+     */
     @GetMapping("/currentUser")
     public User currentUser() {
 

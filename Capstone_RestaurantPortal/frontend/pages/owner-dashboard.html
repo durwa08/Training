@@ -103,17 +103,27 @@
 
         /* ── RESTAURANT SELECTOR ── */
         .restaurant-card-side {
-            border: 1.5px solid rgba(255,255,255,0.2);
+            border: 1.5px solid rgba(255,255,255,0.3);
             border-radius: 12px;
             padding: 12px 14px;
             cursor: pointer;
             transition: all .18s;
             margin-bottom: 8px;
-            background: rgba(255,255,255,0.05);
-            color: white;
+            background: rgba(255,255,255,0.95);
+            color: var(--ink);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        .restaurant-card-side:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.1); }
-        .restaurant-card-side.selected { border-color: var(--emerald-light); background: rgba(34,197,94,0.15); }
+        .restaurant-card-side:hover {
+            border-color: var(--emerald-light);
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-1px);
+        }
+        .restaurant-card-side.selected {
+            border-color: var(--emerald);
+            background: var(--mint);
+            box-shadow: 0 4px 12px rgba(22,101,52,0.2);
+        }
 
         /* ── MAIN PANEL ── */
         .main-panel {
@@ -367,6 +377,51 @@
         /* scrollbar hide for category bar */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* ── TOP NAVIGATION BAR ── */
+        #topNav {
+            display: none;
+            background: white;
+            border-bottom: 1px solid #e2e8e4;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        #topNav.show {
+            display: block;
+            animation: slideDown .18s ease;
+        }
+        #topNav .nav-tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 12px;
+            background: transparent;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--ink);
+            cursor: pointer;
+            transition: all .18s;
+        }
+        #topNav .nav-tab:hover {
+            background: rgba(22, 101, 52, 0.05);
+        }
+        #topNav .nav-tab.active {
+            background: rgba(22, 101, 52, 0.1);
+            color: var(--emerald);
+            font-weight: 600;
+        }
+        #topNav .nav-icon {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
     </style>
 </head>
 <body class="bg-cream min-h-screen">
@@ -402,6 +457,40 @@
     </div>
 </nav>
 
+<!-- TOP NAVIGATION BAR -->
+<div id="topNav" class="hidden bg-white border-b border-gray-100 shadow-sm">
+    <div class="max-w-full px-6 py-3">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-sm font-dm text-ash">Managing:</span>
+                <span class="font-semibold text-emerald" id="topNavRestName">--</span>
+            </div>
+            <nav class="flex items-center gap-1">
+                <button class="nav-tab active" id="navOverviewTop" onclick="switchPanel('overview')">
+                    <span class="nav-icon">&#128202;</span>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-tab" id="navCategoriesTop" onclick="switchPanel('categories')">
+                    <span class="nav-icon">&#127991;</span>
+                    <span>Categories</span>
+                </button>
+                <button class="nav-tab" id="navMenuTop" onclick="switchPanel('menu')">
+                    <span class="nav-icon">&#127869;</span>
+                    <span>Menu Items</span>
+                </button>
+                <button class="nav-tab" onclick="window.open('ownerOrders.html', '_blank')">
+                    <span class="nav-icon">📦</span>
+                    <span>Orders</span>
+                </button>
+                <button class="nav-tab" id="navRestaurantTop" onclick="switchPanel('restaurant')">
+                    <span class="nav-icon">&#127978;</span>
+                    <span>Settings</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+</div>
+
 <!-- LAYOUT: SIDEBAR + MAIN -->
 <div class="flex">
 
@@ -410,37 +499,12 @@
         <!-- My Restaurants -->
         <div class="sidebar-section">
             <div class="sidebar-label">Your Restaurants</div>
+            <button class="sidebar-btn mb-3" onclick="openAddRestaurantModal()">
+                <span class="sb-icon">&#10133;</span> Add New Restaurant
+            </button>
             <div id="sidebarRestaurantList">
                 <div class="skel h-14 mb-2" style="background: rgba(255,255,255,0.1);"></div>
                 <div class="skel h-14 mb-2" style="background: rgba(255,255,255,0.1);"></div>
-            </div>
-            <button class="sidebar-btn mt-2" onclick="openAddRestaurantModal()">
-                <span class="sb-icon">&#10133;</span> Add New Restaurant
-            </button>
-        </div>
-
-        <!-- Navigation (shown only if a restaurant is selected) -->
-        <div id="sidebarNav" class="hidden">
-            <div class="sidebar-section">
-                <div class="sidebar-label">Management</div>
-                <button class="sidebar-btn active" id="navOverview" onclick="switchPanel('overview')">
-                    <span class="sb-icon">&#128202;</span> Dashboard
-                </button>
-                <button class="sidebar-btn" id="navCategories" onclick="switchPanel('categories')">
-                    <span class="sb-icon">&#127991;</span> Menu Categories
-                </button>
-                <button class="sidebar-btn" id="navMenu" onclick="switchPanel('menu')">
-                    <span class="sb-icon">&#127869;</span> Food Items
-                </button>
-                <button class="sidebar-btn" onclick="goToOrders()">
-                    <span class="sb-icon">📦</span> Orders
-                </button>
-                <button class="sidebar-btn" onclick="window.location.href='ownerOrders.html'">
-                    <span class="sb-icon">📦</span> Orders
-                </button>
-                <button class="sidebar-btn" id="navRestaurant" onclick="switchPanel('restaurant')">
-                    <span class="sb-icon">&#127978;</span> Settings
-                </button>
             </div>
         </div>
     </aside>

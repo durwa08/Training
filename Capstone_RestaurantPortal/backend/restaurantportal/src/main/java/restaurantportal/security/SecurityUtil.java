@@ -41,7 +41,6 @@ public class SecurityUtil {
     /**
      * Retrieves the user ID of the currently logged-in user.
      *
-     * NOTE: Spring Security default User does NOT provide ID.
      * This method returns null unless CustomUserDetails is implemented.
      */
     public static Long getCurrentUserId() {

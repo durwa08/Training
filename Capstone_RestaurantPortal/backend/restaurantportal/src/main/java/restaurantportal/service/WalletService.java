@@ -12,7 +12,9 @@ import restaurantportal.security.SecurityUtil;
  */
 @Service
 public class WalletService {
-
+/**
+ * UserRepository is injected to perform database operations related to the user's wallet balance.
+ * */
     private final UserRepository userRepository;
 
     public WalletService(UserRepository userRepository) {
