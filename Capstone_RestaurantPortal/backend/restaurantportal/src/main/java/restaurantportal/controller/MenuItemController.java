@@ -1,7 +1,5 @@
 package restaurantportal.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import restaurantportal.dto.MenuItemRequest;
 import restaurantportal.dto.MenuItemResponse;
@@ -17,12 +15,12 @@ import java.util.List;
 @RequestMapping("/api/menu-items")
 public class MenuItemController {
 
-    private static final Logger log = LoggerFactory.getLogger(MenuItemController.class);
-
     private final MenuItemService menuItemService;
 
     /**
      * Constructor-based dependency injection for MenuItemService.
+     *
+     * @param menuItemService service layer for menu item operations
      */
     public MenuItemController(MenuItemService menuItemService) {
         this.menuItemService = menuItemService;
@@ -30,45 +28,35 @@ public class MenuItemController {
 
     /**
      * Creates a new menu item under a specific category.
+     *
+     * @param categoryId ID of the category
+     * @param request menu item details
+     * @return created menu item response
      */
     @PostMapping("/{categoryId}")
     public MenuItemResponse create(@PathVariable Long categoryId,
                                    @RequestBody MenuItemRequest request) {
-
-        log.info("Creating menu item for categoryId: {}", categoryId);
-
-        MenuItemResponse response = menuItemService.create(categoryId, request);
-
-        log.info("Menu item created successfully for categoryId: {}", categoryId);
-
-        return response;
+        return menuItemService.create(categoryId, request);
     }
 
     /**
      * Fetches all menu items for a specific restaurant.
+     *
+     * @param restaurantId ID of the restaurant
+     * @return list of menu items
      */
     @GetMapping("/restaurant/{restaurantId}")
     public List<MenuItemResponse> getByRestaurant(@PathVariable Long restaurantId) {
-
-        log.info("Fetching menu items for restaurantId: {}", restaurantId);
-
-        List<MenuItemResponse> items = menuItemService.getByRestaurant(restaurantId);
-
-        log.info("Fetched {} menu items for restaurantId: {}", items.size(), restaurantId);
-
-        return items;
+        return menuItemService.getByRestaurant(restaurantId);
     }
 
     /**
      * Deletes a menu item by its ID.
+     *
+     * @param id menu item ID
      */
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-
-        log.info("Deleting menu item with id: {}", id);
-
         menuItemService.delete(id);
-
-        log.info("Menu item deleted successfully with id: {}", id);
     }
 }

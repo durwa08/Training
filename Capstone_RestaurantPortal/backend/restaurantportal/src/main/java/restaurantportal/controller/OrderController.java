@@ -1,7 +1,5 @@
 package restaurantportal.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import restaurantportal.dto.OrderResponse;
 import restaurantportal.dto.PlaceOrderRequest;
@@ -17,8 +15,6 @@ import java.util.List;
 @RequestMapping("/api/orders")
 public class OrderController {
 
-    private static final Logger log = LoggerFactory.getLogger(OrderController.class);
-
     private final OrderService service;
 
     // Constructor injection
@@ -31,14 +27,7 @@ public class OrderController {
      */
     @GetMapping("/preview")
     public OrderResponse preview() {
-
-        log.info("Fetching order preview");
-
-        OrderResponse response = service.previewOrder();
-
-        log.info("Order preview fetched successfully");
-
-        return response;
+        return service.previewOrder();
     }
 
     /**
@@ -46,14 +35,7 @@ public class OrderController {
      */
     @PostMapping
     public OrderResponse placeOrder(@RequestBody PlaceOrderRequest request) {
-
-        log.info("Placing new order: {}", request);
-
-        OrderResponse response = service.placeOrder(request);
-
-        log.info("Order placed successfully");
-
-        return response;
+        return service.placeOrder(request);
     }
 
     /**
@@ -61,14 +43,7 @@ public class OrderController {
      */
     @GetMapping
     public List<OrderResponse> getMyOrders() {
-
-        log.info("Fetching orders for current user");
-
-        List<OrderResponse> orders = service.getMyOrders();
-
-        log.info("Fetched {} orders for user", orders.size());
-
-        return orders;
+        return service.getMyOrders();
     }
 
     /**
@@ -76,14 +51,7 @@ public class OrderController {
      */
     @GetMapping("/owner")
     public List<OrderResponse> getOwnerOrders() {
-
-        log.info("Fetching owner orders");
-
-        List<OrderResponse> orders = service.getOwnerOrders();
-
-        log.info("Fetched {} owner orders", orders.size());
-
-        return orders;
+        return service.getOwnerOrders();
     }
 
     /**
@@ -92,14 +60,7 @@ public class OrderController {
     @PutMapping("/{id}")
     public OrderResponse updateStatus(@PathVariable Long id,
                                       @RequestParam String status) {
-
-        log.info("Updating order id: {} to status: {}", id, status);
-
-        OrderResponse response = service.updateStatus(id, status);
-
-        log.info("Order status updated successfully for id: {}", id);
-
-        return response;
+        return service.updateStatus(id, status);
     }
 
     /**
@@ -107,13 +68,6 @@ public class OrderController {
      */
     @PutMapping("/{id}/cancel")
     public String cancelOrder(@PathVariable Long id) {
-
-        log.info("Cancelling order id: {}", id);
-
-        String response = service.cancelOrder(id);
-
-        log.info("Order cancelled successfully for id: {}", id);
-
-        return response;
+        return service.cancelOrder(id);
     }
 }

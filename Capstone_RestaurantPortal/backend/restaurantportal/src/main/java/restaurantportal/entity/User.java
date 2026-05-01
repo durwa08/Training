@@ -1,5 +1,6 @@
 package restaurantportal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
@@ -63,6 +64,7 @@ public class User {
     /**
      * Orders placed by the user.
      */
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
 

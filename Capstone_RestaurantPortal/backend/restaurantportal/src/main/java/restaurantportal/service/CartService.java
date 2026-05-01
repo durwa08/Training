@@ -1,7 +1,5 @@
 package restaurantportal.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import restaurantportal.dto.*;
@@ -16,8 +14,6 @@ import java.util.List;
  */
 @Service
 public class CartService {
-
-    private static final Logger log = LoggerFactory.getLogger(CartService.class);
 
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
@@ -37,8 +33,6 @@ public class CartService {
     private Cart getCart(User user) {
         return cartRepository.findByUser(user)
                 .orElseGet(() -> {
-                    log.info("Creating new cart for user: {}", user.getEmail());
-
                     Cart cart = new Cart();
                     cart.setUser(user);
                     return cartRepository.save(cart);
@@ -52,23 +46,14 @@ public class CartService {
     public CartResponse addToCart(AddToCartRequest request) {
 
         String email = SecurityUtil.getCurrentUserEmail();
-        log.info("Add to cart request received for user: {}", email);
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    log.error("User not found: {}", email);
-                    return new RuntimeException("User not found");
-                });
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         Cart cart = getCart(user);
 
         MenuItem menuItem = menuItemRepository.findById(request.getMenuItemId())
-                .orElseThrow(() -> {
-                    log.error("Menu item not found: {}", request.getMenuItemId());
-                    return new RuntimeException("Menu item not found");
-                });
-
-        log.info("Adding item {} to cart of user {}", menuItem.getName(), email);
+                .orElseThrow(() -> new RuntimeException("Menu item not found"));
 
         CartItem existing = cart.getItems().stream()
                 .filter(i -> i.getMenuItem().getId().equals(menuItem.getId()))
@@ -76,12 +61,11 @@ public class CartService {
                 .orElse(null);
 
         if (existing != null) {
-            log.info("Updating quantity for existing item in cart");
             existing.setQuantity(request.getQuantity());
         } else {
-            log.info("Adding new item to cart");
             CartItem item = new CartItem();
             item.setMenuItem(menuItem);
+            item.setId(menuItem.getId());
             item.setQuantity(request.getQuantity());
             item.setPrice(menuItem.getPrice());
             item.setCart(cart);
@@ -89,8 +73,6 @@ public class CartService {
         }
 
         recalculate(cart);
-
-        log.info("Cart updated successfully for user: {}", email);
 
         return mapToResponse(cartRepository.save(cart));
     }
@@ -101,19 +83,12 @@ public class CartService {
     public CartResponse getMyCart() {
 
         String email = SecurityUtil.getCurrentUserEmail();
-        log.info("Fetching cart for user: {}", email);
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    log.error("User not found: {}", email);
-                    return new RuntimeException("User not found");
-                });
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         Cart cart = cartRepository.findByUser(user)
-                .orElseThrow(() -> {
-                    log.error("Cart not found for user: {}", email);
-                    return new RuntimeException("Cart not found");
-                });
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
 
         return mapToResponse(cart);
     }
@@ -126,23 +101,16 @@ public class CartService {
 
         Cart cart = getCartEntity();
 
-        log.info("Removing item {} from cart", id);
-
         CartItem item = cart.getItems().stream()
                 .filter(i -> i.getId().equals(id))
                 .findFirst()
-                .orElseThrow(() -> {
-                    log.error("Cart item not found: {}", id);
-                    return new RuntimeException("Item not found");
-                });
+                .orElseThrow(() -> new RuntimeException("Item not found"));
 
         cart.getItems().remove(item);
 
         recalculate(cart);
 
         cartRepository.save(cart);
-
-        log.info("Item removed successfully from cart");
     }
 
     /**
@@ -153,14 +121,10 @@ public class CartService {
 
         Cart cart = getCartEntity();
 
-        log.info("Clearing cart for user");
-
         cart.getItems().clear();
         cart.setTotalAmount(0.0);
 
         cartRepository.save(cart);
-
-        log.info("Cart cleared successfully");
     }
 
     /**

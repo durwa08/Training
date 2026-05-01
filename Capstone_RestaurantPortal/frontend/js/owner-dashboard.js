@@ -465,44 +465,27 @@ function confirmDeleteRestaurant() {
 
 async function deleteRestaurant() {
     try {
-        if (!selectedRestaurant || !selectedRestaurant.id) {
-            throw new Error("No restaurant selected");
-        }
+        const res = await apiFetch(`/api/restaurants/${selectedRestaurant.id}`, {
+            method: 'DELETE'
+        });
 
-        const res = await apiFetch(
-            `/api/restaurants/${selectedRestaurant.id}`,
-            {
-                method: 'DELETE'
-            }
-        );
-
-        // DELETE usually returns 204 No Content → don't assume JSON
-        if (!res.ok) {
-            throw new Error(`Delete failed with status ${res.status}`);
-        }
+        if (!res.ok) throw new Error(`Error ${res.status}`);
 
         showToast('success', '✅', 'Restaurant deleted.');
         closeModal('modalConfirm');
 
-        // Reset state safely
         selectedRestaurant = null;
         allCategories = [];
-        allMenuItems = [];
+        allMenuItems  = [];
 
         await loadMyRestaurants();
 
-        // Hide sidebar safely
-        const sidebar = document.getElementById('sidebarNav');
-        if (sidebar) sidebar.classList.add('hidden');
-
+        // Show prompt
+        document.getElementById('sidebarNav').classList.add('hidden');
         switchPanel('SelectPrompt');
 
     } catch (err) {
-        showToast(
-            'error',
-            '❌',
-            err.message || 'Failed to delete restaurant.'
-        );
+        showToast('error', '❌', err.message || 'Failed to delete restaurant.');
     }
 }
 
@@ -581,10 +564,9 @@ function confirmDeleteCategory(id, name) {
 async function deleteCategory(categoryId) {
     try {
         const res = await apiFetch(
-            `/api/categories/${categoryId}`,
+            `/api/restaurants/${selectedRestaurant.id}/categories/${categoryId}`,
             { method: 'DELETE' }
         );
-
         if (!res.ok) throw new Error(`Error ${res.status}`);
 
         closeModal('modalConfirm');

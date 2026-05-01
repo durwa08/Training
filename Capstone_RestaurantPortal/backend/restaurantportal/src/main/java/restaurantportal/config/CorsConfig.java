@@ -1,7 +1,5 @@
 package restaurantportal.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -9,32 +7,23 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 /**
- * CORS Configuration for the application.
+ * ============================================
+ *   CORS Configuration
+ * ============================================
  */
 @Configuration
 public class CorsConfig {
 
-    private static final Logger log = LoggerFactory.getLogger(CorsConfig.class);
-
-    /**
-     * Creates and configures global CORS filter.
-     */
     @Bean
     public CorsFilter corsFilter() {
 
-        log.info("Initializing CORS configuration...");
-
         CorsConfiguration config = new CorsConfiguration();
 
-        /**
-         * Allow all origins (useful for local development).
-         * In production, restrict to specific domains.
-         */
+        // Allow ALL origins (any localhost port, any frontend)
+        // In production you would restrict this to your domain
         config.addAllowedOriginPattern("*");
 
-        /**
-         * Allowed HTTP methods for cross-origin requests.
-         */
+        // Allow all HTTP methods
         config.addAllowedMethod("GET");
         config.addAllowedMethod("POST");
         config.addAllowedMethod("PUT");
@@ -42,24 +31,17 @@ public class CorsConfig {
         config.addAllowedMethod("PATCH");
         config.addAllowedMethod("OPTIONS");
 
-        /**
-         * Allow all headers including Authorization (JWT support).
-         */
+        // Allow all headers including Authorization (for JWT)
         config.addAllowedHeader("*");
 
-        /**
-         * Credential sharing disabled (JWT sent via headers).
-         */
+        // Allow Authorization header to be sent
+        // This is needed for JWT token to pass through
         config.setAllowCredentials(false);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        /**
-         * Apply CORS configuration to all endpoints.
-         */
+        // Apply to ALL routes
         source.registerCorsConfiguration("/**", config);
-
-        log.info("CORS configuration successfully initialized.");
 
         return new CorsFilter(source);
     }

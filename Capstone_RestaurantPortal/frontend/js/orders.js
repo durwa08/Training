@@ -5,70 +5,89 @@
 
 let allOrders = [];
 
-document.addEventListener('DOMContentLoaded', () => {
-    requireAuth();
-    loadOrders();
+document.addEventListener("DOMContentLoaded", () => {
+  requireAuth();
+  loadOrders();
 });
 
 // ── LOAD ORDERS ────────────────────────────
 
 async function loadOrders() {
-    try {
-        /**
-         * GET /api/orders/my-orders
-         * Returns all orders for logged in customer
-         * Sorted by newest first
-         */
-        const res = await apiFetch('/api/orders/my-orders');
-        const data = await res.json();
+  try {
+    /**
+     * GET /api/orders/my-orders
+     * Returns all orders for logged in customer
+     * Sorted by newest first
+     */
+    const res = await apiFetch("/api/orders");
+    const data = await res.json();
 
-        document.getElementById('ordersLoading').classList.add('hidden');
+    document.getElementById("ordersLoading").classList.add("hidden");
 
-        if (!Array.isArray(data) || data.length === 0) {
-            document.getElementById('ordersEmpty').classList.remove('hidden');
-            return;
-        }
-
-        allOrders = data;
-        document.getElementById('ordersList').classList.remove('hidden');
-        renderOrders(data);
-
-    } catch (err) {
-        console.error('Orders load error:', err);
-        document.getElementById('ordersLoading').classList.add('hidden');
-        document.getElementById('ordersEmpty').classList.remove('hidden');
+    if (!Array.isArray(data) || data.length === 0) {
+      document.getElementById("ordersEmpty").classList.remove("hidden");
+      return;
     }
+
+    allOrders = data;
+    // Sort by newest first
+    data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    document.getElementById("ordersList").classList.remove("hidden");
+    renderOrders(data);
+  } catch (err) {
+    console.error("Orders load error:", err);
+    document.getElementById("ordersLoading").classList.add("hidden");
+    document.getElementById("ordersEmpty").classList.remove("hidden");
+  }
 }
 
 // ── RENDER ORDERS ──────────────────────────
 
 function renderOrders(orders) {
-    const list = document.getElementById('ordersList');
-    list.innerHTML = '';
+  const list = document.getElementById("ordersList");
+  list.innerHTML = "";
 
-    orders.forEach(order => {
-        const card = createOrderCard(order);
-        list.appendChild(card);
-    });
+  orders.forEach((order) => {
+    const card = createOrderCard(order);
+    list.appendChild(card);
+  });
 }
 
 function createOrderCard(order) {
-    const card = document.createElement('div');
-    card.className = 'order-card';
-    card.id = `order-${order.orderId}`;
+  const card = document.createElement("div");
+  card.className = "order-card";
+  card.id = `order-${order.orderId}`;
 
-    const canCancel = order.status === 'PLACED' && isWithin30Seconds(order.createdAt);
-    const date = formatDate(order.createdAt);
+  const canCancel =
+    order.status === "PENDING" && isWithin30Seconds(order.createdAt);
+  const date = formatDate(order.createdAt);
 
-    // Build items list
-    const itemsHtml = (order.items || []).map(item =>
+  // If can cancel, set up auto-hide timer
+  if (canCancel) {
+    const created = new Date(order.createdAt);
+    const now = new Date();
+    const diff = (now - created) / 1000;
+    const remaining = Math.max(0, 30 - diff);
+    setTimeout(() => {
+      const btn = document.getElementById(`cancel-btn-${order.orderId}`);
+      if (btn) btn.style.display = "none";
+      const countdown = document.getElementById(`countdown-${order.orderId}`);
+      if (countdown) countdown.style.display = "none";
+    }, remaining * 1000);
+  }
+
+  // Build items list
+  const itemsHtml = (order.items || [])
+    .map(
+      (item) =>
         `<div class="flex justify-between text-sm font-dm py-1">
-            <span class="text-ink">${escapeHtml(item.itemName)} <span class="text-ash">x${item.quantity}</span></span>
-            <span class="text-ash">₹${item.subtotal.toFixed(2)}</span>
-        </div>`
-    ).join('');
+            <span class="text-ink">${escapeHtml(item.menuItemName)} <span class="text-ash">x${item.quantity}</span></span>
+            <span class="text-ash">₹${(item.price * item.quantity).toFixed(2)}</span>
+        </div>`,
+    )
+    .join("");
 
-    card.innerHTML = `
+  card.innerHTML = `
         <!-- Header -->
         <div class="p-5 border-b border-gold/10 flex items-start justify-between gap-4 flex-wrap">
             <div>
@@ -78,16 +97,19 @@ function createOrderCard(order) {
                         ${getStatusIcon(order.status)} ${order.status}
                     </span>
                 </div>
-                <p class="text-ash text-sm font-dm">🏪 ${escapeHtml(order.restaurantName)} · ${date}</p>
+                <p class="text-ash text-sm font-dm">📅 ${date}</p>
+                <p class="text-ash text-sm font-dm">📍 ${escapeHtml(order.deliveryAddress || "N/A")}</p>
+                <p class="text-ash text-sm font-dm">📞 ${escapeHtml(order.phoneNumber || "N/A")}</p>
             </div>
             <div class="text-right">
                 <p class="font-playfair text-2xl font-bold text-burgundy">₹${order.totalAmount.toFixed(2)}</p>
-                ${canCancel
-        ? `<button class="cancel-btn mt-2" onclick="cancelOrder(${order.orderId})">
+                ${
+                  canCancel
+                    ? `<button id="cancel-btn-${order.orderId}" class="cancel-btn mt-2" onclick="cancelOrder(${order.orderId})">
                         Cancel Order
                        </button>`
-        : ''
-    }
+                    : ""
+                }
             </div>
         </div>
 
@@ -101,93 +123,118 @@ function createOrderCard(order) {
             </div>
         </div>
 
-        <!-- Cancel countdown if PLACED -->
-        ${order.status === 'PLACED'
-        ? `<div class="bg-blue-50 border-t border-blue-100 px-5 py-3" id="countdown-${order.orderId}">
+        <!-- Cancel countdown if PENDING -->
+        ${
+          canCancel
+            ? `<div class="bg-blue-50 border-t border-blue-100 px-5 py-3" id="countdown-${order.orderId}">
                 <p class="text-xs text-blue-600 font-dm font-medium">
                     ⏱️ You can cancel this order within 30 seconds of placing it.
                 </p>
                </div>`
-        : ''
-    }
+            : ""
+        }
     `;
 
-    return card;
+  return card;
 }
 
 // ── CANCEL ORDER ───────────────────────────
 
 async function cancelOrder(orderId) {
-    if (!confirm('Cancel this order? The amount will be refunded to your wallet.')) return;
+  if (
+    !confirm("Cancel this order? The amount will be refunded to your wallet.")
+  )
+    return;
 
-    try {
-        /**
-         * DELETE /api/orders/cancel/{orderId}
-         * Returns updated order with status CANCELLED
-         */
-        const res = await apiFetch(`/api/orders/cancel/${orderId}`, {
-            method: 'DELETE'
-        });
+  try {
+    /**
+     * DELETE /api/orders/cancel/{orderId}
+     * Returns updated order with status CANCELLED
+     */
+    const res = await apiFetch(`/api/orders/${orderId}/cancel`, {
+      method: "PUT",
+    });
 
-        const data = await res.json();
+    const data = await res.text();
 
-        if (!res.ok) {
-            showToast('error', '❌', data.message || 'Could not cancel order');
-            return;
-        }
-
-        showToast('success', '✅', 'Order cancelled. Amount refunded to wallet!');
-
-        // Reload orders to show updated status
-        setTimeout(loadOrders, 1000);
-
-    } catch (err) {
-        showToast('error', '❌', 'Could not cancel order. Please try again.');
+    if (!res.ok) {
+      showToast("error", "❌", data || "Could not cancel order");
+      return;
     }
+
+    showToast("success", "✅", "Order cancelled. Amount refunded to wallet!");
+
+    // Update the card status
+    const card = document.getElementById(`order-${orderId}`);
+    if (card) {
+      const statusBadge = card.querySelector(".status-badge");
+      if (statusBadge) {
+        statusBadge.className = "status-badge status-CANCELLED";
+        statusBadge.innerHTML = `${getStatusIcon("CANCELLED")} CANCELLED`;
+      }
+      const btn = document.getElementById(`cancel-btn-${orderId}`);
+      if (btn) btn.style.display = "none";
+      const countdown = document.getElementById(`countdown-${orderId}`);
+      if (countdown) countdown.style.display = "none";
+    }
+  } catch (err) {
+    showToast("error", "❌", "Could not cancel order. Please try again.");
+  }
 }
 
 // ── HELPERS ────────────────────────────────
 
 function isWithin30Seconds(createdAt) {
-    if (!createdAt) return false;
-    const created = new Date(createdAt);
-    const now = new Date();
-    const diff = (now - created) / 1000; // seconds
-    return diff <= 30;
+  if (!createdAt) return false;
+  const created = new Date(createdAt);
+  const now = new Date();
+  const diff = (now - created) / 1000; // seconds
+  return diff <= 30;
 }
 
 function formatDate(dateStr) {
-    if (!dateStr) return '--';
-    try {
-        const d = new Date(dateStr);
-        return d.toLocaleDateString('en-IN', {
-            day: 'numeric', month: 'short', year: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-        });
-    } catch { return dateStr; }
+  if (!dateStr) return "--";
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("en-IN", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  } catch {
+    return dateStr;
+  }
 }
 
 function getStatusIcon(status) {
-    const icons = {
-        PLACED: '🔵', PENDING: '🟠',
-        DELIVERED: '🟢', COMPLETED: '✅', CANCELLED: '🔴'
-    };
-    return icons[status] || '⚪';
+  const icons = {
+    PLACED: "🔵",
+    PENDING: "🟠",
+    DELIVERED: "🟢",
+    COMPLETED: "✅",
+    CANCELLED: "🔴",
+  };
+  return icons[status] || "⚪";
 }
 
 function escapeHtml(str) {
-    if (!str) return '';
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }
 
 // ── TOAST ──────────────────────────────────
 
 let toastTimer;
 function showToast(type, icon, msg) {
-    clearTimeout(toastTimer);
-    const t = document.getElementById('toast');
-    document.getElementById('toastIcon').textContent = icon;
-    document.getElementById('toastMsg').textContent = msg;
-    t.className = `show ${type}`;
-    toastTimer = setTimeout(() => t.className = type, 2800);
+  clearTimeout(toastTimer);
+  const t = document.getElementById("toast");
+  document.getElementById("toastIcon").textContent = icon;
+  document.getElementById("toastMsg").textContent = msg;
+  t.className = `show ${type}`;
+  toastTimer = setTimeout(() => (t.className = type), 2800);
 }

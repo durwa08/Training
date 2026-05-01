@@ -10,37 +10,53 @@
  *  DELETE /api/cart/clear                      → clear all
  */
 
-const FOOD_EMOJIS = ['🍕','🍔','🍜','🍣','🌮','🍛','🍱','🥗','🍗','🥪','🧆','🥘','🍲','🥙','🌯'];
+const FOOD_EMOJIS = [
+  "🍕",
+  "🍔",
+  "🍜",
+  "🍣",
+  "🌮",
+  "🍛",
+  "🍱",
+  "🥗",
+  "🍗",
+  "🥪",
+  "🧆",
+  "🥘",
+  "🍲",
+  "🥙",
+  "🌯",
+];
 
 let currentCart = null;
 
 // ─────────────────────────────────────────
 //   PAGE INIT
 // ─────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-    requireAuth();
-    setupNavbar();
-    loadCart();
+document.addEventListener("DOMContentLoaded", () => {
+  requireAuth();
+  setupNavbar();
+  loadCart();
 
-    document.addEventListener('click', (e) => {
-        const menu = document.getElementById('userMenu');
-        if (menu && !menu.contains(e.target)) {
-            const dd = document.getElementById('userDropdown');
-            if (dd) dd.classList.add('hidden');
-        }
-    });
+  document.addEventListener("click", (e) => {
+    const menu = document.getElementById("userMenu");
+    if (menu && !menu.contains(e.target)) {
+      const dd = document.getElementById("userDropdown");
+      if (dd) dd.classList.add("hidden");
+    }
+  });
 });
 
 // ─────────────────────────────────────────
 //   NAVBAR
 // ─────────────────────────────────────────
 function setupNavbar() {
-    const email = getEmail() || 'Account';
-    document.getElementById('userEmailNav').textContent = email.split('@')[0];
-    document.getElementById('userEmailDrop').textContent = email;
+  const email = getEmail() || "Account";
+  document.getElementById("userEmailNav").textContent = email.split("@")[0];
+  document.getElementById("userEmailDrop").textContent = email;
 }
 function toggleUserMenu() {
-    document.getElementById('userDropdown').classList.toggle('hidden');
+  document.getElementById("userDropdown").classList.toggle("hidden");
 }
 
 // ─────────────────────────────────────────
@@ -48,48 +64,55 @@ function toggleUserMenu() {
 //   GET /api/cart
 // ─────────────────────────────────────────
 async function loadCart() {
-    showSkeleton();
-    try {
-        const res = await apiFetch('/api/cart');
+  showSkeleton();
+  try {
+    const res = await apiFetch("/api/cart");
 
-        if (res.status === 404) { hideSkeleton(); showEmpty(); return; }
-        if (!res.ok) {
-            const err = await res.text();
-            throw new Error(err || `Server error ${res.status}`);
-        }
-
-        const cart = await res.json();
-        currentCart = cart;
-        hideSkeleton();
-
-        if (!cart.items || cart.items.length === 0) { showEmpty(); return; }
-        renderCart(cart);
-
-    } catch (err) {
-        console.error('Cart load error:', err);
-        hideSkeleton();
-        showError(err.message || 'Could not load your cart.');
+    if (res.status === 404) {
+      hideSkeleton();
+      showEmpty();
+      return;
     }
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(err || `Server error ${res.status}`);
+    }
+
+    const cart = await res.json();
+    currentCart = cart;
+    hideSkeleton();
+
+    if (!cart.items || cart.items.length === 0) {
+      showEmpty();
+      return;
+    }
+    renderCart(cart);
+  } catch (err) {
+    console.error("Cart load error:", err);
+    hideSkeleton();
+    showError(err.message || "Could not load your cart.");
+  }
 }
 
 // ─────────────────────────────────────────
 //   RENDER CART
 // ─────────────────────────────────────────
 function renderCart(cart) {
-    document.getElementById('cartContent').style.display = '';
-    document.getElementById('emptyCart').style.display   = 'none';
-    document.getElementById('errorCart').style.display   = 'none';
+  document.getElementById("cartContent").style.display = "";
+  document.getElementById("emptyCart").style.display = "none";
+  document.getElementById("errorCart").style.display = "none";
 
-    document.getElementById('restaurantBadgeName').textContent = cart.restaurantName || 'Restaurant';
+  document.getElementById("restaurantBadgeName").textContent =
+    cart.restaurantName || "Restaurant";
 
-    const list = document.getElementById('cartItemsList');
-    list.innerHTML = '';
-    cart.items.forEach((item, idx) => {
-        const card = createCartCard(item, idx);
-        list.appendChild(card);
-    });
+  const list = document.getElementById("cartItemsList");
+  list.innerHTML = "";
+  cart.items.forEach((item, idx) => {
+    const card = createCartCard(item, idx);
+    list.appendChild(card);
+  });
 
-    updateSummary(cart);
+  updateSummary(cart);
 }
 
 // ─────────────────────────────────────────
@@ -126,20 +149,20 @@ function renderCart(cart) {
 //        return card;
 //    }
 function createCartCard(item, index) {
-    console.log('Creating card for', item);
+  console.log("Creating card for", item);
 
-    const emoji = FOOD_EMOJIS[item.id % FOOD_EMOJIS.length];
-    const delay = index * 60;
+  const emoji = FOOD_EMOJIS[item.id % FOOD_EMOJIS.length];
+  const delay = index * 60;
 
-    const subtotal = item.price * item.quantity;
+  const subtotal = item.price * item.quantity;
 
-    const card = document.createElement('div');
-    card.className = 'cart-card fade-in';
-    card.id = `cart-item-${item.id}`;
-    card.style.animationDelay = `${delay}ms`;
-    card.style.transition = 'opacity .25s, transform .25s';
+  const card = document.createElement("div");
+  card.className = "cart-card fade-in";
+  card.id = `cart-item-${item.id}`;
+  card.style.animationDelay = `${delay}ms`;
+  card.style.transition = "opacity .25s, transform .25s";
 
-    card.innerHTML = `
+  card.innerHTML = `
         <div class="cc-emoji">${emoji}</div>
         <div class="cc-info">
             <div class="cc-name">${escapeHtml(item.name)}</div>
@@ -149,7 +172,7 @@ function createCartCard(item, index) {
             <button class="cc-qty-btn"
     id="minus-${item.id}"
     onclick="changeQty(${item.id}, -1)"
-    ${item.quantity <= 1 ? 'disabled' : ''}>−</button>
+    ${item.quantity <= 1 ? "disabled" : ""}>−</button>
 
             <div class="cc-qty-num" id="qty-${item.id}">
                 ${item.quantity}
@@ -168,23 +191,24 @@ function createCartCard(item, index) {
             title="Remove">✕</button>
     `;
 
-    return card;
+  return card;
 }
 
 // ─────────────────────────────────────────
 //   UPDATE SUMMARY PANEL
 // ─────────────────────────────────────────
 function updateSummary(cart) {
-    const subtotal  = cart.totalAmount || 0;
-    const tax       = subtotal * 0.05;
-    const grandTotal = subtotal + tax;
-    const itemCount = (cart.items || []).reduce((s, i) => s + i.quantity, 0);
+  const subtotal = cart.totalAmount || 0;
+  const tax = subtotal * 0.05;
+  const grandTotal = subtotal + tax;
+  const itemCount = (cart.items || []).reduce((s, i) => s + i.quantity, 0);
 
-    document.getElementById('summaryCount').textContent    = itemCount;
-    document.getElementById('summarySubtotal').textContent = `₹${subtotal.toFixed(2)}`;
-    document.getElementById('summaryTax').textContent      = `₹${tax.toFixed(2)}`;
-    document.getElementById('summaryTotal').textContent    = `₹${grandTotal.toFixed(2)}`;
-
+  document.getElementById("summaryCount").textContent = itemCount;
+  document.getElementById("summarySubtotal").textContent =
+    `₹${subtotal.toFixed(2)}`;
+  document.getElementById("summaryTax").textContent = `₹${tax.toFixed(2)}`;
+  document.getElementById("summaryTotal").textContent =
+    `₹${grandTotal.toFixed(2)}`;
 }
 
 // ─────────────────────────────────────────
@@ -243,76 +267,66 @@ function updateSummary(cart) {
 //   }
 // }
 async function changeQty(cartItemId, delta) {
+  const item = currentCart.items.find((i) => i.id === cartItemId);
 
-    const item = currentCart.items.find(i => i.id === cartItemId);
+  if (!item) {
+    showToast("error", "❌", "Item not found.");
+    return;
+  }
 
-    if (!item) {
-        showToast("error", "❌", "Item not found.");
-        return;
+  const currentQty = item.quantity;
+  const newQty = currentQty + delta;
+
+  if (newQty < 1) return;
+
+  console.log("Changing qty for", cartItemId, "from", currentQty, "to", newQty);
+
+  setQtyDisabled(cartItemId, true);
+
+  try {
+    const res = await apiFetch("/api/cart", {
+      method: "POST",
+      body: JSON.stringify({
+        menuItemId: item.id,
+        quantity: newQty,
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(err || `Error ${res.status}`);
     }
 
-    const currentQty = item.quantity;
-    const newQty = currentQty + delta;
+    const updatedCart = await res.json();
+    currentCart = updatedCart;
 
-    if (newQty < 1) return;
+    const updatedItem = updatedCart.items.find((i) => i.id === cartItemId);
 
-    console.log('Changing qty for', cartItemId, 'from', currentQty, 'to', newQty);
+    if (updatedItem) {
+      document.getElementById(`qty-${cartItemId}`).textContent =
+        updatedItem.quantity;
 
-    setQtyDisabled(cartItemId, true);
+      document.getElementById(`sub-${cartItemId}`).textContent =
+        `₹${(updatedItem.price * updatedItem.quantity).toFixed(2)}`;
 
-    try {
+      const minusBtn = document.getElementById(`minus-${cartItemId}`);
 
-        const res = await apiFetch('/api/cart', {
-            method: 'POST',
-            body: JSON.stringify({
-                menuItemId: item.id,
-                quantity: newQty
-            })
-        });
-
-        if (!res.ok) {
-            const err = await res.text();
-            throw new Error(err || `Error ${res.status}`);
-        }
-
-        const updatedCart = await res.json();
-        currentCart = updatedCart;
-
-        const updatedItem = updatedCart.items.find(
-            i => i.id === cartItemId
-        );
-
-        if (updatedItem) {
-
-            document.getElementById(`qty-${cartItemId}`).textContent =
-                updatedItem.quantity;
-
-            document.getElementById(`sub-${cartItemId}`).textContent =
-                `₹${(updatedItem.price * updatedItem.quantity).toFixed(2)}`;
-
-            const minusBtn = document.getElementById(`minus-${cartItemId}`);
-
-            if (minusBtn) {
-                minusBtn.disabled = updatedItem.quantity <= 1;
-            }
-        }
-
-        updateSummary(updatedCart);
-
-    } catch (err) {
-
-        showToast("error", "❌", err.message || "Failed to update quantity.");
-
-    } finally {
-
-        setQtyDisabled(cartItemId, false);
-
+      if (minusBtn) {
+        minusBtn.disabled = updatedItem.quantity <= 1;
+      }
     }
+
+    updateSummary(updatedCart);
+  } catch (err) {
+    showToast("error", "❌", err.message || "Failed to update quantity.");
+  } finally {
+    setQtyDisabled(cartItemId, false);
+  }
 }
 function setQtyDisabled(cartItemId, disabled) {
-    const card = document.getElementById(`cart-item-${cartItemId}`);
-    if (!card) return;
-    card.querySelectorAll('.cc-qty-btn').forEach(b => b.disabled = disabled);
+  const card = document.getElementById(`cart-item-${cartItemId}`);
+  if (!card) return;
+  card.querySelectorAll(".cc-qty-btn").forEach((b) => (b.disabled = disabled));
 }
 
 // ─────────────────────────────────────────
@@ -320,100 +334,158 @@ function setQtyDisabled(cartItemId, disabled) {
 //   DELETE /api/cart/remove/{cartItemId}
 // ─────────────────────────────────────────
 async function removeItem(cartItemId) {
-    const card = document.getElementById(`cart-item-${cartItemId}`);
-    if (card) { card.style.opacity = '0'; card.style.transform = 'translateX(30px)'; }
+  const card = document.getElementById(`cart-item-${cartItemId}`);
+  if (card) {
+    card.style.opacity = "0";
+    card.style.transform = "translateX(30px)";
+  }
 
-    try {
-        const res = await apiFetch(`/api/cart/remove/${cartItemId}`, { method: 'DELETE' });
-        if (!res.ok) {
-            if (card) { card.style.opacity = '1'; card.style.transform = ''; }
-            const err = await res.text();
-            throw new Error(err || `Error ${res.status}`);
-        }
-
-        const updatedCart = await res.json();
-        currentCart = updatedCart;
-
-        setTimeout(() => { if (card) card.remove(); }, 260);
-
-        if (!updatedCart.items || updatedCart.items.length === 0) {
-            setTimeout(() => {
-                document.getElementById('cartContent').style.display = 'none';
-                showEmpty();
-            }, 300);
-        } else {
-            updateSummary(updatedCart);
-        }
-        showToast('info', '🗑️', 'Item removed.');
-
-    } catch (err) {
-        showToast('error', '❌', err.message || 'Failed to remove item.');
+  try {
+    const res = await apiFetch(`/api/cart/${cartItemId}`, { method: "DELETE" });
+    if (!res.ok) {
+      if (card) {
+        card.style.opacity = "1";
+        card.style.transform = "";
+      }
+      const err = await res.text();
+      throw new Error(err || `Error ${res.status}`);
     }
+
+    const successMessage = await res.text();
+
+    if (currentCart && currentCart.items) {
+      currentCart.items = currentCart.items.filter(
+        (item) => item.id !== cartItemId,
+      );
+      currentCart.totalAmount = currentCart.items.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0,
+      );
+    }
+
+    setTimeout(() => {
+      if (card) card.remove();
+    }, 260);
+
+    if (!currentCart || !currentCart.items || currentCart.items.length === 0) {
+      setTimeout(() => {
+        document.getElementById("cartContent").style.display = "none";
+        showEmpty();
+      }, 300);
+    } else {
+      updateSummary(currentCart);
+    }
+    showToast("info", "🗑️", successMessage || "Item removed.");
+  } catch (err) {
+    showToast("error", "❌", err.message || "Failed to remove item.");
+  }
 }
 
 // ─────────────────────────────────────────
 //   CLEAR CART
 //   DELETE /api/cart/clear
 // ─────────────────────────────────────────
-function openClearModal() { document.getElementById('modalClear').classList.remove('hidden'); }
-function closeClearModal() { document.getElementById('modalClear').classList.add('hidden'); }
+function openClearModal() {
+  document.getElementById("modalClear").classList.remove("hidden");
+}
+function closeClearModal() {
+  document.getElementById("modalClear").classList.add("hidden");
+}
 
 async function clearCart() {
-    closeClearModal();
+  closeClearModal();
 
-    try {
-        const cartId = currentCart?.cartId; // only needed if using id-based API
+  try {
+    const cartId = currentCart?.cartId; // only needed if using id-based API
 
-        const res = await apiFetch(
-            cartId ? `/api/cart/${cartId}` : '/api/cart/clear',
-            { method: 'DELETE' }
-        );
+    const res = await apiFetch("/api/cart", { method: "DELETE" });
 
-        if (!res.ok) {
-            const e = await res.text();
-            throw new Error(e || `Error ${res.status}`);
-        }
-
-
-        currentCart = null;
-
-        const cartContent = document.getElementById('cartContent');
-        if (cartContent) cartContent.style.display = 'none';
-
-        showEmpty();
-        showToast('info', '🗑️', 'Cart cleared.');
-
-    } catch (err) {
-        console.error('Clear cart failed:', err);
-        showToast('error', '❌', err.message || 'Failed to clear cart.');
+    if (!res.ok) {
+      const e = await res.text();
+      throw new Error(e || `Error ${res.status}`);
     }
+
+    currentCart = null;
+
+    const cartContent = document.getElementById("cartContent");
+    if (cartContent) cartContent.style.display = "none";
+
+    showEmpty();
+    showToast("info", "🗑️", "Cart cleared.");
+  } catch (err) {
+    console.error("Clear cart failed:", err);
+    showToast("error", "❌", err.message || "Failed to clear cart.");
+  }
 }
 
 // ─────────────────────────────────────────
 //   PLACE ORDER (backend coming later)
 // ─────────────────────────────────────────
-function placeOrder() {
-    showToast('info', '🚧', 'Order placement coming soon!');
+async function placeOrder() {
+  if (!currentCart || !currentCart.items || currentCart.items.length === 0) {
+    showToast("error", "❌", "Your cart is empty.");
+    return;
+  }
+
+  const address = prompt("Enter delivery address:");
+  if (!address || address.trim() === "") {
+    showToast("error", "❌", "Delivery address is required.");
+    return;
+  }
+
+  const phone = prompt("Enter phone number:");
+  if (!phone || phone.trim() === "") {
+    showToast("error", "❌", "Phone number is required.");
+    return;
+  }
+
+  try {
+    const res = await apiFetch("/api/orders", {
+      method: "POST",
+      body: JSON.stringify({
+        deliveryAddress: address.trim(),
+        phoneNumber: phone.trim(),
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(err || `Server error ${res.status}`);
+    }
+
+    const orderResponse = await res.json();
+
+    // Order placed successfully, clear cart
+    currentCart = null;
+    document.getElementById("cartContent").style.display = "none";
+    showEmpty();
+    showToast("success", "✅", "Order placed successfully!");
+  } catch (err) {
+    console.error("Place order error:", err);
+    showToast("error", "❌", err.message || "Failed to place order.");
+  }
 }
 
 // ─────────────────────────────────────────
 //   SKELETON / STATES
 // ─────────────────────────────────────────
 function showSkeleton() {
-    document.getElementById('skeletonCart').style.display = '';
-    document.getElementById('cartContent').style.display  = 'none';
-    document.getElementById('emptyCart').style.display    = 'none';
-    document.getElementById('errorCart').style.display    = 'none';
+  document.getElementById("skeletonCart").style.display = "";
+  document.getElementById("cartContent").style.display = "none";
+  document.getElementById("emptyCart").style.display = "none";
+  document.getElementById("errorCart").style.display = "none";
 }
-function hideSkeleton() { document.getElementById('skeletonCart').style.display = 'none'; }
+function hideSkeleton() {
+  document.getElementById("skeletonCart").style.display = "none";
+}
 function showEmpty() {
-    document.getElementById('emptyCart').style.display = '';
-    document.getElementById('cartContent').style.display = 'none';
-    document.getElementById('errorCart').style.display = 'none';
+  document.getElementById("emptyCart").style.display = "";
+  document.getElementById("cartContent").style.display = "none";
+  document.getElementById("errorCart").style.display = "none";
 }
 function showError(msg) {
-    document.getElementById('errorCart').style.display = '';
-    document.getElementById('errorMsg').textContent = msg;
+  document.getElementById("errorCart").style.display = "";
+  document.getElementById("errorMsg").textContent = msg;
 }
 
 // ─────────────────────────────────────────
@@ -421,18 +493,24 @@ function showError(msg) {
 // ─────────────────────────────────────────
 let toastTimer;
 function showToast(type, icon, message) {
-    clearTimeout(toastTimer);
-    const toast = document.getElementById('toast');
-    document.getElementById('toastIcon').textContent = icon;
-    document.getElementById('toastMsg').textContent  = message;
-    toast.className = `show ${type}`;
-    toastTimer = setTimeout(() => { toast.className = type; }, 2800);
+  clearTimeout(toastTimer);
+  const toast = document.getElementById("toast");
+  document.getElementById("toastIcon").textContent = icon;
+  document.getElementById("toastMsg").textContent = message;
+  toast.className = `show ${type}`;
+  toastTimer = setTimeout(() => {
+    toast.className = type;
+  }, 2800);
 }
 
 // ─────────────────────────────────────────
 //   HELPER
 // ─────────────────────────────────────────
 function escapeHtml(str) {
-    if (!str) return '';
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }

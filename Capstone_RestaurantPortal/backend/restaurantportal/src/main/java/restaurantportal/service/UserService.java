@@ -1,7 +1,5 @@
 package restaurantportal.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +17,6 @@ import restaurantportal.security.JwtUtil;
  */
 @Service
 public class UserService {
-
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -40,11 +36,8 @@ public class UserService {
     @Transactional
     public UserResponse register(RegisterRequest request) {
 
-        log.info("User registration attempt for email: {}", request.getEmail());
-
         userRepository.findByEmail(request.getEmail())
                 .ifPresent(u -> {
-                    log.warn("Registration failed - email already exists: {}", request.getEmail());
                     throw new IllegalArgumentException("Email already registered");
                 });
 
@@ -62,8 +55,6 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        log.info("User registered successfully with id: {}", savedUser.getId());
-
         return new UserResponse(
                 savedUser.getId(),
                 savedUser.getFirstName(),
@@ -80,23 +71,13 @@ public class UserService {
      */
     public String login(String email, String password) {
 
-        log.info("Login attempt for email: {}", email);
-
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    log.warn("Login failed - invalid email: {}", email);
-                    return new IllegalArgumentException("Invalid email or password");
-                });
+                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            log.warn("Login failed - invalid password for email: {}", email);
             throw new IllegalArgumentException("Invalid email or password");
         }
 
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
-
-        log.info("Login successful for email: {}", email);
-
-        return token;
+        return jwtUtil.generateToken(user.getEmail(), user.getRole().name());
     }
 }

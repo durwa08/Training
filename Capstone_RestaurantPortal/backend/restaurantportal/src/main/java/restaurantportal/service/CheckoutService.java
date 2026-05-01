@@ -1,7 +1,5 @@
 package restaurantportal.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import restaurantportal.dto.CartItemResponse;
 import restaurantportal.dto.CheckoutResponse;
@@ -20,8 +18,6 @@ import java.util.stream.Collectors;
 @Service
 public class CheckoutService {
 
-    private static final Logger log = LoggerFactory.getLogger(CheckoutService.class);
-
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
 
@@ -37,22 +33,14 @@ public class CheckoutService {
     public CheckoutResponse checkout() {
 
         String email = SecurityUtil.getCurrentUserEmail();
-        log.info("Checkout initiated for user: {}", email);
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> {
-                    log.error("User not found during checkout: {}", email);
-                    return new RuntimeException("User not found");
-                });
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         Cart cart = cartRepository.findByUser(user)
-                .orElseThrow(() -> {
-                    log.error("Cart not found for user: {}", email);
-                    return new RuntimeException("Cart not found");
-                });
+                .orElseThrow(() -> new RuntimeException("Cart not found"));
 
         if (cart.getItems().isEmpty()) {
-            log.warn("Checkout failed - cart is empty for user: {}", email);
             throw new RuntimeException("Cart is empty");
         }
 
@@ -60,8 +48,6 @@ public class CheckoutService {
         double wallet = user.getWalletBalance();
 
         boolean canPlace = wallet >= total;
-
-        log.info("Checkout calculated - total: {}, wallet: {}, canPlaceOrder: {}", total, wallet, canPlace);
 
         return new CheckoutResponse(
                 total,
@@ -72,7 +58,6 @@ public class CheckoutService {
                                 i.getId(),
                                 i.getMenuItem().getName(),
                                 i.getPrice(),
-                                i.getQuantity()))
-                        .collect(Collectors.toList()));
+                                i.getQuantity())).collect(Collectors.toList()));
     }
 }
