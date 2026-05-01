@@ -3,16 +3,28 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Food GreenBite — My Profile</title>
+    <title>Green Bite — My Profile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="../css/main.css"/>
     <style>
+        /* Green & White Theme */
+        :root {
+            --green: #10b981;
+            --green-dk: #059669;
+            --green-light: #d1fae5;
+            --white: #ffffff;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+        }
+
+        body { background: var(--white) !important; }
+
         /* ── PROFILE SPECIFIC STYLES ── */
         .profile-avatar {
             width: 96px; height: 96px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--burgundy), var(--burgundy-lt));
+            background: linear-gradient(135deg, var(--green), var(--green-light));
             display: flex; align-items: center; justify-content: center;
             font-size: 36px; font-weight: 700;
             color: white; font-family: 'Playfair Display', serif;
@@ -20,32 +32,32 @@
             flex-shrink: 0;
         }
         .info-card {
-            background: white; border: 1px solid var(--border);
+            background: white; border: 1px solid var(--green-light);
             border-radius: 18px; padding: 28px; margin-bottom: 20px;
         }
         .info-card-title {
             font-family: 'Playfair Display', serif;
-            font-size: 18px; font-weight: 700; color: var(--ink);
+            font-size: 18px; font-weight: 700; color: var(--green-dk);
             margin-bottom: 20px; padding-bottom: 14px;
-            border-bottom: 1.5px solid var(--border);
+            border-bottom: 1.5px solid var(--green-light);
             display: flex; align-items: center; gap: 10px;
         }
         .info-row {
             display: flex; align-items: center;
-            padding: 12px 0; border-bottom: 1px solid var(--cream-dk);
+            padding: 12px 0; border-bottom: 1px solid var(--green-light);
         }
         .info-row:last-child { border-bottom: none; }
         .info-label {
             font-size: 12px; font-weight: 700; letter-spacing: .5px;
-            text-transform: uppercase; color: var(--ash);
+            text-transform: uppercase; color: var(--gray-700);
             width: 140px; flex-shrink: 0;
         }
         .info-value {
-            font-size: 15px; font-weight: 500; color: var(--ink);
+            font-size: 15px; font-weight: 500; color: var(--gray-800);
             font-family: 'DM Sans', sans-serif;
         }
         .wallet-card {
-            background: linear-gradient(135deg, var(--burgundy-dk) 0%, var(--burgundy-lt) 100%);
+            background: linear-gradient(135deg, var(--green-dk) 0%, var(--green) 100%);
             border-radius: 20px; padding: 28px; color: white;
             margin-bottom: 20px; position: relative; overflow: hidden;
         }
@@ -59,7 +71,7 @@
             content: ''; position: absolute;
             bottom: -30px; left: -30px;
             width: 120px; height: 120px; border-radius: 50%;
-            background: rgba(201,168,76,.12);
+            background: rgba(16,185,129,.12);
         }
         .wallet-label {
             font-size: 12px; letter-spacing: 1px; text-transform: uppercase;
@@ -79,30 +91,30 @@
             font-size: 12px; font-weight: 600; margin-top: 14px;
         }
         .order-mini-card {
-            background: var(--cream); border: 1px solid var(--border);
+            background: var(--green-light); border: 1px solid var(--green);
             border-radius: 12px; padding: 14px 16px;
             display: flex; align-items: center; justify-content: space-between;
             margin-bottom: 10px; transition: all .2s;
         }
         .order-mini-card:hover {
-            border-color: var(--gold);
-            box-shadow: 0 4px 16px rgba(107,29,46,.07);
+            border-color: var(--green-dk);
+            box-shadow: 0 4px 16px rgba(16,185,129,.15);
         }
         .status-pill {
             display: inline-flex; align-items: center; gap: 4px;
             padding: 3px 10px; border-radius: 99px;
             font-size: 11px; font-weight: 700;
         }
-        .status-PLACED    { background:#EFF4FF; color:#2563EB; }
-        .status-PENDING   { background:#FFF7ED; color:#C2410C; }
-        .status-DELIVERED { background:#F0FDF4; color:#15803D; }
-        .status-COMPLETED { background:#EFF9F4; color:#1E6B45; }
-        .status-CANCELLED { background:#FDF0EF; color:#C0392B; }
+        .status-PLACED    { background:#dbeafe; color:#0284c7; }
+        .status-PENDING   { background:#fef3c7; color:#ca8a04; }
+        .status-DELIVERED { background:#dcfce7; color:#15803d; }
+        .status-COMPLETED { background:#d1fae5; color:#059669; }
+        .status-CANCELLED { background:#fee2e2; color:#dc2626; }
 
         /* skeleton */
         .skel-line {
             height: 16px; border-radius: 8px;
-            background: var(--cream-dk);
+            background: var(--green-light);
             animation: pulse 1.4s ease-in-out infinite;
         }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
@@ -111,33 +123,33 @@
 <body class="page-wrapper">
 
 <!-- ══ NAVBAR ══ -->
-<nav style="position:sticky;top:0;z-index:100;background:white;border-bottom:1px solid var(--border);box-shadow:0 2px 8px rgba(107,29,46,.07);">
+<nav style="position:sticky;top:0;z-index:100;background:white;border-bottom:1px solid var(--green-light);box-shadow:0 2px 8px rgba(16,185,129,.07);">
     <div style="max-width:1100px;margin:0 auto;padding:0 24px;height:72px;display:flex;align-items:center;justify-content:space-between;">
         <div style="display:flex;align-items:center;gap:14px;flex-shrink:0;">
             <a href="restaurants.html"
-               style="display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:10px;border:1.5px solid var(--border);background:var(--cream);font-size:13px;font-weight:500;color:var(--ash);text-decoration:none;"
-               onmouseover="this.style.borderColor='var(--burgundy)';this.style.color='var(--burgundy)'"
-               onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ash)'">
+               style="display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:10px;border:1.5px solid var(--green-light);background:var(--green-light);font-size:13px;font-weight:500;color:var(--green-dk);text-decoration:none;"
+               onmouseover="this.style.borderColor='var(--green-dk)';this.style.color='var(--green-dk)'"
+               onmouseout="this.style.borderColor='var(--green-light)';this.style.color='var(--green-dk)'">
                 ← Back
             </a>
-            <div style="width:1px;height:22px;background:var(--border);"></div>
+            <div style="width:1px;height:22px;background:var(--green-light);"></div>
             <a href="restaurants.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
                 <span style="font-size:26px;">🍽️</span>
-                <span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--burgundy);">
-                    Food<span style="color:var(--gold);">Mania</span>
+                <span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--green-dk);">
+                    Green<span style="color:var(--green);">Bite</span>
                 </span>
             </a>
         </div>
         <div style="display:flex;align-items:center;gap:12px;">
-            <a href="orders.html" style="font-size:13.5px;font-weight:500;color:var(--ash);text-decoration:none;display:flex;align-items:center;gap:5px;"
-               onmouseover="this.style.color='var(--burgundy)'"
-               onmouseout="this.style.color='var(--ash)'">
+            <a href="orders.html" style="font-size:13.5px;font-weight:500;color:var(--gray-700);text-decoration:none;display:flex;align-items:center;gap:5px;"
+               onmouseover="this.style.color='var(--green-dk)'"
+               onmouseout="this.style.color='var(--gray-700)'">
                 📦 My Orders
             </a>
             <button onclick="logout()"
-                    style="display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:500;color:var(--ash);background:none;border:none;cursor:pointer;"
-                    onmouseover="this.style.color='#c0392b'"
-                    onmouseout="this.style.color='var(--ash)'">
+                    style="display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:500;color:var(--gray-700);background:none;border:none;cursor:pointer;"
+                    onmouseover="this.style.color='#dc2626'"
+                    onmouseout="this.style.color='var(--gray-700)'">
                 🚪 Sign Out
             </button>
         </div>
@@ -145,8 +157,8 @@
 </nav>
 
 <!-- ══ HERO ══ -->
-<div class="fm-hero">
-    <div class="fm-hero-inner">
+<div class="fm-hero" style="background: linear-gradient(135deg, var(--green-dk), var(--green)); padding: 40px 24px;">
+    <div class="fm-hero-inner" style="max-width:1100px;margin:0 auto;">
         <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
             <div class="profile-avatar" id="avatarInitials">--</div>
             <div>
@@ -209,7 +221,7 @@
                     </div>
                     <div class="info-row">
                         <span class="info-label">Member Since</span>
-                        <span class="info-value">Food Mania Member</span>
+                        <span class="info-value">Green Bite Member</span>
                     </div>
                 </div>
 
@@ -313,9 +325,9 @@
 </main>
 
 <!-- FOOTER -->
-<footer class="fm-footer">
-    <span class="fb">🍽️ Food<em>Mania</em></span>
-    <p>© 2026 Food Mania. Made with ❤️ for food lovers.</p>
+<footer class="fm-footer" style="background: var(--gray-800); color: rgba(255,255,255,.6); padding: 28px 24px; text-align: center;">
+    <span class="fb" style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:white;display:block;margin-bottom:6px;">🍽️ Green<em style="color:var(--green);font-style:normal;">Bite</em></span>
+    <p style="font-family:'DM Sans',sans-serif;font-size:13px;">© 2026 Green Bite. Made with ❤️ for food lovers.</p>
 </footer>
 
 <script src="../js/utils.js"></script>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>GreenBite — Orders</title>
+    <title>Green Bite — Orders</title>
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -13,9 +13,64 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../css/style.css">
+    <style>
+        /* Green & White Theme */
+        :root {
+            --green: #10b981;
+            --green-dark: #059669;
+            --green-light: #d1fae5;
+            --white: #ffffff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+        }
+
+        body {
+            background: var(--white) !important;
+            color: var(--gray-800) !important;
+        }
+
+        .stat-box {
+            background: var(--white) !important;
+            border: 2px solid var(--green) !important;
+            border-radius: 12px;
+            padding: 16px;
+            color: var(--gray-800) !important;
+        }
+
+        .stat-box p {
+            color: var(--gray-700) !important;
+            font-weight: 600;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .stat-box h2 {
+            color: var(--green-dark) !important;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .back-btn {
+            background: var(--green) !important;
+            color: var(--white) !important;
+            border: none !important;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover {
+            background: var(--green-dark) !important;
+        }
+    </style>
 </head>
 
-<body class="bg-gray-100 font-[DM_Sans]">
+<body class="font-[DM_Sans]">
 
 <!-- MAIN CONTAINER -->
 <div class="max-w-7xl mx-auto px-6 py-6">
@@ -23,8 +78,8 @@
     <!-- HEADER -->
     <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
         <div>
-            <h1 class="text-3xl font-bold text-gray-800">📦 Orders Dashboard</h1>
-            <p class="text-gray-500 text-sm mt-1">
+            <h1 class="text-3xl font-bold" style="color: var(--green-dark);">📦 Orders Dashboard</h1>
+            <p class="text-sm mt-1" style="color: var(--gray-700);">
                 Manage and track all incoming restaurant orders
             </p>
         </div>
@@ -55,23 +110,23 @@
     </div>
 
     <!-- TABLE CARD -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+    <div class="bg-white rounded-2xl shadow-sm border border-green-200 overflow-hidden">
 
         <!-- TABLE HEADER -->
-        <div class="flex items-center justify-between px-6 py-4 border-b bg-gray-50">
-            <h2 class="font-semibold text-gray-700 text-lg">All Orders</h2>
+        <div class="flex items-center justify-between px-6 py-4 border-b" style="background: var(--green-light);">
+            <h2 class="font-semibold text-lg" style="color: var(--green-dark);">All Orders</h2>
         </div>
 
         <!-- TABLE -->
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
-                <thead class="bg-gray-50 text-gray-600 uppercase text-xs">
+                <thead style="background: var(--green-light); color: var(--green-dark);" class="uppercase text-xs font-bold">
                 <tr>
                     <th class="px-6 py-3 text-left">Order ID</th>
                     <th class="px-6 py-3 text-left">Customer</th>
                     <th class="px-6 py-3 text-left">Total</th>
                     <th class="px-6 py-3 text-left">Status</th>
-                    <th class="px-6 py-3 text-left">Action</th>
+                    <th class="px-6 py-3 text-center">Action</th>
                 </tr>
                 </thead>
 
@@ -85,8 +140,8 @@
     <!-- EMPTY STATE -->
     <div id="emptyState" class="hidden text-center mt-12">
         <div class="text-6xl mb-3">📭</div>
-        <h2 class="text-xl font-semibold text-gray-700">No Orders Yet</h2>
-        <p class="text-gray-500 text-sm mt-1">
+        <h2 class="text-xl font-semibold" style="color: var(--green-dark);">No Orders Yet</h2>
+        <p class="text-sm mt-1" style="color: var(--gray-700);">
             Orders will appear here once customers start placing them.
         </p>
     </div>
