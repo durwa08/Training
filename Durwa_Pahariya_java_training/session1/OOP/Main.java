@@ -8,8 +8,10 @@ public class Main {
 
         System.out.println("-----");
 
-        GraduateStudent g1 = new GraduateStudent("Anji", 12, 90.0, "AIML");
+        Durwa_Pahariya_java_training.session1.OOP.GraduateStudent g1 = new Durwa_Pahariya_java_training.session1.OOP.GraduateStudent("Anji", 12, 90.0, "AIML");
         g1.displayDetails();
     }
 
 }
+
+

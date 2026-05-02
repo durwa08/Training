@@ -1,5 +1,7 @@
 package restaurantportal.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import restaurantportal.dto.CartItemResponse;
 import restaurantportal.dto.CheckoutResponse;
@@ -17,16 +19,19 @@ import java.util.stream.Collectors;
  */
 @Service
 public class CheckoutService {
-/**
+    /**
      * CheckoutService handles the checkout process for users.
      * It calculates the total amount of the cart and checks if the user has sufficient wallet balance to place the order.
      */
+    private static final Logger logger = LoggerFactory.getLogger(CheckoutService.class);
+
     private final UserRepository userRepository;
     private final CartRepository cartRepository;
 
     public CheckoutService(UserRepository userRepository, CartRepository cartRepository) {
         this.userRepository = userRepository;
         this.cartRepository = cartRepository;
+        logger.info("CheckoutService initialized");
     }
 
     /**
@@ -35,22 +40,36 @@ public class CheckoutService {
      */
     public CheckoutResponse checkout() {
 
+        logger.info("Processing checkout");
+
         String email = SecurityUtil.getCurrentUserEmail();
+        logger.debug("Current user email: {}", email);
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with email: {}", email);
+                    return new RuntimeException("User not found");
+                });
 
         Cart cart = cartRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
+                .orElseThrow(() -> {
+                    logger.error("Cart not found for user");
+                    return new RuntimeException("Cart not found");
+                });
 
         if (cart.getItems().isEmpty()) {
+            logger.warn("Cart is empty for user: {}", email);
             throw new RuntimeException("Cart is empty");
         }
 
         double total = cart.getTotalAmount();
         double wallet = user.getWalletBalance();
 
+        logger.debug("Cart total: {}, Wallet balance: {}", total, wallet);
+
         boolean canPlace = wallet >= total;
+
+        logger.info("Checkout evaluated. Can place order: {}", canPlace);
 
         return new CheckoutResponse(
                 total,

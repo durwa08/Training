@@ -1,5 +1,7 @@
 package restaurantportal.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import restaurantportal.dto.CategoryRequest;
 import restaurantportal.dto.CategoryResponse;
@@ -14,10 +16,13 @@ import java.util.List;
 @RequestMapping("/api/categories")
 public class CategoryController {
 
+    private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);
+
     private final CategoryService categoryService;
 
     public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
+        logger.info("CategoryController initialized");
     }
 
     /**
@@ -26,7 +31,11 @@ public class CategoryController {
     @PostMapping("/{restaurantId}")
     public CategoryResponse create(@PathVariable Long restaurantId,
                                    @RequestBody CategoryRequest request) {
-        return categoryService.create(restaurantId, request);
+        logger.info("Received request to create category for restaurantId: {}", restaurantId);
+        logger.debug("CategoryRequest: {}", request);
+        CategoryResponse response = categoryService.create(restaurantId, request);
+        logger.info("Category created successfully for restaurantId: {}", restaurantId);
+        return response;
     }
 
     /**
@@ -34,7 +43,10 @@ public class CategoryController {
      */
     @GetMapping("/{restaurantId}")
     public List<CategoryResponse> getByRestaurant(@PathVariable Long restaurantId) {
-        return categoryService.getByRestaurant(restaurantId);
+        logger.info("Received request to fetch categories for restaurantId: {}", restaurantId);
+        List<CategoryResponse> response = categoryService.getByRestaurant(restaurantId);
+        logger.info("Categories fetched successfully for restaurantId: {}", restaurantId);
+        return response;
     }
 
     /**
@@ -43,7 +55,11 @@ public class CategoryController {
     @PutMapping("/{id}")
     public CategoryResponse update(@PathVariable Long id,
                                    @RequestBody CategoryRequest request) {
-        return categoryService.update(id, request);
+        logger.info("Received request to update category with id: {}", id);
+        logger.debug("CategoryRequest: {}", request);
+        CategoryResponse response = categoryService.update(id, request);
+        logger.info("Category updated successfully with id: {}", id);
+        return response;
     }
 
     /**
@@ -51,6 +67,8 @@ public class CategoryController {
      */
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
+        logger.info("Received request to delete category with id: {}", id);
         categoryService.delete(id);
+        logger.info("Category deleted successfully with id: {}", id);
     }
 }

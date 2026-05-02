@@ -1,5 +1,7 @@
 package restaurantportal.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import restaurantportal.dto.OrderResponse;
 import restaurantportal.dto.PlaceOrderRequest;
@@ -15,11 +17,14 @@ import java.util.List;
 @RequestMapping("/api/orders")
 public class OrderController {
 
+    private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
+
     private final OrderService service;
 
     // Constructor injection
     public OrderController(OrderService service) {
         this.service = service;
+        logger.info("OrderController initialized");
     }
 
     /**
@@ -27,7 +32,10 @@ public class OrderController {
      */
     @GetMapping("/preview")
     public OrderResponse preview() {
-        return service.previewOrder();
+        logger.info("Received request for order preview");
+        OrderResponse response = service.previewOrder();
+        logger.info("Order preview fetched successfully");
+        return response;
     }
 
     /**
@@ -35,7 +43,11 @@ public class OrderController {
      */
     @PostMapping
     public OrderResponse placeOrder(@RequestBody PlaceOrderRequest request) {
-        return service.placeOrder(request);
+        logger.info("Received request to place order");
+        logger.debug("PlaceOrderRequest: {}", request);
+        OrderResponse response = service.placeOrder(request);
+        logger.info("Order placed successfully");
+        return response;
     }
 
     /**
@@ -43,7 +55,10 @@ public class OrderController {
      */
     @GetMapping
     public List<OrderResponse> getMyOrders() {
-        return service.getMyOrders();
+        logger.info("Received request to fetch user orders");
+        List<OrderResponse> response = service.getMyOrders();
+        logger.info("User orders fetched successfully");
+        return response;
     }
 
     /**
@@ -51,7 +66,10 @@ public class OrderController {
      */
     @GetMapping("/owner")
     public List<OrderResponse> getOwnerOrders() {
-        return service.getOwnerOrders();
+        logger.info("Received request to fetch owner orders");
+        List<OrderResponse> response = service.getOwnerOrders();
+        logger.info("Owner orders fetched successfully");
+        return response;
     }
 
     /**
@@ -60,7 +78,10 @@ public class OrderController {
     @PutMapping("/{id}")
     public OrderResponse updateStatus(@PathVariable Long id,
                                       @RequestParam String status) {
-        return service.updateStatus(id, status);
+        logger.info("Received request to update order status for id: {} to status: {}", id, status);
+        OrderResponse response = service.updateStatus(id, status);
+        logger.info("Order status updated successfully for id: {}", id);
+        return response;
     }
 
     /**
@@ -68,6 +89,9 @@ public class OrderController {
      */
     @PutMapping("/{id}/cancel")
     public String cancelOrder(@PathVariable Long id) {
-        return service.cancelOrder(id);
+        logger.info("Received request to cancel order with id: {}", id);
+        String response = service.cancelOrder(id);
+        logger.info("Order cancelled successfully with id: {}", id);
+        return response;
     }
 }

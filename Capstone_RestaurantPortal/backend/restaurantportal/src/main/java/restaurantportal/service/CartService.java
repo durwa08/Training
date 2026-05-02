@@ -1,5 +1,7 @@
 package restaurantportal.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import restaurantportal.dto.*;
@@ -17,6 +19,8 @@ public class CartService {
     /**
      * CartService handles all operations related to the shopping cart.
      */
+    private static final Logger logger = LoggerFactory.getLogger(CartService.class);
+
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final MenuItemRepository menuItemRepository;
@@ -27,14 +31,17 @@ public class CartService {
         this.cartRepository = cartRepository;
         this.userRepository = userRepository;
         this.menuItemRepository = menuItemRepository;
+        logger.info("CartService initialized");
     }
 
     /**
      * Fetches existing cart for user or creates a new one if not present.
      */
     private Cart getCart(User user) {
+        logger.debug("Fetching cart for user");
         return cartRepository.findByUser(user)
                 .orElseGet(() -> {
+                    logger.info("Cart not found, creating new cart");
                     Cart cart = new Cart();
                     cart.setUser(user);
                     return cartRepository.save(cart);
@@ -47,15 +54,25 @@ public class CartService {
     @Transactional
     public CartResponse addToCart(AddToCartRequest request) {
 
+        logger.info("Adding item to cart");
+        logger.debug("AddToCartRequest: {}", request);
+
         String email = SecurityUtil.getCurrentUserEmail();
+        logger.debug("Current user email: {}", email);
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with email: {}", email);
+                    return new RuntimeException("User not found");
+                });
 
         Cart cart = getCart(user);
 
         MenuItem menuItem = menuItemRepository.findById(request.getMenuItemId())
-                .orElseThrow(() -> new RuntimeException("Menu item not found"));
+                .orElseThrow(() -> {
+                    logger.error("Menu item not found with id: {}", request.getMenuItemId());
+                    return new RuntimeException("Menu item not found");
+                });
 
         CartItem existing = cart.getItems().stream()
                 .filter(i -> i.getMenuItem().getId().equals(menuItem.getId()))
@@ -63,8 +80,10 @@ public class CartService {
                 .orElse(null);
 
         if (existing != null) {
+            logger.debug("Item already exists in cart, updating quantity");
             existing.setQuantity(request.getQuantity());
         } else {
+            logger.debug("Adding new item to cart");
             CartItem item = new CartItem();
             item.setMenuItem(menuItem);
             item.setId(menuItem.getId());
@@ -76,7 +95,10 @@ public class CartService {
 
         recalculate(cart);
 
-        return mapToResponse(cartRepository.save(cart));
+        CartResponse response = mapToResponse(cartRepository.save(cart));
+        logger.info("Item added to cart successfully");
+
+        return response;
     }
 
     /**
@@ -84,13 +106,24 @@ public class CartService {
      */
     public CartResponse getMyCart() {
 
+        logger.info("Fetching current user's cart");
+
         String email = SecurityUtil.getCurrentUserEmail();
+        logger.debug("Current user email: {}", email);
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with email: {}", email);
+                    return new RuntimeException("User not found");
+                });
 
         Cart cart = cartRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
+                .orElseThrow(() -> {
+                    logger.error("Cart not found for user");
+                    return new RuntimeException("Cart not found");
+                });
+
+        logger.info("Cart fetched successfully");
 
         return mapToResponse(cart);
     }
@@ -101,18 +134,25 @@ public class CartService {
     @Transactional
     public void removeItem(Long id) {
 
+        logger.info("Removing item from cart with id: {}", id);
+
         Cart cart = getCartEntity();
 
         CartItem item = cart.getItems().stream()
                 .filter(i -> i.getId().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Item not found"));
+                .orElseThrow(() -> {
+                    logger.error("Item not found in cart with id: {}", id);
+                    return new RuntimeException("Item not found");
+                });
 
         cart.getItems().remove(item);
 
         recalculate(cart);
 
         cartRepository.save(cart);
+
+        logger.info("Item removed successfully from cart with id: {}", id);
     }
 
     /**
@@ -121,12 +161,16 @@ public class CartService {
     @Transactional
     public void clearCart() {
 
+        logger.info("Clearing cart");
+
         Cart cart = getCartEntity();
 
         cart.getItems().clear();
         cart.setTotalAmount(0.0);
 
         cartRepository.save(cart);
+
+        logger.info("Cart cleared successfully");
     }
 
     /**
@@ -134,19 +178,29 @@ public class CartService {
      */
     private Cart getCartEntity() {
 
+        logger.debug("Fetching cart entity for current user");
+
         String email = SecurityUtil.getCurrentUserEmail();
+        logger.debug("Current user email: {}", email);
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with email: {}", email);
+                    return new RuntimeException("User not found");
+                });
 
         return cartRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
+                .orElseThrow(() -> {
+                    logger.error("Cart not found for user");
+                    return new RuntimeException("Cart not found");
+                });
     }
 
     /**
      * Recalculates total cart amount.
      */
     private void recalculate(Cart cart) {
+        logger.debug("Recalculating cart total");
         double total = cart.getItems().stream()
                 .mapToDouble(i -> i.getPrice() * i.getQuantity())
                 .sum();
@@ -158,6 +212,8 @@ public class CartService {
      * Converts Cart entity to CartResponse DTO.
      */
     private CartResponse mapToResponse(Cart cart) {
+
+        logger.debug("Mapping Cart entity to CartResponse");
 
         return new CartResponse(
                 cart.getId(),

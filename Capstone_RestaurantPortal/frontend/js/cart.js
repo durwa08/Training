@@ -419,7 +419,7 @@ async function clearCart() {
 }
 
 // ─────────────────────────────────────────
-//   PLACE ORDER (backend coming later)
+//   PLACE ORDER
 // ─────────────────────────────────────────
 async function placeOrder() {
   if (!currentCart || !currentCart.items || currentCart.items.length === 0) {
