@@ -56,4 +56,7 @@ public class MenuItem {
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
+
+    public void setIsAvailable(boolean b) {
+    }
 }

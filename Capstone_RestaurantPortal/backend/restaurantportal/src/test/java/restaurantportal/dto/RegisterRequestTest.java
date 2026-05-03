@@ -3,8 +3,14 @@ package restaurantportal.dto;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for RegisterRequest DTO.
+ */
 class RegisterRequestTest {
 
+    /**
+     * Tests getter and setter methods of RegisterRequest.
+     */
     @Test
     void testGetterSetter() {
         RegisterRequest request = new RegisterRequest();
@@ -24,6 +30,9 @@ class RegisterRequestTest {
         assertEquals("USER", request.getRole());
     }
 
+    /**
+     * Tests all-arguments constructor of RegisterRequest.
+     */
     @Test
     void testAllArgsConstructor() {
         RegisterRequest request = new RegisterRequest(

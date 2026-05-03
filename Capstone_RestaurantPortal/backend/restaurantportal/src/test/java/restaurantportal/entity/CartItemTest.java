@@ -3,8 +3,14 @@ package restaurantportal.entity;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for CartItem entity.
+ */
 class CartItemTest {
 
+    /**
+     * Tests constructor of CartItem.
+     */
     @Test
     void testConstructor() {
         MenuItem menuItem = new MenuItem();

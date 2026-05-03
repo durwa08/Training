@@ -12,6 +12,9 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for WalletService.
+ */
 class WalletServiceTest {
 
     @Mock private UserRepository userRepository;
@@ -20,39 +23,54 @@ class WalletServiceTest {
 
     private AutoCloseable closeable;
 
+    /**
+     * Initializes mocks before each test.
+     */
     @BeforeEach
     void setup() {
         closeable = MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Closes resources after each test.
+     */
     @AfterEach
     void tearDown() throws Exception {
         closeable.close();
     }
 
+    /**
+     * Creates a sample user with balance.
+     */
     private User user(double balance) {
         User u = new User();
         u.setId(1L);
-        u.setEmail("test@mail.com");
+        u.setEmail("durwa@mail.com");
         u.setWalletBalance(balance);
         return u;
     }
 
+    /**
+     * Creates a sample add money request.
+     */
     private AddMoneyRequest request(double amount) {
         AddMoneyRequest r = new AddMoneyRequest();
         r.setAmount(amount);
         return r;
     }
 
+    /**
+     * Tests successful money addition.
+     */
     @Test
     void addMoney_success() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {
 
-            s.when(SecurityUtil::getCurrentUserEmail).thenReturn("test@mail.com");
+            s.when(SecurityUtil::getCurrentUserEmail).thenReturn("durwa@mail.com");
 
             User u = user(100.0);
 
-            when(userRepository.findByEmail("test@mail.com")).thenReturn(Optional.of(u));
+            when(userRepository.findByEmail("durwa@mail.com")).thenReturn(Optional.of(u));
             when(userRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
             WalletResponse res = walletService.addMoney(request(50.0));
@@ -61,6 +79,9 @@ class WalletServiceTest {
         }
     }
 
+    /**
+     * Tests add money when user not found.
+     */
     @Test
     void addMoney_userNotFound() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {
@@ -74,15 +95,18 @@ class WalletServiceTest {
         }
     }
 
+    /**
+     * Tests add money with zero amount.
+     */
     @Test
     void addMoney_zeroAmount() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {
 
-            s.when(SecurityUtil::getCurrentUserEmail).thenReturn("test@mail.com");
+            s.when(SecurityUtil::getCurrentUserEmail).thenReturn("durwa@mail.com");
 
             User u = user(100.0);
 
-            when(userRepository.findByEmail("test@mail.com")).thenReturn(Optional.of(u));
+            when(userRepository.findByEmail("durwa@mail.com")).thenReturn(Optional.of(u));
             when(userRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
             WalletResponse res = walletService.addMoney(request(0.0));
@@ -91,15 +115,18 @@ class WalletServiceTest {
         }
     }
 
+    /**
+     * Tests add money with negative amount.
+     */
     @Test
     void addMoney_negativeAmount() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {
 
-            s.when(SecurityUtil::getCurrentUserEmail).thenReturn("test@mail.com");
+            s.when(SecurityUtil::getCurrentUserEmail).thenReturn("durwa@mail.com");
 
             User u = user(100.0);
 
-            when(userRepository.findByEmail("test@mail.com")).thenReturn(Optional.of(u));
+            when(userRepository.findByEmail("durwa@mail.com")).thenReturn(Optional.of(u));
             when(userRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
             WalletResponse res = walletService.addMoney(request(-20.0));
@@ -108,15 +135,18 @@ class WalletServiceTest {
         }
     }
 
+    /**
+     * Tests fetching wallet balance.
+     */
     @Test
     void getBalance_success() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {
 
-            s.when(SecurityUtil::getCurrentUserEmail).thenReturn("test@mail.com");
+            s.when(SecurityUtil::getCurrentUserEmail).thenReturn("durwa@mail.com");
 
             User u = user(200.0);
 
-            when(userRepository.findByEmail("test@mail.com")).thenReturn(Optional.of(u));
+            when(userRepository.findByEmail("durwa@mail.com")).thenReturn(Optional.of(u));
 
             WalletResponse res = walletService.getBalance();
 
@@ -124,6 +154,9 @@ class WalletServiceTest {
         }
     }
 
+    /**
+     * Tests fetching balance when user not found.
+     */
     @Test
     void getBalance_userNotFound() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {

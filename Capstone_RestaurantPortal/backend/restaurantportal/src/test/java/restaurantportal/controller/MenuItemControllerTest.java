@@ -12,6 +12,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for MenuItemController.
+ */
 class MenuItemControllerTest {
 
     @InjectMocks
@@ -20,20 +23,31 @@ class MenuItemControllerTest {
     @Mock
     private MenuItemService menuItemService;
 
+    /**
+     * Initializes mocks before each test.
+     */
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Creates a sample MenuItemResponse.
+     */
     private MenuItemResponse response() {
         return new MenuItemResponse(
                 1L,
                 "Burger",
                 150.0,
-                    1L  // restaurantId (adjust if your constructor differs)
+                "Tasty burger",
+                true,
+                2L
         );
     }
 
+    /**
+     * Tests successful menu item creation.
+     */
     @Test
     void create_success() {
 
@@ -50,6 +64,9 @@ class MenuItemControllerTest {
         verify(menuItemService).create(1L, req);
     }
 
+    /**
+     * Tests menu item creation exception.
+     */
     @Test
     void create_exception() {
 
@@ -63,6 +80,9 @@ class MenuItemControllerTest {
         });
     }
 
+    /**
+     * Tests fetching menu items by restaurant.
+     */
     @Test
     void getByRestaurant_success() {
 
@@ -75,6 +95,9 @@ class MenuItemControllerTest {
         verify(menuItemService).getByRestaurant(1L);
     }
 
+    /**
+     * Tests empty menu item list.
+     */
     @Test
     void getByRestaurant_empty() {
 
@@ -86,6 +109,9 @@ class MenuItemControllerTest {
         assertTrue(list.isEmpty());
     }
 
+    /**
+     * Tests successful menu item deletion.
+     */
     @Test
     void delete_success() {
 
@@ -96,6 +122,9 @@ class MenuItemControllerTest {
         verify(menuItemService).delete(1L);
     }
 
+    /**
+     * Tests menu item deletion exception.
+     */
     @Test
     void delete_exception() {
 

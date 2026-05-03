@@ -6,8 +6,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for CartResponse DTO.
+ */
 class CartResponseTest {
 
+    /**
+     * Tests constructor and getter methods of CartResponse.
+     */
     @Test
     void testConstructorAndGetters() {
         CartItemResponse item = new CartItemResponse(1L, "Burger", 150.0, 1);

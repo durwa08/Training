@@ -14,6 +14,9 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for UserController.
+ */
 class UserControllerTest {
 
     @InjectMocks
@@ -27,16 +30,25 @@ class UserControllerTest {
 
     private AutoCloseable closeable;
 
+    /**
+     * Initializes mocks.
+     */
     @BeforeEach
     void setup() {
         closeable = MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Releases resources.
+     */
     @AfterEach
     void tearDown() throws Exception {
         closeable.close();
     }
 
+    /**
+     * Creates a sample UserResponse.
+     */
     private UserResponse userResponse() {
         return new UserResponse(
                 1L,
@@ -49,6 +61,9 @@ class UserControllerTest {
         );
     }
 
+    /**
+     * Creates a sample User entity.
+     */
     private User user() {
         User u = new User();
         u.setId(1L);
@@ -56,6 +71,9 @@ class UserControllerTest {
         return u;
     }
 
+    /**
+     * Tests successful user registration.
+     */
     @Test
     void register_success() {
         RegisterRequest req = new RegisterRequest();
@@ -70,6 +88,9 @@ class UserControllerTest {
         verify(userService).register(req);
     }
 
+    /**
+     * Tests registration exception.
+     */
     @Test
     void register_exception() {
         RegisterRequest req = new RegisterRequest();
@@ -79,6 +100,9 @@ class UserControllerTest {
         assertThrows(RuntimeException.class, () -> controller.register(req));
     }
 
+    /**
+     * Tests successful login.
+     */
     @Test
     void login_success() {
         LoginRequest req = new LoginRequest();
@@ -97,6 +121,9 @@ class UserControllerTest {
         verify(userService).login("john@gmail.com", "pass");
     }
 
+    /**
+     * Tests login exception.
+     */
     @Test
     void login_exception() {
         LoginRequest req = new LoginRequest();
@@ -107,6 +134,9 @@ class UserControllerTest {
         assertThrows(RuntimeException.class, () -> controller.login(req));
     }
 
+    /**
+     * Tests fetching current user.
+     */
     @Test
     void currentUser_success() {
         try (MockedStatic<SecurityUtil> mocked = mockStatic(SecurityUtil.class)) {
@@ -124,6 +154,9 @@ class UserControllerTest {
         }
     }
 
+    /**
+     * Tests current user not found scenario.
+     */
     @Test
     void currentUser_notFound() {
         try (MockedStatic<SecurityUtil> mocked = mockStatic(SecurityUtil.class)) {

@@ -3,8 +3,14 @@ package restaurantportal.entity;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for User entity.
+ */
 class UserTest {
 
+    /**
+     * Tests builder of User.
+     */
     @Test
     void testBuilder() {
         User user = User.builder()
@@ -19,6 +25,9 @@ class UserTest {
         assertEquals(500.0, user.getWalletBalance());
     }
 
+    /**
+     * Tests cart relationship of User.
+     */
     @Test
     void testCartRelation() {
         User user = new User();

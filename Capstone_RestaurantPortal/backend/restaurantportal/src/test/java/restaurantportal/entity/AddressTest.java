@@ -3,8 +3,14 @@ package restaurantportal.entity;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for Address entity.
+ */
 class AddressTest {
 
+    /**
+     * Tests builder and getter methods of Address.
+     */
     @Test
     void testBuilderAndGetters() {
         User user = new User();

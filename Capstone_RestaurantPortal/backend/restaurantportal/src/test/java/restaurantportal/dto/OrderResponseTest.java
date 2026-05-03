@@ -6,8 +6,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for OrderResponse DTO.
+ */
 class OrderResponseTest {
 
+    /**
+     * Tests constructor and setter methods of OrderResponse.
+     */
     @Test
     void testConstructorAndSetters() {
         OrderItemResponse item = new OrderItemResponse(1L, "Pizza", 200.0, 2);

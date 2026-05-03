@@ -14,6 +14,9 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for CategoryService.
+ */
 class CategoryServiceTest {
 
     @Mock
@@ -27,17 +30,25 @@ class CategoryServiceTest {
 
     private AutoCloseable closeable;
 
+    /**
+     * Initializes mocks.
+     */
     @BeforeEach
     void setup() {
         closeable = MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Releases resources.
+     */
     @AfterEach
     void tearDown() throws Exception {
         closeable.close();
     }
 
-    //CREATE - SUCCESS
+    /**
+     * Tests successful category creation.
+     */
     @Test
     void testCreate_Success() {
         Long restaurantId = 1L;
@@ -67,7 +78,9 @@ class CategoryServiceTest {
         assertEquals(restaurantId, response.getRestaurantId());
     }
 
-    // CREATE - RESTAURANT NOT FOUND
+    /**
+     * Tests category creation when restaurant not found.
+     */
     @Test
     void testCreate_RestaurantNotFound() {
         Long restaurantId = 1L;
@@ -84,7 +97,9 @@ class CategoryServiceTest {
         assertEquals("Restaurant not found", ex.getMessage());
     }
 
-    //GET BY RESTAURANT
+    /**
+     * Tests fetching categories by restaurant.
+     */
     @Test
     void testGetByRestaurant() {
         Long restaurantId = 1L;
@@ -96,11 +111,13 @@ class CategoryServiceTest {
         c1.setId(1L);
         c1.setName("Starters");
         c1.setRestaurant(restaurant);
+        c1.setDeleted(false);
 
         Category c2 = new Category();
         c2.setId(2L);
         c2.setName("Desserts");
         c2.setRestaurant(restaurant);
+        c2.setDeleted(false);
 
         when(categoryRepository.findByRestaurantId(restaurantId))
                 .thenReturn(Arrays.asList(c1, c2));
@@ -112,24 +129,68 @@ class CategoryServiceTest {
         assertEquals("Desserts", result.get(1).getName());
     }
 
-    // GET BY RESTAURANT - EMPTY LIST
+    /**
+     * Tests filtering deleted categories.
+     */
     @Test
-    void testGetByRestaurant_Empty() {
-        when(categoryRepository.findByRestaurantId(1L))
-                .thenReturn(Collections.emptyList());
+    void testGetByRestaurant_FilterDeleted() {
+        Long restaurantId = 1L;
 
-        List<CategoryResponse> result = categoryService.getByRestaurant(1L);
+        Restaurant restaurant = new Restaurant();
+        restaurant.setId(restaurantId);
 
-        assertTrue(result.isEmpty());
+        Category active = new Category();
+        active.setId(1L);
+        active.setName("Starters");
+        active.setRestaurant(restaurant);
+        active.setDeleted(false);
+
+        Category deleted = new Category();
+        deleted.setId(2L);
+        deleted.setName("Old");
+        deleted.setRestaurant(restaurant);
+        deleted.setDeleted(true);
+
+        when(categoryRepository.findByRestaurantId(restaurantId))
+                .thenReturn(Arrays.asList(active, deleted));
+
+        List<CategoryResponse> result = categoryService.getByRestaurant(restaurantId);
+
+        assertEquals(1, result.size());
+        assertEquals("Starters", result.get(0).getName());
     }
 
-    // DELETE
+    /**
+     * Tests successful soft delete.
+     */
     @Test
-    void testDelete() {
+    void testDelete_Success() {
         Long id = 1L;
+
+        Category category = new Category();
+        category.setId(id);
+        category.setDeleted(false);
+
+        when(categoryRepository.findById(id))
+                .thenReturn(Optional.of(category));
 
         categoryService.delete(id);
 
-        verify(categoryRepository).deleteById(id);
+        assertTrue(category.getDeleted());
+        verify(categoryRepository).save(category);
+    }
+
+    /**
+     * Tests delete when category not found.
+     */
+    @Test
+    void testDelete_NotFound() {
+        when(categoryRepository.findById(1L))
+                .thenReturn(Optional.empty());
+
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> categoryService.delete(1L));
+
+        assertEquals("Category not found", ex.getMessage());
     }
 }

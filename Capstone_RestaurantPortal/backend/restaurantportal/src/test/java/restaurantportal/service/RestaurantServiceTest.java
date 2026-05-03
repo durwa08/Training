@@ -12,6 +12,9 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Test class for RestaurantService.
+ */
 class RestaurantServiceTest {
 
     @Mock private RestaurantRepository restaurantRepository;
@@ -21,16 +24,25 @@ class RestaurantServiceTest {
 
     private AutoCloseable closeable;
 
+    /**
+     * Initializes mocks before each test.
+     */
     @BeforeEach
     void setup() {
         closeable = MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Closes resources after each test.
+     */
     @AfterEach
     void tearDown() throws Exception {
         closeable.close();
     }
 
+    /**
+     * Creates a mock user.
+     */
     private User user(String email) {
         User u = new User();
         u.setId(1L);
@@ -38,6 +50,9 @@ class RestaurantServiceTest {
         return u;
     }
 
+    /**
+     * Creates a mock restaurant.
+     */
     private Restaurant restaurant(User owner) {
         Restaurant r = new Restaurant();
         r.setId(1L);
@@ -48,6 +63,9 @@ class RestaurantServiceTest {
         return r;
     }
 
+    /**
+     * Creates a restaurant request.
+     */
     private RestaurantRequest request(String status) {
         RestaurantRequest req = new RestaurantRequest();
         req.setName("Test");
@@ -56,6 +74,9 @@ class RestaurantServiceTest {
         return req;
     }
 
+    /**
+     * Tests successful restaurant creation.
+     */
     @Test
     void create_success() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {
@@ -74,6 +95,9 @@ class RestaurantServiceTest {
         }
     }
 
+    /**
+     * Tests creation when user not found.
+     */
     @Test
     void create_userNotFound() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {
@@ -87,6 +111,9 @@ class RestaurantServiceTest {
         }
     }
 
+    /**
+     * Tests creation with null status.
+     */
     @Test
     void create_nullStatus() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {
@@ -102,6 +129,9 @@ class RestaurantServiceTest {
         }
     }
 
+    /**
+     * Tests fetching all restaurants.
+     */
     @Test
     void getAll_success() {
         Restaurant r1 = restaurant(user("a"));
@@ -114,6 +144,9 @@ class RestaurantServiceTest {
         assertEquals(2, res.size());
     }
 
+    /**
+     * Tests fetching when no restaurants exist.
+     */
     @Test
     void getAll_empty() {
         when(restaurantRepository.findAll()).thenReturn(new ArrayList<>());
@@ -123,6 +156,9 @@ class RestaurantServiceTest {
         assertEquals(0, res.size());
     }
 
+    /**
+     * Tests fetching restaurant by ID.
+     */
     @Test
     void getById_success() {
         Restaurant r = restaurant(user("x"));
@@ -134,6 +170,9 @@ class RestaurantServiceTest {
         assertEquals("Test", res.getName());
     }
 
+    /**
+     * Tests fetching restaurant when not found.
+     */
     @Test
     void getById_notFound() {
         when(restaurantRepository.findById(1L)).thenReturn(Optional.empty());
@@ -142,6 +181,9 @@ class RestaurantServiceTest {
                 () -> restaurantService.getById(1L));
     }
 
+    /**
+     * Tests successful update.
+     */
     @Test
     void update_success() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {
@@ -160,6 +202,9 @@ class RestaurantServiceTest {
         }
     }
 
+    /**
+     * Tests update when restaurant not found.
+     */
     @Test
     void update_notFound() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {
@@ -173,6 +218,9 @@ class RestaurantServiceTest {
         }
     }
 
+    /**
+     * Tests update when user is unauthorized.
+     */
     @Test
     void update_unauthorized() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {
@@ -189,6 +237,9 @@ class RestaurantServiceTest {
         }
     }
 
+    /**
+     * Tests update when owner is null.
+     */
     @Test
     void update_nullOwner() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {
@@ -204,6 +255,9 @@ class RestaurantServiceTest {
         }
     }
 
+    /**
+     * Tests update with null status.
+     */
     @Test
     void update_nullStatus() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {
@@ -220,6 +274,9 @@ class RestaurantServiceTest {
         }
     }
 
+    /**
+     * Tests successful delete.
+     */
     @Test
     void delete_success() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {
@@ -237,6 +294,9 @@ class RestaurantServiceTest {
         }
     }
 
+    /**
+     * Tests delete when restaurant not found.
+     */
     @Test
     void delete_notFound() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {
@@ -250,6 +310,9 @@ class RestaurantServiceTest {
         }
     }
 
+    /**
+     * Tests delete when user is unauthorized.
+     */
     @Test
     void delete_unauthorized() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {
@@ -266,6 +329,9 @@ class RestaurantServiceTest {
         }
     }
 
+    /**
+     * Tests delete when owner is null.
+     */
     @Test
     void delete_nullOwner() {
         try (MockedStatic<SecurityUtil> s = mockStatic(SecurityUtil.class)) {

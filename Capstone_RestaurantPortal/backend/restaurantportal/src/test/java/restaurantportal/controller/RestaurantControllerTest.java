@@ -11,6 +11,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for RestaurantController.
+ */
 class RestaurantControllerTest {
 
     @InjectMocks
@@ -21,26 +24,37 @@ class RestaurantControllerTest {
 
     private AutoCloseable closeable;
 
+    /**
+     * Initializes mocks.
+     */
     @BeforeEach
     void setup() {
         closeable = MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Releases resources.
+     */
     @AfterEach
     void tearDown() throws Exception {
         closeable.close();
     }
 
+    /**
+     * Creates a sample RestaurantResponse.
+     */
     private RestaurantResponse response() {
         return new RestaurantResponse(
                 1L,
                 "Dominos",
                 "Pizza",
                 "Bhopal"
-
         );
     }
 
+    /**
+     * Tests successful restaurant creation.
+     */
     @Test
     void create_success() {
         RestaurantRequest req = new RestaurantRequest();
@@ -55,6 +69,9 @@ class RestaurantControllerTest {
         verify(service).create(req);
     }
 
+    /**
+     * Tests restaurant creation exception.
+     */
     @Test
     void create_exception() {
         RestaurantRequest req = new RestaurantRequest();
@@ -64,6 +81,9 @@ class RestaurantControllerTest {
         assertThrows(RuntimeException.class, () -> controller.create(req));
     }
 
+    /**
+     * Tests fetching all restaurants.
+     */
     @Test
     void get_success() {
         when(service.getAll()).thenReturn(List.of(response()));
@@ -74,6 +94,9 @@ class RestaurantControllerTest {
         verify(service).getAll();
     }
 
+    /**
+     * Tests empty restaurant list.
+     */
     @Test
     void get_empty() {
         when(service.getAll()).thenReturn(List.of());
@@ -83,6 +106,9 @@ class RestaurantControllerTest {
         assertTrue(list.isEmpty());
     }
 
+    /**
+     * Tests fetching restaurant by id.
+     */
     @Test
     void getById_success() {
         when(service.getById(1L)).thenReturn(response());
@@ -93,6 +119,9 @@ class RestaurantControllerTest {
         verify(service).getById(1L);
     }
 
+    /**
+     * Tests getById exception.
+     */
     @Test
     void getById_exception() {
         when(service.getById(1L)).thenThrow(new RuntimeException());
@@ -100,6 +129,9 @@ class RestaurantControllerTest {
         assertThrows(RuntimeException.class, () -> controller.getById(1L));
     }
 
+    /**
+     * Tests successful update.
+     */
     @Test
     void update_success() {
         RestaurantRequest req = new RestaurantRequest();
@@ -112,6 +144,9 @@ class RestaurantControllerTest {
         verify(service).update(1L, req);
     }
 
+    /**
+     * Tests update exception.
+     */
     @Test
     void update_exception() {
         RestaurantRequest req = new RestaurantRequest();
@@ -121,6 +156,9 @@ class RestaurantControllerTest {
         assertThrows(RuntimeException.class, () -> controller.update(1L, req));
     }
 
+    /**
+     * Tests successful deletion.
+     */
     @Test
     void delete_success() {
         doNothing().when(service).delete(1L);
@@ -130,6 +168,9 @@ class RestaurantControllerTest {
         verify(service).delete(1L);
     }
 
+    /**
+     * Tests deletion exception.
+     */
     @Test
     void delete_exception() {
         doThrow(new RuntimeException()).when(service).delete(1L);

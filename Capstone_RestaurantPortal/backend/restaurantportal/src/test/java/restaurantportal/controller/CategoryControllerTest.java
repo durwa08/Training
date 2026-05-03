@@ -12,6 +12,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for CategoryController.
+ */
 class CategoryControllerTest {
 
     @InjectMocks
@@ -20,20 +23,28 @@ class CategoryControllerTest {
     @Mock
     private CategoryService categoryService;
 
+    /**
+     * Initializes mocks before each test.
+     */
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Creates a sample CategoryResponse.
+     */
     private CategoryResponse response() {
         return new CategoryResponse(
                 1L,
                 "Pizza",
-                1L   // restaurantId (adjust if your constructor differs)
+                1L
         );
     }
 
-    //CREATE
+    /**
+     * Tests successful category creation.
+     */
     @Test
     void create_success() {
 
@@ -49,6 +60,9 @@ class CategoryControllerTest {
         verify(categoryService).create(1L, req);
     }
 
+    /**
+     * Tests category creation exception.
+     */
     @Test
     void create_exception() {
 
@@ -62,7 +76,9 @@ class CategoryControllerTest {
         });
     }
 
-    // GET BY RESTAURANT
+    /**
+     * Tests fetching categories by restaurant.
+     */
     @Test
     void getByRestaurant_success() {
 
@@ -75,6 +91,9 @@ class CategoryControllerTest {
         verify(categoryService).getByRestaurant(1L);
     }
 
+    /**
+     * Tests empty category list.
+     */
     @Test
     void getByRestaurant_empty() {
 
@@ -86,7 +105,9 @@ class CategoryControllerTest {
         assertTrue(list.isEmpty());
     }
 
-    // DELETE
+    /**
+     * Tests successful category deletion.
+     */
     @Test
     void delete_success() {
 
@@ -97,6 +118,9 @@ class CategoryControllerTest {
         verify(categoryService).delete(1L);
     }
 
+    /**
+     * Tests category deletion exception.
+     */
     @Test
     void delete_exception() {
 

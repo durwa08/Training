@@ -3,8 +3,14 @@ package restaurantportal.dto;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for UserResponse DTO.
+ */
 class UserResponseTest {
 
+    /**
+     * Tests getter and setter methods of UserResponse.
+     */
     @Test
     void testGetterSetter() {
         UserResponse user = new UserResponse();

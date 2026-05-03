@@ -6,8 +6,14 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for Order entity.
+ */
 class OrderTest {
 
+    /**
+     * Tests getter and setter methods of Order.
+     */
     @Test
     void testSettersAndGetters() {
         Order order = new Order();

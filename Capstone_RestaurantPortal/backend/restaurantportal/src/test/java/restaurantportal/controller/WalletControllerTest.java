@@ -9,6 +9,9 @@ import restaurantportal.service.WalletService;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for WalletController.
+ */
 class WalletControllerTest {
 
     @InjectMocks
@@ -19,20 +22,32 @@ class WalletControllerTest {
 
     private AutoCloseable closeable;
 
+    /**
+     * Initializes mocks.
+     */
     @BeforeEach
     void setup() {
         closeable = MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Releases resources.
+     */
     @AfterEach
     void tearDown() throws Exception {
         closeable.close();
     }
 
+    /**
+     * Creates a sample WalletResponse.
+     */
     private WalletResponse response() {
         return new WalletResponse(1500.0);
     }
 
+    /**
+     * Tests successful add money.
+     */
     @Test
     void addMoney_success() {
         AddMoneyRequest req = new AddMoneyRequest();
@@ -47,6 +62,9 @@ class WalletControllerTest {
         verify(service).addMoney(req);
     }
 
+    /**
+     * Tests add money exception.
+     */
     @Test
     void addMoney_exception() {
         AddMoneyRequest req = new AddMoneyRequest();
@@ -56,6 +74,9 @@ class WalletControllerTest {
         assertThrows(RuntimeException.class, () -> controller.addMoney(req));
     }
 
+    /**
+     * Tests successful balance fetch.
+     */
     @Test
     void getBalance_success() {
         when(service.getBalance()).thenReturn(response());
@@ -67,6 +88,9 @@ class WalletControllerTest {
         verify(service).getBalance();
     }
 
+    /**
+     * Tests balance fetch exception.
+     */
     @Test
     void getBalance_exception() {
         when(service.getBalance()).thenThrow(new RuntimeException());

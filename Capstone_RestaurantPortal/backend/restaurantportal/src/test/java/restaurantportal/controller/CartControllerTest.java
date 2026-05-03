@@ -12,6 +12,9 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for CartController.
+ */
 class CartControllerTest {
 
     @InjectMocks
@@ -20,11 +23,17 @@ class CartControllerTest {
     @Mock
     private CartService cartService;
 
+    /**
+     * Initializes mocks before each test.
+     */
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Creates a sample CartResponse.
+     */
     private CartResponse response() {
         return new CartResponse(
                 1L,
@@ -33,7 +42,9 @@ class CartControllerTest {
         );
     }
 
-    // ADD TO CART
+    /**
+     * Tests successful add to cart.
+     */
     @Test
     void addToCart_success() {
 
@@ -50,6 +61,9 @@ class CartControllerTest {
         verify(cartService).addToCart(req);
     }
 
+    /**
+     * Tests add to cart exception.
+     */
     @Test
     void addToCart_exception() {
 
@@ -63,7 +77,9 @@ class CartControllerTest {
         });
     }
 
-    // GET CART
+    /**
+     * Tests fetching cart successfully.
+     */
     @Test
     void getCart_success() {
 
@@ -75,7 +91,9 @@ class CartControllerTest {
         verify(cartService).getMyCart();
     }
 
-    // REMOVE ITEM
+    /**
+     * Tests successful item removal.
+     */
     @Test
     void remove_success() {
 
@@ -87,6 +105,9 @@ class CartControllerTest {
         verify(cartService).removeItem(1L);
     }
 
+    /**
+     * Tests item removal exception.
+     */
     @Test
     void remove_exception() {
 
@@ -98,7 +119,9 @@ class CartControllerTest {
         });
     }
 
-    // CLEAR CART
+    /**
+     * Tests successful cart clear.
+     */
     @Test
     void clear_success() {
 
@@ -110,6 +133,9 @@ class CartControllerTest {
         verify(cartService).clearCart();
     }
 
+    /**
+     * Tests cart clear exception.
+     */
     @Test
     void clear_exception() {
 

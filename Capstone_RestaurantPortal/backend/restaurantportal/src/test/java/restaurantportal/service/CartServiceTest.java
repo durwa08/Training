@@ -13,6 +13,9 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for CartService.
+ */
 class CartServiceTest {
 
     @Mock
@@ -29,24 +32,33 @@ class CartServiceTest {
 
     private AutoCloseable closeable;
 
+    /**
+     * Initializes mocks.
+     */
     @BeforeEach
     void setup() {
         closeable = MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Releases resources.
+     */
     @AfterEach
     void tearDown() throws Exception {
         closeable.close();
     }
 
+    /**
+     * Tests adding a new item to cart.
+     */
     @Test
     void testAddToCart_NewItem() {
         try (MockedStatic<SecurityUtil> mocked = mockStatic(SecurityUtil.class)) {
 
-            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("test@mail.com");
+            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("dp@mail.com");
 
             User user = new User();
-            user.setEmail("test@mail.com");
+            user.setEmail("dp@mail.com");
 
             Cart cart = new Cart();
             cart.setUser(user);
@@ -60,7 +72,7 @@ class CartServiceTest {
             request.setMenuItemId(1L);
             request.setQuantity(2);
 
-            when(userRepository.findByEmail("test@mail.com")).thenReturn(Optional.of(user));
+            when(userRepository.findByEmail("dp@mail.com")).thenReturn(Optional.of(user));
             when(cartRepository.findByUser(user)).thenReturn(Optional.of(cart));
             when(menuItemRepository.findById(1L)).thenReturn(Optional.of(menuItem));
             when(cartRepository.save(any())).thenAnswer(i -> i.getArgument(0));
@@ -72,16 +84,19 @@ class CartServiceTest {
         }
     }
 
+    /**
+     * Tests add to cart when user not found.
+     */
     @Test
     void testAddToCart_UserNotFound() {
         try (MockedStatic<SecurityUtil> mocked = mockStatic(SecurityUtil.class)) {
 
-            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("test@mail.com");
+            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("dp@mail.com");
 
             AddToCartRequest request = new AddToCartRequest();
             request.setMenuItemId(1L);
 
-            when(userRepository.findByEmail("test@mail.com")).thenReturn(Optional.empty());
+            when(userRepository.findByEmail("dp@mail.com")).thenReturn(Optional.empty());
 
             RuntimeException ex = assertThrows(RuntimeException.class,
                     () -> cartService.addToCart(request));
@@ -90,14 +105,17 @@ class CartServiceTest {
         }
     }
 
+    /**
+     * Tests successful removal of cart item.
+     */
     @Test
     void testRemoveItem_Success() {
         try (MockedStatic<SecurityUtil> mocked = mockStatic(SecurityUtil.class)) {
 
-            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("test@mail.com");
+            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("dp@mail.com");
 
             User user = new User();
-            user.setEmail("test@mail.com");
+            user.setEmail("dp@mail.com");
 
             Cart cart = new Cart();
             cart.setUser(user);
@@ -110,7 +128,7 @@ class CartServiceTest {
 
             cart.getItems().add(item);
 
-            when(userRepository.findByEmail("test@mail.com")).thenReturn(Optional.of(user));
+            when(userRepository.findByEmail("dp@mail.com")).thenReturn(Optional.of(user));
             when(cartRepository.findByUser(user)).thenReturn(Optional.of(cart));
 
             cartService.removeItem(1L);
@@ -119,21 +137,24 @@ class CartServiceTest {
         }
     }
 
+    /**
+     * Tests clearing the cart.
+     */
     @Test
     void testClearCart() {
         try (MockedStatic<SecurityUtil> mocked = mockStatic(SecurityUtil.class)) {
 
-            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("test@mail.com");
+            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("dp@mail.com");
 
             User user = new User();
-            user.setEmail("test@mail.com");
+            user.setEmail("dp@mail.com");
 
             Cart cart = new Cart();
             cart.setUser(user);
             cart.getItems().add(new CartItem());
             cart.setTotalAmount(100.0);
 
-            when(userRepository.findByEmail("test@mail.com")).thenReturn(Optional.of(user));
+            when(userRepository.findByEmail("dp@mail.com")).thenReturn(Optional.of(user));
             when(cartRepository.findByUser(user)).thenReturn(Optional.of(cart));
 
             cartService.clearCart();

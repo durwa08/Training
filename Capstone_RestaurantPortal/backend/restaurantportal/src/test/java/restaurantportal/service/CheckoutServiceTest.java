@@ -13,6 +13,9 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for CheckoutService.
+ */
 class CheckoutServiceTest {
 
     @Mock
@@ -26,24 +29,33 @@ class CheckoutServiceTest {
 
     private AutoCloseable closeable;
 
+    /**
+     * Initializes mocks.
+     */
     @BeforeEach
     void setup() {
         closeable = MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Releases resources.
+     */
     @AfterEach
     void tearDown() throws Exception {
         closeable.close();
     }
 
+    /**
+     * Tests checkout when order can be placed.
+     */
     @Test
     void testCheckout_Success_CanPlaceOrder() {
         try (MockedStatic<SecurityUtil> mocked = mockStatic(SecurityUtil.class)) {
 
-            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("test@mail.com");
+            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("john@gmail.com");
 
             User user = new User();
-            user.setEmail("test@mail.com");
+            user.setEmail("john@gmail.com");
             user.setWalletBalance(500.0);
 
             MenuItem menuItem = new MenuItem();
@@ -60,7 +72,7 @@ class CheckoutServiceTest {
             cart.setItems(new ArrayList<>(List.of(item)));
             cart.setTotalAmount(200.0);
 
-            when(userRepository.findByEmail("test@mail.com")).thenReturn(Optional.of(user));
+            when(userRepository.findByEmail("john@gmail.com")).thenReturn(Optional.of(user));
             when(cartRepository.findByUser(user)).thenReturn(Optional.of(cart));
 
             CheckoutResponse response = checkoutService.checkout();
@@ -72,14 +84,17 @@ class CheckoutServiceTest {
         }
     }
 
+    /**
+     * Tests checkout when order cannot be placed.
+     */
     @Test
     void testCheckout_Success_CannotPlaceOrder() {
         try (MockedStatic<SecurityUtil> mocked = mockStatic(SecurityUtil.class)) {
 
-            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("test@mail.com");
+            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("john@gmail.com");
 
             User user = new User();
-            user.setEmail("test@mail.com");
+            user.setEmail("john@gmail.com");
             user.setWalletBalance(100.0);
 
             MenuItem menuItem = new MenuItem();
@@ -96,7 +111,7 @@ class CheckoutServiceTest {
             cart.setItems(new ArrayList<>(List.of(item)));
             cart.setTotalAmount(200.0);
 
-            when(userRepository.findByEmail("test@mail.com")).thenReturn(Optional.of(user));
+            when(userRepository.findByEmail("john@gmail.com")).thenReturn(Optional.of(user));
             when(cartRepository.findByUser(user)).thenReturn(Optional.of(cart));
 
             CheckoutResponse response = checkoutService.checkout();
@@ -105,13 +120,16 @@ class CheckoutServiceTest {
         }
     }
 
+    /**
+     * Tests checkout when user not found.
+     */
     @Test
     void testCheckout_UserNotFound() {
         try (MockedStatic<SecurityUtil> mocked = mockStatic(SecurityUtil.class)) {
 
-            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("test@mail.com");
+            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("john@gmail.com");
 
-            when(userRepository.findByEmail("test@mail.com")).thenReturn(Optional.empty());
+            when(userRepository.findByEmail("john@gmail.com")).thenReturn(Optional.empty());
 
             RuntimeException ex = assertThrows(RuntimeException.class,
                     () -> checkoutService.checkout());
@@ -120,16 +138,19 @@ class CheckoutServiceTest {
         }
     }
 
+    /**
+     * Tests checkout when cart not found.
+     */
     @Test
     void testCheckout_CartNotFound() {
         try (MockedStatic<SecurityUtil> mocked = mockStatic(SecurityUtil.class)) {
 
-            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("test@mail.com");
+            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("john@gmail.com");
 
             User user = new User();
-            user.setEmail("test@mail.com");
+            user.setEmail("john@gmail.com");
 
-            when(userRepository.findByEmail("test@mail.com")).thenReturn(Optional.of(user));
+            when(userRepository.findByEmail("john@gmail.com")).thenReturn(Optional.of(user));
             when(cartRepository.findByUser(user)).thenReturn(Optional.empty());
 
             RuntimeException ex = assertThrows(RuntimeException.class,
@@ -139,14 +160,17 @@ class CheckoutServiceTest {
         }
     }
 
+    /**
+     * Tests checkout when cart is empty.
+     */
     @Test
     void testCheckout_EmptyCart() {
         try (MockedStatic<SecurityUtil> mocked = mockStatic(SecurityUtil.class)) {
 
-            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("test@mail.com");
+            mocked.when(SecurityUtil::getCurrentUserEmail).thenReturn("john@gmail.com");
 
             User user = new User();
-            user.setEmail("test@mail.com");
+            user.setEmail("john@gmail.com");
             user.setWalletBalance(500.0);
 
             Cart cart = new Cart();
@@ -154,7 +178,7 @@ class CheckoutServiceTest {
             cart.setItems(new ArrayList<>());
             cart.setTotalAmount(0.0);
 
-            when(userRepository.findByEmail("test@mail.com")).thenReturn(Optional.of(user));
+            when(userRepository.findByEmail("john@gmail.com")).thenReturn(Optional.of(user));
             when(cartRepository.findByUser(user)).thenReturn(Optional.of(cart));
 
             RuntimeException ex = assertThrows(RuntimeException.class,

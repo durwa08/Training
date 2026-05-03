@@ -3,8 +3,14 @@ package restaurantportal.entity;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for OrderItem entity.
+ */
 class OrderItemTest {
 
+    /**
+     * Tests getter and setter methods of OrderItem.
+     */
     @Test
     void testGetterSetter() {
         OrderItem item = new OrderItem();

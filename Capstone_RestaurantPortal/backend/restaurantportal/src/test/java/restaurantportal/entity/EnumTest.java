@@ -3,8 +3,14 @@ package restaurantportal.entity;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for enum validations.
+ */
 class EnumTest {
 
+    /**
+     * Tests OrderStatus enum values.
+     */
     @Test
     void testOrderStatusEnum() {
         for (OrderStatus status : OrderStatus.values()) {
@@ -13,6 +19,9 @@ class EnumTest {
         }
     }
 
+    /**
+     * Tests Role enum values.
+     */
     @Test
     void testRoleEnum() {
         for (Role role : Role.values()) {
@@ -21,6 +30,9 @@ class EnumTest {
         }
     }
 
+    /**
+     * Tests RestaurantStatus enum values.
+     */
     @Test
     void testRestaurantStatusEnum() {
         for (RestaurantStatus status : RestaurantStatus.values()) {

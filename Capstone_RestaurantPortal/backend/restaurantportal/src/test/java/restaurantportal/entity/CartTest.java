@@ -3,8 +3,14 @@ package restaurantportal.entity;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for Cart entity.
+ */
 class CartTest {
 
+    /**
+     * Tests adding item to cart.
+     */
     @Test
     void testAddItem() {
         Cart cart = new Cart();
@@ -13,9 +19,12 @@ class CartTest {
         cart.addItem(item);
 
         assertEquals(1, cart.getItems().size());
-        assertEquals(cart, item.getCart()); // relationship check
+        assertEquals(cart, item.getCart());
     }
 
+    /**
+     * Tests removing item from cart.
+     */
     @Test
     void testRemoveItem() {
         Cart cart = new Cart();
@@ -28,6 +37,9 @@ class CartTest {
         assertNull(item.getCart());
     }
 
+    /**
+     * Tests constructor of Cart.
+     */
     @Test
     void testConstructor() {
         User user = new User();

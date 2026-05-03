@@ -6,8 +6,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for CheckoutResponse DTO.
+ */
 class CheckoutResponseTest {
 
+    /**
+     * Tests constructor of CheckoutResponse.
+     */
     @Test
     void testConstructor() {
         CartItemResponse item = new CartItemResponse(1L, "Pizza", 200.0, 2);

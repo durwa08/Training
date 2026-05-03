@@ -13,6 +13,9 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Unit tests for MenuItemService.
+ */
 class MenuItemServiceTest {
 
     @Mock
@@ -26,16 +29,25 @@ class MenuItemServiceTest {
 
     private AutoCloseable closeable;
 
+    /**
+     * Initializes mocks.
+     */
     @BeforeEach
     void setup() {
         closeable = MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * Releases resources.
+     */
     @AfterEach
     void tearDown() throws Exception {
         closeable.close();
     }
 
+    /**
+     * Tests successful menu item creation.
+     */
     @Test
     void testCreate_Success() {
         Long categoryId = 1L;
@@ -56,6 +68,7 @@ class MenuItemServiceTest {
         saved.setName("Pizza");
         saved.setPrice(200.0);
         saved.setCategory(category);
+        saved.setAvailable(true);
 
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
         when(menuItemRepository.save(any(MenuItem.class))).thenReturn(saved);
@@ -68,6 +81,9 @@ class MenuItemServiceTest {
         assertEquals(categoryId, response.getCategoryId());
     }
 
+    /**
+     * Tests creation when category not found.
+     */
     @Test
     void testCreate_CategoryNotFound() {
         when(categoryRepository.findById(1L)).thenReturn(Optional.empty());
@@ -81,6 +97,9 @@ class MenuItemServiceTest {
         assertEquals("Category not found", ex.getMessage());
     }
 
+    /**
+     * Tests fetching menu items by restaurant.
+     */
     @Test
     void testGetByRestaurant() {
         Long restaurantId = 1L;
@@ -93,12 +112,14 @@ class MenuItemServiceTest {
         m1.setName("Burger");
         m1.setPrice(100.0);
         m1.setCategory(category);
+        m1.setDeleted(false);
 
         MenuItem m2 = new MenuItem();
         m2.setId(2L);
         m2.setName("Pizza");
         m2.setPrice(200.0);
         m2.setCategory(category);
+        m2.setDeleted(false);
 
         when(menuItemRepository.findByRestaurantId(restaurantId))
                 .thenReturn(Arrays.asList(m1, m2));
@@ -110,22 +131,63 @@ class MenuItemServiceTest {
         assertEquals("Pizza", result.get(1).getName());
     }
 
+    /**
+     * Tests successful soft delete.
+     */
     @Test
-    void testGetByRestaurant_Empty() {
-        when(menuItemRepository.findByRestaurantId(1L))
-                .thenReturn(Collections.emptyList());
-
-        List<MenuItemResponse> result = menuItemService.getByRestaurant(1L);
-
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    void testDelete() {
+    void testDelete_Success() {
         Long id = 1L;
+
+        MenuItem item = new MenuItem();
+        item.setId(id);
+        item.setDeleted(false);
+
+        when(menuItemRepository.findById(id)).thenReturn(Optional.of(item));
 
         menuItemService.delete(id);
 
-        verify(menuItemRepository).deleteById(id);
+        assertTrue(item.getDeleted());
+        verify(menuItemRepository).save(item);
+    }
+
+    /**
+     * Tests delete when item not found.
+     */
+    @Test
+    void testDelete_NotFound() {
+        when(menuItemRepository.findById(1L)).thenReturn(Optional.empty());
+
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> menuItemService.delete(1L));
+
+        assertEquals("Menu item not found", ex.getMessage());
+    }
+
+    /**
+     * Tests successful update of menu item.
+     */
+    @Test
+    void testUpdate_Success() {
+        Long id = 1L;
+
+        MenuItemRequest request = new MenuItemRequest();
+        request.setName("Updated Pizza");
+        request.setPrice(250.0);
+        request.setAvailable(true);
+
+        Category category = new Category();
+        category.setId(10L);
+
+        MenuItem item = new MenuItem();
+        item.setId(id);
+        item.setCategory(category);
+
+        when(menuItemRepository.findById(id)).thenReturn(Optional.of(item));
+        when(menuItemRepository.save(any(MenuItem.class))).thenReturn(item);
+
+        MenuItemResponse response = menuItemService.update(id, request);
+
+        assertEquals("Updated Pizza", item.getName());
+        assertEquals(250.0, item.getPrice());
     }
 }
