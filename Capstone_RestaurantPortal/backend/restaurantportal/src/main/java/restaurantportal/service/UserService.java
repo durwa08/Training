@@ -1,5 +1,7 @@
 package restaurantportal.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,10 +19,12 @@ import restaurantportal.security.JwtUtil;
  */
 @Service
 public class UserService {
-/**
+    /**
      * UserService manages user registration and authentication.
-      * It ensures secure password storage and generates JWT tokens for authenticated users.
+     * It ensures secure password storage and generates JWT tokens for authenticated users.
      */
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
@@ -31,6 +35,7 @@ public class UserService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        logger.info("UserService initialized");
     }
 
     /**
@@ -39,8 +44,12 @@ public class UserService {
     @Transactional
     public UserResponse register(RegisterRequest request) {
 
+        logger.info("Registering new user");
+        logger.debug("RegisterRequest: {}", request);
+
         userRepository.findByEmail(request.getEmail())
                 .ifPresent(u -> {
+                    logger.error("Email already registered: {}", request.getEmail());
                     throw new IllegalArgumentException("Email already registered");
                 });
 
@@ -58,6 +67,8 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
+        logger.info("User registered successfully with id: {}", savedUser.getId());
+
         return new UserResponse(
                 savedUser.getId(),
                 savedUser.getFirstName(),
@@ -74,13 +85,23 @@ public class UserService {
      */
     public String login(String email, String password) {
 
+        logger.info("Login attempt for email: {}", email);
+
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid email or password"));
+                .orElseThrow(() -> {
+                    logger.error("Invalid login attempt for email: {}", email);
+                    return new IllegalArgumentException("Invalid email or password");
+                });
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
+            logger.error("Password mismatch for email: {}", email);
             throw new IllegalArgumentException("Invalid email or password");
         }
 
-        return jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().name());
+
+        logger.info("User logged in successfully for email: {}", email);
+
+        return token;
     }
 }

@@ -1,6 +1,8 @@
 package restaurantportal.controller;
 
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import restaurantportal.dto.RestaurantRequest;
 import restaurantportal.dto.RestaurantResponse;
@@ -18,15 +20,17 @@ import java.util.List;
 @CrossOrigin(origins = "*", allowedHeaders = "*") // Allow CORS for all origins and headers
 public class RestaurantController {
 
+    private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
+
     private final RestaurantService service;
 
     /**
      * Constructs RestaurantController with RestaurantService dependency.
      *
-     * @param service service layer handling restaurant business logic
      */
     public RestaurantController(RestaurantService service) {
         this.service = service;
+        logger.info("RestaurantController initialized");
     }
 
     /**
@@ -34,7 +38,11 @@ public class RestaurantController {
      */
     @PostMapping
     public RestaurantResponse create(@Valid @RequestBody RestaurantRequest request) {
-        return service.create(request);
+        logger.info("Received request to create restaurant");
+        logger.debug("RestaurantRequest: {}", request);
+        RestaurantResponse response = service.create(request);
+        logger.info("Restaurant created successfully");
+        return response;
     }
 
     /**
@@ -42,18 +50,21 @@ public class RestaurantController {
      */
     @GetMapping
     public List<RestaurantResponse> get() {
-        return service.getAll();
+        logger.info("Received request to fetch all restaurants");
+        List<RestaurantResponse> response = service.getAll();
+        logger.info("Restaurants fetched successfully");
+        return response;
     }
 
     /**
      * Retrieves a specific restaurant by its ID.
-     *
-     * @param id restaurant identifier
-     * @return restaurant details
      */
     @GetMapping("/{id}")
     public RestaurantResponse getById(@PathVariable Long id) {
-        return service.getById(id);
+        logger.info("Received request to fetch restaurant with id: {}", id);
+        RestaurantResponse response = service.getById(id);
+        logger.info("Restaurant fetched successfully with id: {}", id);
+        return response;
     }
 
     /**
@@ -63,16 +74,21 @@ public class RestaurantController {
     @PutMapping("/{id}")
     public RestaurantResponse update(@PathVariable Long id,
                                      @Valid @RequestBody RestaurantRequest request) {
-        return service.update(id, request);
+        logger.info("Received request to update restaurant with id: {}", id);
+        logger.debug("RestaurantRequest: {}", request);
+        RestaurantResponse response = service.update(id, request);
+        logger.info("Restaurant updated successfully with id: {}", id);
+        return response;
     }
 
     /**
      * Deletes a restaurant by its ID.
      *
-     * @param id restaurant identifier
      */
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
+        logger.info("Received request to delete restaurant with id: {}", id);
         service.delete(id);
+        logger.info("Restaurant deleted successfully with id: {}", id);
     }
 }

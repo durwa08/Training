@@ -296,8 +296,6 @@ async function clearCart() {
 
 // ─────────────────────────────────────────
 //   PLACE ORDER
-//   POST /api/orders
-// ─────────────────────────────────────────
 function placeOrder() {
   if (!currentCart || !currentCart.items || currentCart.items.length === 0) {
     showToast("error", "❌", "Your cart is empty.");

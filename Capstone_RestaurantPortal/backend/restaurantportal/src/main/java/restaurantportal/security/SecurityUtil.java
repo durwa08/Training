@@ -1,8 +1,9 @@
 package restaurantportal.security;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 /**
@@ -10,17 +11,24 @@ import org.springframework.security.core.userdetails.User;
  */
 public class SecurityUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger(SecurityUtil.class);
+
     /**
      * Retrieves the email of the currently logged-in user.
      */
     public static String getCurrentUserEmail() {
 
+        logger.debug("Fetching current user email");
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.getPrincipal() instanceof org.springframework.security.core.userdetails.UserDetails userDetails) {
-            return userDetails.getUsername();
+            String email = userDetails.getUsername();
+            logger.debug("Current user email: {}", email);
+            return email;
         }
 
+        logger.warn("No authenticated user found while fetching email");
         return null;
     }
 
@@ -29,12 +37,17 @@ public class SecurityUtil {
      */
     public static String getCurrentUserRole() {
 
+        logger.debug("Fetching current user role");
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && !authentication.getAuthorities().isEmpty()) {
-            return authentication.getAuthorities().iterator().next().getAuthority();
+            String role = authentication.getAuthorities().iterator().next().getAuthority();
+            logger.debug("Current user role: {}", role);
+            return role;
         }
 
+        logger.warn("No authenticated user found while fetching role");
         return null;
     }
 
@@ -44,19 +57,17 @@ public class SecurityUtil {
      * This method returns null unless CustomUserDetails is implemented.
      */
     public static Long getCurrentUserId() {
+
+        logger.debug("Fetching current user ID");
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.getPrincipal() instanceof User) {
 
-            /** Default Spring Security User has NO ID field
-            // You must use CustomUserDetails for real ID access
-                CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-                return userDetails.getId();
-                */
-
             return null;
         }
 
+        logger.warn("No authenticated user found while fetching user ID");
         return null;
     }
 }

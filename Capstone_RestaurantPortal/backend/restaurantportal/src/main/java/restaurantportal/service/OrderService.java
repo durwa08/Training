@@ -2,6 +2,8 @@ package restaurantportal.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +28,12 @@ import restaurantportal.security.SecurityUtil;
  */
 @Service
 public class OrderService {
-/**
+    /**
      * OrderService handles all operations related to order processing.
-      * It manages an order from preview to placement, status updates, and cancellation.
-      */
+     * It manages an order from preview to placement, status updates, and cancellation.
+     */
+    private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
+
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
@@ -40,6 +44,7 @@ public class OrderService {
         this.orderRepository = orderRepository;
         this.cartRepository = cartRepository;
         this.userRepository = userRepository;
+        logger.info("OrderService initialized");
     }
 
 
@@ -48,23 +53,36 @@ public class OrderService {
      */
     public OrderResponse previewOrder() {
 
+        logger.info("Generating order preview");
+
         String email = SecurityUtil.getCurrentUserEmail();
+        logger.debug("Current user email: {}", email);
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with email: {}", email);
+                    return new RuntimeException("User not found");
+                });
 
         Cart cart = cartRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
+                .orElseThrow(() -> {
+                    logger.error("Cart not found for user");
+                    return new RuntimeException("Cart not found");
+                });
 
         if (cart.getItems().isEmpty()) {
+            logger.warn("Cart is empty for preview");
             throw new RuntimeException("Cart is empty");
         }
+
         String customerName = String.join(" ",
                 user.getFirstName() == null ? "" : user.getFirstName(),
                 user.getLastName() == null ? "" : user.getLastName()).trim();
         if (customerName.isEmpty()) {
             customerName = user.getEmail();
         }
+
+        logger.info("Order preview generated successfully");
 
         return new OrderResponse(
                 null,
@@ -93,19 +111,31 @@ public class OrderService {
     @Transactional
     public OrderResponse placeOrder(PlaceOrderRequest request) {
 
+        logger.info("Placing order");
+        logger.debug("PlaceOrderRequest: {}", request);
+
         String email = SecurityUtil.getCurrentUserEmail();
+        logger.debug("Current user email: {}", email);
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with email: {}", email);
+                    return new RuntimeException("User not found");
+                });
 
         Cart cart = cartRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Cart not found"));
+                .orElseThrow(() -> {
+                    logger.error("Cart not found for user");
+                    return new RuntimeException("Cart not found");
+                });
 
         if (cart.getItems().isEmpty()) {
+            logger.warn("Cart is empty while placing order");
             throw new RuntimeException("Cart is empty");
         }
 
         if (user.getWalletBalance() < cart.getTotalAmount()) {
+            logger.warn("Insufficient wallet balance");
             throw new RuntimeException("Insufficient wallet balance");
         }
 
@@ -145,6 +175,8 @@ public class OrderService {
 
         Order saved = orderRepository.save(order);
 
+        logger.info("Order placed successfully with id: {}", saved.getId());
+
         return mapToResponse(saved);
     }
 
@@ -153,15 +185,25 @@ public class OrderService {
      */
     public List<OrderResponse> getMyOrders() {
 
+        logger.info("Fetching user orders");
+
         String email = SecurityUtil.getCurrentUserEmail();
+        logger.debug("Current user email: {}", email);
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with email: {}", email);
+                    return new RuntimeException("User not found");
+                });
 
-        return orderRepository.findByUserId(user.getId())
+        List<OrderResponse> response = orderRepository.findByUserId(user.getId())
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
+
+        logger.info("User orders fetched successfully");
+
+        return response;
     }
 
     /**
@@ -169,29 +211,49 @@ public class OrderService {
      */
     public List<OrderResponse> getOwnerOrders() {
 
+        logger.info("Fetching owner orders");
+
         String email = SecurityUtil.getCurrentUserEmail();
+        logger.debug("Current user email: {}", email);
 
         User owner = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with email: {}", email);
+                    return new RuntimeException("User not found");
+                });
 
-        return orderRepository.findByRestaurantOwnerId(owner.getId())
+        List<OrderResponse> response = orderRepository.findByRestaurantOwnerId(owner.getId())
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
+
+        logger.info("Owner orders fetched successfully");
+
+        return response;
     }
 
     @Transactional
     public OrderResponse updateStatus(Long orderId, String status) {
 
+        logger.info("Updating order status for id: {} to {}", orderId, status);
+
         String email = SecurityUtil.getCurrentUserEmail();
+        logger.debug("Current user email: {}", email);
 
         User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with email: {}", email);
+                    return new RuntimeException("User not found");
+                });
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found with ID: " + orderId));
+                .orElseThrow(() -> {
+                    logger.error("Order not found with id: {}", orderId);
+                    return new RuntimeException("Order not found with ID: " + orderId);
+                });
 
         if (!order.getRestaurant().getOwner().getId().equals(currentUser.getId())) {
+            logger.error("Unauthorized status update attempt");
             throw new RuntimeException("You are not allowed to update this order");
         }
 
@@ -200,25 +262,38 @@ public class OrderService {
 
         order.setStatus(newStatus);
 
+        logger.info("Order status updated successfully");
+
         return mapToResponse(orderRepository.save(order));
     }
 
     @Transactional
     public String cancelOrder(Long orderId) {
 
+        logger.info("Cancelling order with id: {}", orderId);
+
         String email = SecurityUtil.getCurrentUserEmail();
+        logger.debug("Current user email: {}", email);
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> {
+                    logger.error("User not found with email: {}", email);
+                    return new RuntimeException("User not found");
+                });
 
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+                .orElseThrow(() -> {
+                    logger.error("Order not found with id: {}", orderId);
+                    return new RuntimeException("Order not found");
+                });
 
         if (!order.getUser().getId().equals(user.getId())) {
+            logger.error("Unauthorized cancel attempt");
             throw new RuntimeException("Not your order");
         }
 
         if (!order.getStatus().name().equals("PENDING")) {
+            logger.warn("Order cannot be cancelled at this stage");
             throw new RuntimeException("Cannot cancel now");
         }
 
@@ -226,6 +301,7 @@ public class OrderService {
         long seconds = java.time.Duration.between(order.getCreatedAt(), now).getSeconds();
 
         if (seconds > 30) {
+            logger.warn("Cancellation time expired");
             throw new RuntimeException("Cancellation time expired (30 seconds only)");
         }
 
@@ -235,19 +311,27 @@ public class OrderService {
         userRepository.save(user);
         orderRepository.save(order);
 
+        logger.info("Order cancelled and refunded successfully");
+
         return "Order cancelled & refunded";
     }
 
     private void validateStatusFlow(OrderStatus current, OrderStatus next) {
 
+        logger.debug("Validating status transition from {} to {}", current, next);
+
         if (current == OrderStatus.PENDING && next == OrderStatus.DELIVERED) return;
         if (current == OrderStatus.DELIVERED && next == OrderStatus.COMPLETED) return;
         if (next == OrderStatus.CANCELLED) return;
 
+        logger.error("Invalid status transition");
         throw new RuntimeException("Invalid status transition");
     }
 
     private OrderResponse mapToResponse(Order order) {
+
+        logger.debug("Mapping Order to OrderResponse with id: {}", order.getId());
+
         String customerName = null;
         if (order.getUser() != null) {
             customerName = String.join(" ",

@@ -37,5 +37,3 @@ public class Student {
         System.out.println("Marks: " + marks);
     }
 }
-    
-

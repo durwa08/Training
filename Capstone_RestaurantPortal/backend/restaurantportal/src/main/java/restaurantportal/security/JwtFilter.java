@@ -2,6 +2,8 @@ package restaurantportal.security;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -18,6 +20,8 @@ import java.io.IOException;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
+    private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
+
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
 
@@ -28,17 +32,12 @@ public class JwtFilter extends OncePerRequestFilter {
     public JwtFilter(JwtUtil jwtUtil, CustomUserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
         this.userDetailsService = userDetailsService;
+        logger.info("JwtFilter initialized");
     }
 
     /**
      * Filters incoming requests and validates JWT token.
      * If token is valid, sets authentication in SecurityContext.
-     *
-     * @param request incoming HTTP request
-     * @param response HTTP response
-     * @param filterChain filter chain
-     * @throws ServletException if servlet error occurs
-     * @throws IOException if I/O error occurs
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -46,22 +45,33 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        logger.debug("Processing request: {} {}", request.getMethod(), request.getRequestURI());
+
         String header = request.getHeader("Authorization");
 
         String email = null;
         String token = null;
 
         if (header != null && header.startsWith("Bearer ")) {
+            logger.debug("JWT token found in Authorization header");
+
             token = header.substring(7);
 
             try {
                 email = jwtUtil.extractEmail(token);
+                logger.debug("Extracted email from token: {}", email);
             } catch (Exception e) {
+                logger.error("Error extracting email from JWT", e);
                 filterChain.doFilter(request, response);
                 return;
             }
+        } else {
+            logger.debug("No JWT token found in request");
         }
+
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
+            logger.debug("Setting authentication for user: {}", email);
 
             var userDetails = userDetailsService.loadUserByUsername(email);
 
@@ -77,7 +87,10 @@ public class JwtFilter extends OncePerRequestFilter {
             );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            logger.info("User authenticated successfully: {}", email);
         }
+
         filterChain.doFilter(request, response);
     }
 }
