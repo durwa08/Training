@@ -275,7 +275,7 @@ function createMenuItemCard(item, index) {
 
 // ─────────────────────────────────────────
 //   ADD TO CART — real backend
-//   POST /api/cart/add
+//   POST /api/cart
 //   Body: { menuItemId, quantity }
 // ─────────────────────────────────────────
 async function addToCart(itemId, itemName, price) {
@@ -385,7 +385,7 @@ function showToast(type, icon, message) {
 }
 
 // ─────────────────────────────────────────
-//   SKELETON / STATES
+//   STATES
 // ─────────────────────────────────────────
 function showSkeleton() {
   document.getElementById("skeletonMenu").classList.remove("hidden");
@@ -431,7 +431,7 @@ function escapeHtml(str) {
     .replace(/"/g, "&quot;");
 }
 
-// Spinner CSS for add button
+//  add button
 const s = document.createElement("style");
 s.textContent = `
     @keyframes spin { to { transform: rotate(360deg); } }

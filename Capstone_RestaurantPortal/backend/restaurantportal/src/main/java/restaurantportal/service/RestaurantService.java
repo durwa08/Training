@@ -188,9 +188,6 @@ public class RestaurantService {
         logger.info("Restaurant deleted successfully with id: {}", id);
     }
 
-    /**
-     * Converts Restaurant entity to RestaurantResponse DTO.
-     */
     private RestaurantResponse mapToResponse(Restaurant restaurant) {
 
         logger.debug("Mapping Restaurant to RestaurantResponse with id: {}", restaurant.getId());

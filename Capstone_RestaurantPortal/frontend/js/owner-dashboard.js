@@ -91,8 +91,7 @@ async function loadMyRestaurants() {
         if (!res.ok) throw new Error(`Server error ${res.status}`);
         let data = await res.json();
 
-        // If we fetched all restaurants (no ownerId in token), just show all
-        // (backend should have filtered by owner via the token on secured routes)
+
         myRestaurants = Array.isArray(data) ? data : [data];
 
         renderSidebarRestaurants(myRestaurants);
@@ -146,7 +145,7 @@ async function selectRestaurant(restaurant) {
     document.getElementById('topNav').classList.add('show');
     document.getElementById('topNavRestName').textContent = restaurant.name;
 
-    // Hide prompt
+
     document.getElementById('panelSelectPrompt').classList.add('hidden');
 
     // Populate edit form
@@ -162,7 +161,7 @@ async function selectRestaurant(restaurant) {
 
 // ─────────────────────────────────────────
 //   LOAD CATEGORIES
-//   GET /api/restaurants/{id}/categories
+//   GET /api/categories/${selectedRestaurant.id}
 // ─────────────────────────────────────────
 
 async function loadCategories() {
@@ -180,7 +179,7 @@ async function loadCategories() {
 
 // ─────────────────────────────────────────
 //   LOAD MENU ITEMS
-//   GET /api/restaurants/{id}/menu
+//   GET /api/menu-items/restaurant/${selectedRestaurant.id}
 // ─────────────────────────────────────────
 
 async function loadMenuItems() {
@@ -204,7 +203,7 @@ async function loadMenuItems() {
 }
 
 // ─────────────────────────────────────────
-//   UPDATE STATUS (overview panel)
+//   UPDATE STATUS
 // ─────────────────────────────────────────
 
 function updateStats() {
@@ -409,7 +408,7 @@ async function submitRestaurant() {
                 description,
                 address,
                 phone,
-                status   // ✅ USE THIS (not "OPEN")
+                status
             })
         });
 
@@ -450,7 +449,7 @@ async function updateRestaurant() {
                 description,
                 address,
                 phone,
-                status   // ✅ added
+                status
             })
         });
 
@@ -690,7 +689,7 @@ function confirmDeleteMenuItem(id, name) {
 }
 
 /**
- * DELETE /api/restaurants/{id}/menu/{mId}
+ * DELETE //api/menu-items/${menuItemId}`
  */
 async function deleteMenuItem(menuItemId) {
     try {
