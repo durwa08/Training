@@ -178,7 +178,7 @@ function renderActionButtons(orderId, order) {
 
 // ─────────────────────────────────────────
 //   UPDATE ORDER STATUS (PUT API)
-//   PUT /api/orders/{id}?status=VALUE
+//   PUT /api/orders/${orderId}?status=${status}
 // ─────────────────────────────────────────
 async function updateOrderStatus(orderId, status) {
   try {

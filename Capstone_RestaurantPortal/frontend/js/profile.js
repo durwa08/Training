@@ -84,7 +84,7 @@ function renderStats(orders) {
     document.getElementById('statTotalSpent').textContent  = `₹${spent.toFixed(2)}`;
 }
 
-// ── RENDER RECENT ORDERS ─────────────────
+// RECENT ORDERS
 function renderRecentOrders(orders) {
     const container = document.getElementById('recentOrdersList');
 

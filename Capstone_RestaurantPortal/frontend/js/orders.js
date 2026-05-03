@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function loadOrders() {
   try {
     /**
-     * GET /api/orders/my-orders
+     * GET /api/orders
      * Returns all orders for logged in customer
      * Sorted by newest first
      */
@@ -138,7 +138,7 @@ function createOrderCard(order) {
   return card;
 }
 
-// ── CANCEL ORDER ───────────────────────────
+// CANCEL ORDER
 
 async function cancelOrder(orderId) {
   if (
@@ -148,7 +148,7 @@ async function cancelOrder(orderId) {
 
   try {
     /**
-     * DELETE /api/orders/cancel/{orderId}
+     * DELETE /api/orders/{orderId}/cancel
      * Returns updated order with status CANCELLED
      */
     const res = await apiFetch(`/api/orders/${orderId}/cancel`, {
@@ -164,7 +164,6 @@ async function cancelOrder(orderId) {
 
     showToast("success", "✅", "Order cancelled. Amount refunded to wallet!");
 
-    // Update the card status
     const card = document.getElementById(`order-${orderId}`);
     if (card) {
       const statusBadge = card.querySelector(".status-badge");
@@ -182,7 +181,7 @@ async function cancelOrder(orderId) {
   }
 }
 
-// ── HELPERS ────────────────────────────────
+
 
 function isWithin30Seconds(createdAt) {
   if (!createdAt) return false;
@@ -227,7 +226,6 @@ function escapeHtml(str) {
     .replace(/>/g, "&gt;");
 }
 
-// ── TOAST ──────────────────────────────────
 
 let toastTimer;
 function showToast(type, icon, msg) {

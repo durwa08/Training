@@ -153,8 +153,6 @@ public class RestaurantService {
     /**
      * Converts Restaurant entity to RestaurantResponse DTO.
      *
-     * @param restaurant entity object
-     * @return response DTO
      */
     private RestaurantResponse mapToResponse(Restaurant restaurant) {
         return new RestaurantResponse(

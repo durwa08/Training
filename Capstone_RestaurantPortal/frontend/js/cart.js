@@ -16,7 +16,7 @@
 
 const FOOD_EMOJIS = [
   "🍕", "🍔", "🍜", "🍣", "🌮", "🍛", "🍱", "🥗",
-  "🍗", "🥪", "🧆", "🥘", "🍲", "🥙", "🌯",
+   "🥪", "🧆", "🥘", "🍲", "🥙", "🌯",
 ];
 
 let currentCart = null;
@@ -298,30 +298,66 @@ async function clearCart() {
 //   PLACE ORDER
 //   POST /api/orders
 // ─────────────────────────────────────────
-async function placeOrder() {
+function placeOrder() {
   if (!currentCart || !currentCart.items || currentCart.items.length === 0) {
     showToast("error", "❌", "Your cart is empty.");
     return;
   }
+  openOrderModal();
+}
 
-  const address = prompt("Enter delivery address:");
-  if (!address || address.trim() === "") {
-    showToast("error", "❌", "Delivery address is required.");
-    return;
-  }
+// ─────────────────────────────────────────
+//   ORDER MODAL — OPEN / CLOSE
+// ─────────────────────────────────────────
+function openOrderModal() {
+  document.getElementById("orderAddressInput").value = "";
+  document.getElementById("orderPhoneInput").value = "";
+  document.getElementById("orderAddressInput").style.borderColor = "";
+  document.getElementById("orderPhoneInput").style.borderColor = "";
+  document.getElementById("modalOrder").classList.remove("hidden");
+  // focus first field
+  setTimeout(() => document.getElementById("orderAddressInput").focus(), 80);
+}
 
-  const phone = prompt("Enter phone number:");
-  if (!phone || phone.trim() === "") {
-    showToast("error", "❌", "Phone number is required.");
-    return;
+function closeOrderModal() {
+  document.getElementById("modalOrder").classList.add("hidden");
+}
+
+// ─────────────────────────────────────────
+//   ORDER MODAL  SUBMIT
+// ─────────────────────────────────────────
+async function submitOrder() {
+  const addressInput = document.getElementById("orderAddressInput");
+  const phoneInput   = document.getElementById("orderPhoneInput");
+  const submitBtn    = document.getElementById("orderSubmitBtn");
+
+  const address = addressInput.value.trim();
+  const phone   = phoneInput.value.trim();
+
+  let valid = true;
+
+  if (!address) {
+    addressInput.style.borderColor = "#dc2626";
+    setTimeout(() => { addressInput.style.borderColor = ""; }, 1500);
+    valid = false;
   }
+  if (!phone) {
+    phoneInput.style.borderColor = "#dc2626";
+    setTimeout(() => { phoneInput.style.borderColor = ""; }, 1500);
+    valid = false;
+  }
+  if (!valid) return;
+
+  // loading state
+  submitBtn.disabled    = true;
+  submitBtn.textContent = "Placing Order…";
 
   try {
     const res = await apiFetch("/api/orders", {
       method: "POST",
       body: JSON.stringify({
-        deliveryAddress: address.trim(),
-        phoneNumber: phone.trim(),
+        deliveryAddress: address,
+        phoneNumber: phone,
       }),
     });
 
@@ -331,6 +367,7 @@ async function placeOrder() {
     }
 
     await res.json();
+    closeOrderModal();
     currentCart = null;
     document.getElementById("cartContent").style.display = "none";
     showEmpty();
@@ -338,6 +375,9 @@ async function placeOrder() {
   } catch (err) {
     console.error("Place order error:", err);
     showToast("error", "❌", err.message || "Failed to place order.");
+  } finally {
+    submitBtn.disabled    = false;
+    submitBtn.textContent = "Confirm Order →";
   }
 }
 
@@ -360,7 +400,7 @@ async function loadWalletBalance() {
 }
 
 // ─────────────────────────────────────────
-//   WALLET — OPEN / CLOSE MODAL
+//   WALLET MODAL
 // ─────────────────────────────────────────
 function openWalletModal() {
   document.getElementById("walletAmountInput").value = "";
@@ -375,7 +415,7 @@ function closeWalletModal() {
 
 // ─────────────────────────────────────────
 //   WALLET — ADD MONEY
-//   POST /api/wallet/add   { amount: number }
+//   POST /api/wallet/add
 // ─────────────────────────────────────────
 async function addWalletAmount() {
   const input = document.getElementById("walletAmountInput");
@@ -403,7 +443,7 @@ async function addWalletAmount() {
       throw new Error(err || `Server error ${res.status}`);
     }
 
-    // WalletResponse: { balance: number, ... }
+    // WalletResponse:
     const data = await res.json();
     const newBalance = data.balance ?? 0;
 
@@ -419,7 +459,7 @@ async function addWalletAmount() {
 }
 
 // ─────────────────────────────────────────
-//   WALLET — UPDATE UI
+//   WALLET
 // ─────────────────────────────────────────
 function updateWalletUI(balance) {
   const walletRow = document.getElementById("walletRow");
@@ -432,7 +472,7 @@ function updateWalletUI(balance) {
 }
 
 // ─────────────────────────────────────────
-//   SKELETON / STATES
+//   STATES
 // ─────────────────────────────────────────
 function showSkeleton() {
   document.getElementById("skeletonCart").style.display = "";

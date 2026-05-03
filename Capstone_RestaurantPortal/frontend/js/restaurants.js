@@ -5,7 +5,7 @@
  *
  */
 
-// All restaurants from API stored here for filtering
+
 let allRestaurants = [];
 
 // Food emojis — assigned by restaurant id for consistency
