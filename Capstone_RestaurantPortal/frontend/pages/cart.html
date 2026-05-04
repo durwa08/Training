@@ -7,337 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="../css/main.css"/>
-    <style>
-        /* Green & White Theme */
-        :root {
-            --green: #10b981;
-            --green-dark: #059669;
-            --green-light: #d1fae5;
-        }
-
-        body { background: white; min-height: 100vh; margin: 0; }
-
-        /* ── NAVBAR ── */
-        .fm-navbar {
-            position: sticky; top: 0; z-index: 50;
-            background: white;
-            border-bottom: 1px solid var(--green-light);
-            box-shadow: 0 1px 8px rgba(16,185,129,.07);
-            height: 72px; display: flex; align-items: center;
-        }
-        .fm-navbar-inner {
-            max-width: 1200px; margin: 0 auto; padding: 0 24px;
-            width: 100%; display: flex; align-items: center; justify-content: space-between;
-        }
-        .fm-nav-left { display: flex; align-items: center; gap: 14px; }
-        .fm-back-btn {
-            display: inline-flex; align-items: center; gap: 5px;
-            color: var(--green-dark); text-decoration: none;
-            font-family: 'DM Sans', sans-serif; font-size: 13.5px; font-weight: 500;
-            padding: 7px 14px; border-radius: 8px;
-            border: 1.5px solid var(--green-light); background: var(--green-light);
-            transition: all .18s; white-space: nowrap;
-        }
-        .fm-back-btn:hover { border-color: var(--green-dark); color: var(--green-dark); }
-        .fm-nav-divider { width: 1px; height: 22px; background: var(--green-light); }
-        .fm-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-        .fm-brand-text {
-            font-family: 'Playfair Display', serif; font-size: 22px;
-            font-weight: 700; color: var(--green-dark);
-        }
-        .fm-brand-text em { color: var(--green); font-style: normal; }
-        .fm-user-btn {
-            display: flex; align-items: center; gap: 8px;
-            background: var(--green); color: white; border: none;
-            border-radius: 99px; padding: 9px 18px;
-            font-family: 'DM Sans', sans-serif; font-size: 13.5px; font-weight: 600;
-            cursor: pointer; transition: background .18s;
-        }
-        .fm-user-btn:hover { background: var(--green-dark); }
-        .fm-dropdown {
-            position: absolute; right: 0; top: 52px;
-            background: white; border: 1px solid var(--green-light);
-            border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,.12);
-            width: 210px; padding: 8px 0; z-index: 200;
-        }
-        .fm-dropdown.hidden { display: none; }
-        .fm-dropdown-header { padding: 12px 16px; border-bottom: 1px solid var(--green-light); }
-        .fm-dropdown-header .label { font-size: 11px; color: #6b7280; font-family: 'DM Sans', sans-serif; }
-        .fm-dropdown-header .email { font-size: 13px; font-weight: 600; color: #1f2937; font-family: 'DM Sans', sans-serif; overflow: hidden; text-overflow: ellipsis; }
-        .fm-dropdown a, .fm-dropdown button {
-            display: flex; align-items: center; gap: 10px;
-            padding: 11px 16px; font-family: 'DM Sans', sans-serif;
-            font-size: 13.5px; text-decoration: none; width: 100%;
-            background: none; border: none; cursor: pointer; transition: background .15s;
-        }
-        .fm-dropdown a { color: #1f2937; }
-        .fm-dropdown a:hover, .fm-dropdown button:hover { background: var(--green-light); }
-        .fm-dropdown button { color: #dc2626; }
-
-        /* ── HERO ── */
-        .fm-hero {
-            background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 55%, var(--green-light) 100%);
-            padding: 40px 24px; position: relative; overflow: hidden;
-        }
-        .fm-hero::before {
-            content: ''; position: absolute; top: -60px; right: -60px;
-            width: 260px; height: 260px; border-radius: 50%;
-            background: rgba(255,255,255,.06);
-        }
-        .fm-hero-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
-        .fm-hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 36px; font-weight: 700;
-            color: #ffffff !important;
-            margin-bottom: 6px;
-        }
-        .fm-hero p {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 14px; color: rgba(255,255,255,.75);
-        }
-
-        /* ── PAGE BODY ── */
-        .fm-main { max-width: 1200px; margin: 0 auto; padding: 36px 24px 60px; }
-        .fm-grid { display: grid; grid-template-columns: 1fr 360px; gap: 28px; align-items: start; }
-        @media(max-width:900px){ .fm-grid { grid-template-columns: 1fr; } }
-
-        /* ── RESTAURANT BADGE ── */
-        .rest-badge {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: var(--green-light); border: 1.5px solid var(--green);
-            color: var(--green-dark); font-family: 'DM Sans', sans-serif;
-            font-size: 13px; font-weight: 600;
-            padding: 7px 16px; border-radius: 99px; margin-bottom: 20px;
-        }
-
-        /* ── CART ITEM CARD ── */
-        .cart-card {
-            background: white; border: 1.5px solid var(--green-light);
-            border-radius: 16px; padding: 16px 18px;
-            display: flex; align-items: center; gap: 14px;
-            margin-bottom: 12px; transition: all .22s;
-        }
-        .cart-card:hover { border-color: var(--green); box-shadow: 0 6px 24px rgba(16,185,129,.15); }
-        .cart-card.removing { opacity: 0; transform: translateX(30px); }
-
-        .cc-emoji {
-            width: 58px; height: 58px; flex-shrink: 0;
-            border-radius: 12px;
-            background: linear-gradient(135deg, var(--green-light), #dcfce7);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 26px;
-        }
-        .cc-info { flex: 1; min-width: 0; }
-        .cc-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 15px; font-weight: 700; color: #1f2937;
-            margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .cc-unit {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 12.5px; color: #6b7280;
-        }
-        .cc-qty {
-            display: flex; align-items: center;
-            border: 1.5px solid var(--green-light); border-radius: 10px;
-            overflow: hidden; flex-shrink: 0;
-        }
-        .cc-qty-btn {
-            width: 32px; height: 32px; background: var(--green-light);
-            border: none; font-size: 16px; font-weight: 700;
-            color: var(--green-dark); cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            transition: background .15s; line-height: 1;
-        }
-        .cc-qty-btn:hover:not(:disabled) { background: #a7f3d0; }
-        .cc-qty-btn:disabled { opacity: .35; cursor: not-allowed; }
-        .cc-qty-num {
-            width: 34px; height: 32px;
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
-            color: #1f2937; background: white;
-            border-left: 1px solid var(--green-light); border-right: 1px solid var(--green-light);
-        }
-        .cc-subtotal {
-            font-family: 'Playfair Display', serif;
-            font-size: 17px; font-weight: 700; color: var(--green-dark);
-            min-width: 72px; text-align: right; flex-shrink: 0;
-        }
-        .cc-remove {
-            background: none; border: none;
-            width: 30px; height: 30px; border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; cursor: pointer; color: #6b7280;
-            transition: all .18s; flex-shrink: 0;
-        }
-        .cc-remove:hover { background: #fee2e2; color: #dc2626; }
-
-        .continue-link {
-            display: inline-flex; align-items: center; gap: 6px;
-            color: var(--green-dark); font-family: 'DM Sans', sans-serif;
-            font-size: 13.5px; font-weight: 600; text-decoration: none;
-            margin-top: 16px; padding-bottom: 2px;
-            border-bottom: 1px solid transparent; transition: border-color .18s;
-        }
-        .continue-link:hover { border-color: var(--green-dark); }
-
-        /* ── ORDER SUMMARY ── */
-        .summary-box {
-            background: white; border: 1.5px solid var(--green-light);
-            border-radius: 20px; padding: 26px 22px;
-            position: sticky; top: 88px;
-        }
-        .summary-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 19px; font-weight: 700; color: #1f2937;
-            margin-bottom: 18px; padding-bottom: 14px;
-            border-bottom: 1.5px solid var(--green-light);
-        }
-        .s-row {
-            display: flex; justify-content: space-between; align-items: center;
-            font-family: 'DM Sans', sans-serif; font-size: 13.5px;
-            color: #6b7280; margin-bottom: 10px;
-        }
-        .s-row .val { color: #1f2937; font-weight: 500; }
-        .s-row .free { color: var(--green-dark); font-weight: 600; }
-        .s-total {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-top: 14px; padding-top: 14px;
-            border-top: 1.5px solid var(--green-light); margin-bottom: 20px;
-        }
-        .s-total .lbl {
-            font-family: 'DM Sans', sans-serif; font-size: 16px;
-            font-weight: 700; color: #1f2937;
-        }
-        .s-total .amt {
-            font-family: 'Playfair Display', serif;
-            font-size: 22px; font-weight: 700; color: var(--green-dark);
-        }
-        .btn-checkout {
-            width: 100%; padding: 14px;
-            background: linear-gradient(135deg, var(--green-dark), var(--green));
-            color: white; border: none; border-radius: 12px;
-            font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 700;
-            cursor: pointer; transition: all .22s;
-            box-shadow: 0 6px 20px rgba(16,185,129,.28);
-        }
-        .btn-checkout:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 28px rgba(16,185,129,.38);
-        }
-        .btn-checkout:disabled { opacity: .6; cursor: not-allowed; }
-
-        /* ── ADD WALLET BUTTON ── */
-        .btn-add-wallet {
-            width: 100%; padding: 11px; margin-top: 10px;
-            background: transparent; color: var(--green-dark);
-            border: 1.5px solid var(--green); border-radius: 10px;
-            font-family: 'DM Sans', sans-serif; font-size: 13.5px; font-weight: 600;
-            cursor: pointer; transition: all .18s;
-            display: flex; align-items: center; justify-content: center; gap: 6px;
-        }
-        .btn-add-wallet:hover { background: var(--green-light); border-color: var(--green-dark); }
-
-        .btn-clear {
-            width: 100%; padding: 10px; margin-top: 10px;
-            background: transparent; color: #dc2626;
-            border: 1.5px solid #fca5a5; border-radius: 10px;
-            font-family: 'DM Sans', sans-serif; font-size: 13.5px; font-weight: 600;
-            cursor: pointer; transition: all .18s;
-        }
-        .btn-clear:hover { background: #fee2e2; border-color: #dc2626; }
-        .secure-note {
-            font-family: 'DM Sans', sans-serif; font-size: 12px;
-            color: #6b7280; text-align: center; margin-top: 14px;
-        }
-
-        /* ── EMPTY STATE ── */
-        .empty-wrap {
-            background: white; border: 1.5px solid var(--green-light);
-            border-radius: 20px; padding: 64px 32px; text-align: center;
-            grid-column: 1 / -1;
-        }
-        .empty-icon { font-size: 72px; display: block; margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
-        .empty-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; color: #1f2937; margin-bottom: 10px; }
-        .empty-sub { font-family: 'DM Sans', sans-serif; font-size: 14px; color: #6b7280; margin-bottom: 28px; line-height: 1.6; }
-        .btn-browse {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: linear-gradient(135deg, var(--green-dark), var(--green));
-            color: white; padding: 13px 32px; border-radius: 99px;
-            font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600;
-            text-decoration: none; transition: all .22s;
-            box-shadow: 0 6px 20px rgba(16,185,129,.28);
-        }
-        .btn-browse:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(16,185,129,.38); }
-
-        /* ── SKELETON ── */
-        .skel-card { background: white; border: 1.5px solid var(--green-light); border-radius: 16px; height: 90px; margin-bottom: 12px; animation: pulse 1.4s ease-in-out infinite; }
-        .skel-box { background: var(--green-light); border-radius: 20px; animation: pulse 1.4s ease-in-out infinite; }
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
-
-        /* ── MODAL ── */
-        .modal-bg { position: fixed; inset: 0; background: rgba(15, 23, 42, .45); backdrop-filter: blur(4px); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .modal-bg.hidden { display: none; }
-        .modal-box { background: white; border-radius: 20px; padding: 32px; max-width: 360px; width: 100%; box-shadow: 0 24px 64px rgba(0,0,0,.18); animation: slideUp .22s ease; }
-        @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
-
-        /* ── ORDER MODAL INPUT LABEL ── */
-        .order-label {
-            display: block;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 12px; font-weight: 600;
-            color: #6b7280; text-transform: uppercase;
-            letter-spacing: .05em; margin-bottom: 6px;
-        }
-        .order-input {
-            width: 100%; padding: 11px 14px;
-            border: 1.5px solid var(--green-light); border-radius: 10px;
-            font-family: 'DM Sans', sans-serif; font-size: 14px; color: #1f2937;
-            outline: none; box-sizing: border-box; transition: border-color .18s;
-            margin-bottom: 16px;
-        }
-        .order-input:focus { border-color: var(--green); }
-        .order-input::placeholder { color: #9ca3af; }
-
-        /* ── WALLET MODAL INPUT ── */
-        .wallet-input {
-            width: 100%; padding: 11px 14px; margin-bottom: 18px;
-            border: 1.5px solid var(--green-light); border-radius: 10px;
-            font-family: 'DM Sans', sans-serif; font-size: 15px; color: #1f2937;
-            outline: none; box-sizing: border-box; transition: border-color .18s;
-        }
-        .wallet-input:focus { border-color: var(--green); }
-
-        /* ── TOAST ── */
-        #toast {
-            position: fixed; bottom: 28px; left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            padding: 13px 26px; border-radius: 99px;
-            font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
-            z-index: 9999; transition: transform .32s cubic-bezier(.34,1.56,.64,1);
-            white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,.18);
-            display: flex; align-items: center; gap: 8px;
-            color: white; background: #1f2937;
-        }
-        #toast.show    { transform: translateX(-50%) translateY(0); }
-        #toast.success { background: var(--green-dark); }
-        #toast.error   { background: #dc2626; }
-        #toast.info    { background: #1f2937; }
-
-        /* ── FOOTER ── */
-        .fm-footer { background: #1f2937; color: rgba(255,255,255,.55); padding: 28px 24px; text-align: center; margin-top: 40px; }
-        .fm-footer .fb { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: white; display: block; margin-bottom: 6px; }
-        .fm-footer .fb em { color: var(--green); font-style: normal; }
-        .fm-footer p { font-family: 'DM Sans', sans-serif; font-size: 13px; }
-
-        @keyframes fadeInUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
-        .fade-in { animation: fadeInUp .3s ease both; }
-    </style>
+    <link rel="stylesheet" href="../css/cart.css"/>
 </head>
 <body>
 
-<!-- ═══ NAVBAR ═══ -->
 <nav class="fm-navbar">
     <div class="fm-navbar-inner">
         <div class="fm-nav-left">
@@ -366,7 +39,6 @@
     </div>
 </nav>
 
-<!-- ═══ HERO ═══ -->
 <div class="fm-hero">
     <div class="fm-hero-inner">
         <h1>My Cart 🛒</h1>
@@ -374,10 +46,8 @@
     </div>
 </div>
 
-<!-- ═══ MAIN ═══ -->
 <div class="fm-main">
 
-    <!-- SKELETON -->
     <div id="skeletonCart" class="fm-grid">
         <div>
             <div class="skel-card"></div>
@@ -387,7 +57,6 @@
         <div class="skel-box" style="height:300px"></div>
     </div>
 
-    <!-- EMPTY -->
     <div id="emptyCart" style="display:none" class="fm-grid">
         <div class="empty-wrap">
             <span class="empty-icon">🛒</span>
@@ -397,7 +66,6 @@
         </div>
     </div>
 
-    <!-- ERROR -->
     <div id="errorCart" style="display:none" class="fm-grid">
         <div style="grid-column:1/-1;text-align:center;padding:60px 20px">
             <div style="font-size:60px;margin-bottom:16px">⚠️</div>
@@ -407,9 +75,7 @@
         </div>
     </div>
 
-    <!-- CART CONTENT -->
     <div id="cartContent" style="display:none" class="fm-grid">
-        <!-- LEFT -->
         <div>
             <div class="rest-badge">
                 <span>🏪</span>
@@ -418,7 +84,6 @@
             <div id="cartItemsList"></div>
             <a href="restaurants.html" class="continue-link">← Continue Shopping</a>
         </div>
-        <!-- RIGHT -->
         <div>
             <div class="summary-box">
                 <div class="summary-title">Order Summary</div>
@@ -434,7 +99,6 @@
                     <span>Taxes (5%)</span>
                     <span class="val" id="summaryTax">₹0.00</span>
                 </div>
-                <!-- WALLET BALANCE ROW -->
                 <div class="s-row" id="walletRow" style="display:none;">
                     <span>💰 Wallet Balance</span>
                     <span class="val" id="walletBalanceDisplay" style="color:var(--green-dark);font-weight:600;">₹0.00</span>
@@ -444,7 +108,6 @@
                     <span class="amt" id="summaryTotal">₹0.00</span>
                 </div>
                 <button class="btn-checkout" onclick="placeOrder()">Place Order →</button>
-                <!-- ADD WALLET BUTTON -->
                 <button class="btn-add-wallet" onclick="openWalletModal()">💰 Add Wallet Amount</button>
                 <button class="btn-clear" onclick="openClearModal()">🗑️ Clear Cart</button>
                 <p class="secure-note">🔒 Secure checkout. Orders coming soon!</p>
@@ -454,13 +117,11 @@
 
 </div>
 
-<!-- FOOTER -->
 <footer class="fm-footer">
     <span class="fb">🍽️ Green<em>Bite</em></span>
     <p>© 2025 Green Bite. Made with ❤ for food lovers.</p>
 </footer>
 
-<!-- CLEAR CART MODAL -->
 <div id="modalClear" class="modal-bg hidden">
     <div class="modal-box">
         <div style="text-align:center;font-size:48px;margin-bottom:14px">🗑️</div>
@@ -473,7 +134,6 @@
     </div>
 </div>
 
-<!-- ADD WALLET MODAL -->
 <div id="modalWallet" class="modal-bg hidden">
     <div class="modal-box">
         <div style="text-align:center;font-size:48px;margin-bottom:14px">💰</div>
@@ -494,7 +154,6 @@
     </div>
 </div>
 
-<!-- ORDER DETAILS MODAL -->
 <div id="modalOrder" class="modal-bg hidden">
     <div class="modal-box">
         <div style="text-align:center;font-size:48px;margin-bottom:14px">🛵</div>
@@ -533,24 +192,19 @@
     </div>
 </div>
 
-<!-- TOAST -->
 <div id="toast"><span id="toastIcon">✅</span><span id="toastMsg">Done!</span></div>
 
 <script src="../js/utils.js"></script>
 <script src="../js/cart.js"></script>
 
-<!-- WALLET-->
 <script>
-    // ── On page load: fetch real balance from API ──
     window.addEventListener('DOMContentLoaded', () => {
         loadWalletBalance();
 
-        // Close wallet modal on backdrop click
         document.getElementById('modalWallet').addEventListener('click', function(e) {
             if (e.target === this) closeWalletModal();
         });
 
-        // Close order modal on backdrop click
         document.getElementById('modalOrder').addEventListener('click', function(e) {
             if (e.target === this) closeOrderModal();
         });
@@ -559,7 +213,7 @@
     async function loadWalletBalance() {
         try {
             const res = await apiFetch('/api/wallet');
-            if (!res.ok) return; // silently skip if wallet unavailable
+            if (!res.ok) return;
             const data = await res.json();
             const balance = data.balance ?? 0;
             updateWalletUI(balance);
@@ -568,7 +222,6 @@
         }
     }
 
-    //Open / Close modal
     function openWalletModal() {
         document.getElementById('walletAmountInput').value = '';
         document.getElementById('walletAmountInput').style.borderColor = '';
@@ -579,20 +232,17 @@
         document.getElementById('modalWallet').classList.add('hidden');
     }
 
-
     async function addWalletAmount() {
         const input  = document.getElementById('walletAmountInput');
         const addBtn = document.getElementById('walletAddBtn');
         const amount = parseFloat(input.value);
 
-        // Client-side validation
         if (!amount || amount <= 0 || isNaN(amount)) {
             input.style.borderColor = '#dc2626';
             setTimeout(() => { input.style.borderColor = ''; }, 1500);
             return;
         }
 
-        // Loading state
         addBtn.disabled    = true;
         addBtn.textContent = 'Adding…';
 
@@ -607,7 +257,6 @@
                 throw new Error(err || `Server error ${res.status}`);
             }
 
-            // WalletResponse has a `balance` field
             const data       = await res.json();
             const newBalance = data.balance ?? 0;
 

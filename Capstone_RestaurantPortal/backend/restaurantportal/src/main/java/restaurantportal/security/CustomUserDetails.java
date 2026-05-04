@@ -45,8 +45,7 @@ public class CustomUserDetails implements UserDetails {
 
     /**
      * Returns encrypted password of user.
-     *
-     * @return password
+
      */
     @Override
     public String getPassword() {

@@ -7,62 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="../css/main.css"/>
-    <style>
-        /* Green & White Theme */
-        :root {
-            --green: #10b981;
-            --green-dark: #059669;
-            --green-light: #d1fae5;
-            --green-sage: #f0fdf4;
-        }
-
-
-        body { background: var(--green-sage) !important; }
-
-        .order-card {
-            background: white;
-            border: 1px solid var(--green-light);
-            border-radius: 18px;
-            overflow: hidden;
-            transition: box-shadow .2s;
-        }
-        .order-card:hover { box-shadow: 0 8px 30px rgba(16,185,129,.15); }
-        .status-badge {
-            display: inline-flex; align-items: center; gap: 5px;
-            padding: 4px 12px; border-radius: 99px;
-            font-size: 12px; font-weight: 700;
-            font-family: 'DM Sans', sans-serif;
-        }
-        .status-PLACED    { background:#dbeafe; color:#0284c7; border:1px solid #7dd3fc; }
-        .status-PENDING   { background:#fef3c7; color:#ca8a04; border:1px solid #fde047; }
-        .status-DELIVERED { background:#dcfce7; color:#15803d; border:1px solid #86efac; }
-        .status-COMPLETED { background:#d1fae5; color:#059669; border:1px solid #6ee7b7; }
-        .status-CANCELLED { background:#fee2e2; color:#dc2626; border:1px solid #fca5a5; }
-        .cancel-btn {
-            padding: 7px 18px; border-radius: 99px;
-            border: 1.5px solid #dc2626; background: white;
-            color: #dc2626; font-family: 'DM Sans', sans-serif;
-            font-size: 12.5px; font-weight: 600;
-            cursor: pointer; transition: all .2s;
-        }
-        .cancel-btn:hover { background: #fee2e2; }
-        #toast {
-            position: fixed; bottom: 28px; left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            padding: 13px 26px; border-radius: 99px;
-            font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
-            z-index: 9999; transition: transform .35s cubic-bezier(.34,1.56,.64,1);
-            white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,.2);
-            display: flex; align-items: center; gap: 10px; color: white;
-        }
-        #toast.show { transform: translateX(-50%) translateY(0); }
-        #toast.success { background: var(--green-dark); }
-        #toast.error { background: #dc2626; }
-    </style>
+    <link rel="stylesheet" href="../css/orders.css"/>
 </head>
-<body class=" min-h-screen">
+<body class="min-h-screen">
 
-<!-- NAVBAR -->
 <nav class="sticky top-0 z-50 bg-white border-b border-green-200 shadow-sm">
     <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -78,7 +26,6 @@
     </div>
 </nav>
 
-<!-- HERO -->
 <div class="bg-gradient-to-br from-green-600 via-green-500 to-green-700 text-white py-10 px-6">
     <div class="max-w-4xl mx-auto">
         <h1 class="font-playfair text-4xl font-bold mb-1">My Orders 📦</h1>
@@ -86,17 +33,14 @@
     </div>
 </div>
 
-<!-- MAIN -->
 <main class="max-w-4xl mx-auto px-6 py-10 space-y-6">
 
-    <!-- Loading -->
     <div id="ordersLoading" class="space-y-4">
         <div class="animate-pulse bg-white rounded-2xl h-36 border border-gold/10"></div>
         <div class="animate-pulse bg-white rounded-2xl h-36 border border-gold/10"></div>
         <div class="animate-pulse bg-white rounded-2xl h-36 border border-gold/10"></div>
     </div>
 
-    <!-- Empty -->
     <div id="ordersEmpty" class="hidden text-center py-24 bg-white rounded-2xl border border-green-200">
         <div class="text-6xl mb-4">📦</div>
         <h3 class="font-playfair text-2xl font-bold text-gray-800 mb-2">No orders yet</h3>
@@ -106,7 +50,6 @@
         </a>
     </div>
 
-    <!-- Orders List -->
     <div id="ordersList" class="hidden space-y-5"></div>
 
 </main>
