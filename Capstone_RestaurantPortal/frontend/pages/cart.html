@@ -17,7 +17,7 @@
             <a href="restaurants.html" class="fm-back-btn">← Back</a>
             <div class="fm-nav-divider"></div>
             <a href="restaurants.html" class="fm-brand">
-                <span style="font-size:26px">🍽️</span>
+                <span style="font-size:26px">🌿</span>
                 <span class="fm-brand-text">Green<em>Bite</em></span>
             </a>
         </div>
@@ -118,7 +118,7 @@
 </div>
 
 <footer class="fm-footer">
-    <span class="fb">🍽️ Green<em>Bite</em></span>
+    <span class="fb">🌿 Green<em>Bite</em></span>
     <p>© 2025 Green Bite. Made with ❤ for food lovers.</p>
 </footer>
 
@@ -155,10 +155,45 @@
 </div>
 
 <div id="modalOrder" class="modal-bg hidden">
-    <div class="modal-box">
+    <div class="modal-box" style="max-height:90vh;overflow-y:auto;">
         <div style="text-align:center;font-size:48px;margin-bottom:14px">🛵</div>
         <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#1f2937;text-align:center;margin-bottom:6px">Delivery Details</div>
         <p style="font-family:'DM Sans',sans-serif;font-size:13.5px;color:#6b7280;text-align:center;margin-bottom:22px">Tell us where to deliver your order.</p>
+
+        <div id="addrSkeleton" style="display:none;margin-bottom:14px;">
+            <div style="height:52px;background:#f3f4f6;border-radius:10px;margin-bottom:8px;"></div>
+            <div style="height:52px;background:#f3f4f6;border-radius:10px;"></div>
+        </div>
+
+        <div id="savedAddressesSection" style="display:none;margin-bottom:16px;">
+            <label class="order-label">Saved Addresses</label>
+            <div id="savedAddressList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;max-height:180px;overflow-y:auto;"></div>
+        </div>
+
+        <button
+                onclick="showAddAddressForm()"
+                id="showAddAddressBtn"
+                style="width:100%;padding:9px;border:1.5px dashed #10b981;border-radius:10px;background:transparent;color:#10b981;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:13px;margin-bottom:14px;">
+            + Add New Address
+        </button>
+
+        <div id="addAddressForm" style="display:none;background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:12px;padding:14px;margin-bottom:14px;">
+            <div style="font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;color:#374151;margin-bottom:10px;">📍 New Address</div>
+            <input id="addrStreet"  class="order-input" placeholder="Street / House No." style="margin-bottom:8px;" />
+            <input id="addrCity"    class="order-input" placeholder="City"                style="margin-bottom:8px;" />
+            <input id="addrState"   class="order-input" placeholder="State"               style="margin-bottom:8px;" />
+            <input id="addrPincode" class="order-input" placeholder="Pincode (6 digits)"  style="margin-bottom:10px;" maxlength="6" />
+            <div style="display:flex;gap:8px;">
+                <button onclick="saveNewAddress()" id="saveAddrBtn"
+                        style="flex:1;background:linear-gradient(135deg,#059669,#10b981);color:white;border:none;padding:10px;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:13px;">
+                    Save Address
+                </button>
+                <button onclick="hideAddAddressForm()"
+                        style="flex:0 0 auto;padding:10px 14px;background:#f3f4f6;border:1.5px solid #e5e7eb;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:13px;color:#374151;">
+                    Cancel
+                </button>
+            </div>
+        </div>
 
         <label class="order-label" for="orderAddressInput">Delivery Address</label>
         <textarea
@@ -194,92 +229,17 @@
 
 <div id="toast"><span id="toastIcon">✅</span><span id="toastMsg">Done!</span></div>
 
-<script src="../js/utils.js"></script>
 <script src="../js/cart.js"></script>
 
 <script>
     window.addEventListener('DOMContentLoaded', () => {
-        loadWalletBalance();
-
         document.getElementById('modalWallet').addEventListener('click', function(e) {
             if (e.target === this) closeWalletModal();
         });
-
         document.getElementById('modalOrder').addEventListener('click', function(e) {
             if (e.target === this) closeOrderModal();
         });
     });
-
-    async function loadWalletBalance() {
-        try {
-            const res = await apiFetch('/api/wallet');
-            if (!res.ok) return;
-            const data = await res.json();
-            const balance = data.balance ?? 0;
-            updateWalletUI(balance);
-        } catch (err) {
-            console.warn('Could not load wallet balance:', err);
-        }
-    }
-
-    function openWalletModal() {
-        document.getElementById('walletAmountInput').value = '';
-        document.getElementById('walletAmountInput').style.borderColor = '';
-        document.getElementById('modalWallet').classList.remove('hidden');
-    }
-
-    function closeWalletModal() {
-        document.getElementById('modalWallet').classList.add('hidden');
-    }
-
-    async function addWalletAmount() {
-        const input  = document.getElementById('walletAmountInput');
-        const addBtn = document.getElementById('walletAddBtn');
-        const amount = parseFloat(input.value);
-
-        if (!amount || amount <= 0 || isNaN(amount)) {
-            input.style.borderColor = '#dc2626';
-            setTimeout(() => { input.style.borderColor = ''; }, 1500);
-            return;
-        }
-
-        addBtn.disabled    = true;
-        addBtn.textContent = 'Adding…';
-
-        try {
-            const res = await apiFetch('/api/wallet/add', {
-                method : 'POST',
-                body   : JSON.stringify({ amount })
-            });
-
-            if (!res.ok) {
-                const err = await res.text();
-                throw new Error(err || `Server error ${res.status}`);
-            }
-
-            const data       = await res.json();
-            const newBalance = data.balance ?? 0;
-
-            updateWalletUI(newBalance);
-            closeWalletModal();
-            showToast('success', '💰', `₹${amount.toFixed(2)} added to wallet!`);
-
-        } catch (err) {
-            console.error('Wallet add error:', err);
-            showToast('error', '❌', err.message || 'Failed to add wallet amount.');
-        } finally {
-            addBtn.disabled    = false;
-            addBtn.textContent = 'Add Amount';
-        }
-    }
-
-    function updateWalletUI(balance) {
-        const walletRow     = document.getElementById('walletRow');
-        const walletDisplay = document.getElementById('walletBalanceDisplay');
-        if (!walletRow || !walletDisplay) return;
-        walletRow.style.display    = balance > 0 ? 'flex' : 'none';
-        walletDisplay.textContent  = '₹' + Number(balance).toFixed(2);
-    }
 </script>
 </body>
 </html>

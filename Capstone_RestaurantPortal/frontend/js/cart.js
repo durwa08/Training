@@ -1,18 +1,4 @@
-/**
- * ============================================
- *    Cart Page
- * ============================================
- *
- *  APIs:
- *  GET    /api/cart                            → get cart
- *  PUT    /api/cart/update/{cartItemId}?quantity=N → update qty
- *  DELETE /api/cart/remove/{cartItemId}        → remove one item
- *  DELETE /api/cart/clear                      → clear all
- *
- *  Wallet APIs:
- *  GET    /api/wallet                          → get wallet balance
- *  POST   /api/wallet/add                      → add money to wallet
- */
+const BASE_URL = 'http://localhost:8080';
 
 const FOOD_EMOJIS = [
   "🍕", "🍔", "🍜", "🍣", "🌮", "🍛", "🍱", "🥗",
@@ -21,14 +7,50 @@ const FOOD_EMOJIS = [
 
 let currentCart = null;
 
-// ─────────────────────────────────────────
-//   PAGE INIT
-// ─────────────────────────────────────────
+function getToken() {
+    return localStorage.getItem('fm_token');
+}
+
+function getEmail() {
+    return localStorage.getItem('fm_email');
+}
+
+function getUserId() {
+    return localStorage.getItem('fm_user_id');
+}
+
+function requireAuth() {
+    const token = getToken();
+    if (!token) {
+        window.location.href = 'Auth.html';
+        return false;
+    }
+    return true;
+}
+
+function logout() {
+    localStorage.removeItem('fm_token');
+    localStorage.removeItem('fm_email');
+    localStorage.removeItem('fm_role');
+    localStorage.removeItem('fm_user_id');
+    window.location.href = 'Auth.html';
+}
+
+async function apiFetch(path, options = {}) {
+    const token = getToken();
+    const headers = {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+        ...(options.headers || {}),
+    };
+    return fetch(`${BASE_URL}${path}`, { ...options, headers });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   requireAuth();
   setupNavbar();
   loadCart();
-  loadWalletBalance(); // fetch real wallet balance on load
+  loadWalletBalance();
 
   document.addEventListener("click", (e) => {
     const menu = document.getElementById("userMenu");
@@ -39,22 +61,16 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-// ─────────────────────────────────────────
-//   NAVBAR
-// ─────────────────────────────────────────
 function setupNavbar() {
   const email = getEmail() || "Account";
   document.getElementById("userEmailNav").textContent = email.split("@")[0];
   document.getElementById("userEmailDrop").textContent = email;
 }
+
 function toggleUserMenu() {
   document.getElementById("userDropdown").classList.toggle("hidden");
 }
 
-// ─────────────────────────────────────────
-//   LOAD CART
-//   GET /api/cart
-// ─────────────────────────────────────────
 async function loadCart() {
   showSkeleton();
   try {
@@ -86,9 +102,6 @@ async function loadCart() {
   }
 }
 
-// ─────────────────────────────────────────
-//   RENDER CART
-// ─────────────────────────────────────────
 function renderCart(cart) {
   document.getElementById("cartContent").style.display = "";
   document.getElementById("emptyCart").style.display = "none";
@@ -107,9 +120,6 @@ function renderCart(cart) {
   updateSummary(cart);
 }
 
-// ─────────────────────────────────────────
-//   CREATE CART ITEM CARD
-// ─────────────────────────────────────────
 function createCartCard(item, index) {
   console.log("Creating card for", item);
 
@@ -144,9 +154,6 @@ function createCartCard(item, index) {
   return card;
 }
 
-// ─────────────────────────────────────────
-//   UPDATE SUMMARY PANEL
-// ─────────────────────────────────────────
 function updateSummary(cart) {
   const subtotal = cart.totalAmount || 0;
   const tax = subtotal * 0.05;
@@ -159,10 +166,6 @@ function updateSummary(cart) {
   document.getElementById("summaryTotal").textContent = `₹${grandTotal.toFixed(2)}`;
 }
 
-// ─────────────────────────────────────────
-//   CHANGE QUANTITY
-//   POST /api/cart
-// ─────────────────────────────────────────
 async function changeQty(cartItemId, delta) {
   const item = currentCart.items.find((i) => i.id === cartItemId);
 
@@ -215,10 +218,6 @@ function setQtyDisabled(cartItemId, disabled) {
   card.querySelectorAll(".cc-qty-btn").forEach((b) => (b.disabled = disabled));
 }
 
-// ─────────────────────────────────────────
-//   REMOVE ITEM
-//   DELETE /api/cart/{cartItemId}
-// ─────────────────────────────────────────
 async function removeItem(cartItemId) {
   const card = document.getElementById(`cart-item-${cartItemId}`);
   if (card) {
@@ -263,10 +262,6 @@ async function removeItem(cartItemId) {
   }
 }
 
-// ─────────────────────────────────────────
-//   CLEAR CART
-//   DELETE /api/cart
-// ─────────────────────────────────────────
 function openClearModal() {
   document.getElementById("modalClear").classList.remove("hidden");
 }
@@ -294,8 +289,6 @@ async function clearCart() {
   }
 }
 
-// ─────────────────────────────────────────
-//   PLACE ORDER
 function placeOrder() {
   if (!currentCart || !currentCart.items || currentCart.items.length === 0) {
     showToast("error", "❌", "Your cart is empty.");
@@ -304,26 +297,20 @@ function placeOrder() {
   openOrderModal();
 }
 
-// ─────────────────────────────────────────
-//   ORDER MODAL — OPEN / CLOSE
-// ─────────────────────────────────────────
 function openOrderModal() {
   document.getElementById("orderAddressInput").value = "";
   document.getElementById("orderPhoneInput").value = "";
   document.getElementById("orderAddressInput").style.borderColor = "";
   document.getElementById("orderPhoneInput").style.borderColor = "";
   document.getElementById("modalOrder").classList.remove("hidden");
-  // focus first field
   setTimeout(() => document.getElementById("orderAddressInput").focus(), 80);
+  loadSavedAddresses();
 }
 
 function closeOrderModal() {
   document.getElementById("modalOrder").classList.add("hidden");
 }
 
-// ─────────────────────────────────────────
-//   ORDER MODAL  SUBMIT
-// ─────────────────────────────────────────
 async function submitOrder() {
   const addressInput = document.getElementById("orderAddressInput");
   const phoneInput   = document.getElementById("orderPhoneInput");
@@ -346,7 +333,6 @@ async function submitOrder() {
   }
   if (!valid) return;
 
-  // loading state
   submitBtn.disabled    = true;
   submitBtn.textContent = "Placing Order…";
 
@@ -360,8 +346,8 @@ async function submitOrder() {
     });
 
     if (!res.ok) {
-      const err = await res.text();
-      throw new Error(err || `Server error ${res.status}`);
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.error || err?.message || `Server error ${res.status}`);
     }
 
     await res.json();
@@ -379,17 +365,12 @@ async function submitOrder() {
   }
 }
 
-// ─────────────────────────────────────────
-//   WALLET — LOAD BALANCE
-//   GET /api/wallet
-// ─────────────────────────────────────────
 async function loadWalletBalance() {
   try {
     const res = await apiFetch("/api/wallet");
-    if (!res.ok) return; // silently skip if wallet not available
+    if (!res.ok) return;
 
     const data = await res.json();
-    // WalletResponse expected to have a `balance` field
     const balance = data.balance ?? 0;
     updateWalletUI(balance);
   } catch (err) {
@@ -397,12 +378,8 @@ async function loadWalletBalance() {
   }
 }
 
-// ─────────────────────────────────────────
-//   WALLET MODAL
-// ─────────────────────────────────────────
 function openWalletModal() {
   document.getElementById("walletAmountInput").value = "";
-  // clear any previous error highlight
   document.getElementById("walletAmountInput").style.borderColor = "";
   document.getElementById("modalWallet").classList.remove("hidden");
 }
@@ -411,22 +388,16 @@ function closeWalletModal() {
   document.getElementById("modalWallet").classList.add("hidden");
 }
 
-// ─────────────────────────────────────────
-//   WALLET — ADD MONEY
-//   POST /api/wallet/add
-// ─────────────────────────────────────────
 async function addWalletAmount() {
   const input = document.getElementById("walletAmountInput");
   const amount = parseFloat(input.value);
 
-  // client-side validation
   if (!amount || amount <= 0 || isNaN(amount)) {
     input.style.borderColor = "#dc2626";
     setTimeout(() => { input.style.borderColor = ""; }, 1500);
     return;
   }
 
-  // disable button to prevent double-submit
   const addBtn = document.getElementById("walletAddBtn");
   if (addBtn) { addBtn.disabled = true; addBtn.textContent = "Adding…"; }
 
@@ -441,7 +412,6 @@ async function addWalletAmount() {
       throw new Error(err || `Server error ${res.status}`);
     }
 
-    // WalletResponse:
     const data = await res.json();
     const newBalance = data.balance ?? 0;
 
@@ -456,9 +426,6 @@ async function addWalletAmount() {
   }
 }
 
-// ─────────────────────────────────────────
-//   WALLET
-// ─────────────────────────────────────────
 function updateWalletUI(balance) {
   const walletRow = document.getElementById("walletRow");
   const walletDisplay = document.getElementById("walletBalanceDisplay");
@@ -469,9 +436,6 @@ function updateWalletUI(balance) {
   }
 }
 
-// ─────────────────────────────────────────
-//   STATES
-// ─────────────────────────────────────────
 function showSkeleton() {
   document.getElementById("skeletonCart").style.display = "";
   document.getElementById("cartContent").style.display = "none";
@@ -491,9 +455,6 @@ function showError(msg) {
   document.getElementById("errorMsg").textContent = msg;
 }
 
-// ─────────────────────────────────────────
-//   TOAST
-// ─────────────────────────────────────────
 let toastTimer;
 function showToast(type, icon, message) {
   clearTimeout(toastTimer);
@@ -504,9 +465,6 @@ function showToast(type, icon, message) {
   toastTimer = setTimeout(() => { toast.className = type; }, 2800);
 }
 
-// ─────────────────────────────────────────
-//   HELPER
-// ─────────────────────────────────────────
 function escapeHtml(str) {
   if (!str) return "";
   return String(str)
@@ -514,4 +472,187 @@ function escapeHtml(str) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
+}
+
+let savedAddresses = [];
+let selectedAddressId = null;
+
+async function loadSavedAddresses() {
+  const userId = getUserId();
+
+  const section  = document.getElementById("savedAddressesSection");
+  const skeleton = document.getElementById("addrSkeleton");
+  const list     = document.getElementById("savedAddressList");
+
+  selectedAddressId = null;
+  section.style.display  = "none";
+  skeleton.style.display = "block";
+  list.innerHTML         = "";
+  hideAddAddressForm();
+
+  if (!userId) {
+    skeleton.style.display = "none";
+    return;
+  }
+
+  try {
+    const res = await apiFetch(`/api/addresses/${userId}`);
+    if (!res.ok) throw new Error("Failed to load addresses");
+
+    savedAddresses = await res.json();
+    skeleton.style.display = "none";
+
+    if (savedAddresses.length > 0) {
+      section.style.display = "block";
+      savedAddresses.forEach(addr => renderAddressCard(addr, list));
+    }
+  } catch (err) {
+    skeleton.style.display = "none";
+    console.warn("Address load error:", err);
+  }
+}
+
+function renderAddressCard(addr, container) {
+  const card = document.createElement("div");
+  card.id = `addr-card-${addr.id}`;
+  card.style.cssText = "display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:10px;cursor:pointer;transition:all .18s;background:#fff;font-family:'DM Sans',sans-serif;";
+
+  const addrText = `${addr.street}, ${addr.city}, ${addr.state} — ${addr.pincode}`;
+
+  card.innerHTML = `
+    <div style="margin-top:2px;font-size:18px;">📍</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:13px;font-weight:500;color:#111827;word-break:break-word;">${escapeHtml(addrText)}</div>
+    </div>
+    <button
+      onclick="deleteAddress(event,${addr.id})"
+      title="Delete"
+      style="flex-shrink:0;background:none;border:none;cursor:pointer;font-size:15px;color:#9ca3af;padding:2px 4px;border-radius:6px;"
+      onmouseover="this.style.color='#dc2626'"
+      onmouseout="this.style.color='#9ca3af'"
+    >✕</button>
+  `;
+
+  card.addEventListener("click", (e) => {
+    if (e.target.closest("button")) return;
+    selectAddressCard(addr, card, addrText);
+  });
+
+  container.appendChild(card);
+}
+
+function selectAddressCard(addr, cardEl, addrText) {
+  document.querySelectorAll("[id^='addr-card-']").forEach(c => {
+    c.style.borderColor = "#e5e7eb";
+    c.style.background  = "#fff";
+    c.style.boxShadow   = "none";
+  });
+
+  cardEl.style.borderColor = "#10b981";
+  cardEl.style.background  = "#f0fdf4";
+  cardEl.style.boxShadow   = "0 0 0 3px rgba(16,185,129,.15)";
+
+  selectedAddressId = addr.id;
+  document.getElementById("orderAddressInput").value = addrText;
+}
+
+function showAddAddressForm() {
+  document.getElementById("addAddressForm").style.display = "block";
+  document.getElementById("showAddAddressBtn").style.display = "none";
+  ["addrStreet","addrCity","addrState","addrPincode"].forEach(id => {
+    document.getElementById(id).value = "";
+    document.getElementById(id).style.borderColor = "";
+  });
+}
+
+function hideAddAddressForm() {
+  document.getElementById("addAddressForm").style.display  = "none";
+  const btn = document.getElementById("showAddAddressBtn");
+  if (btn) btn.style.display = "";
+}
+
+async function saveNewAddress() {
+  const userId  = getUserId();
+  if (!userId) return;
+
+  const street  = document.getElementById("addrStreet").value.trim();
+  const city    = document.getElementById("addrCity").value.trim();
+  const state   = document.getElementById("addrState").value.trim();
+  const pincode = document.getElementById("addrPincode").value.trim();
+
+  let valid = true;
+  [["addrStreet",street],["addrCity",city],["addrState",state],["addrPincode",pincode]].forEach(([id, val]) => {
+    const el = document.getElementById(id);
+    if (!val) { el.style.borderColor = "#dc2626"; valid = false; }
+    else        el.style.borderColor = "";
+  });
+
+  if (!/^\d{6}$/.test(pincode)) {
+    document.getElementById("addrPincode").style.borderColor = "#dc2626";
+    showToast("error", "❌", "Pincode must be exactly 6 digits.");
+    return;
+  }
+  if (!valid) return;
+
+  const btn = document.getElementById("saveAddrBtn");
+  btn.disabled    = true;
+  btn.textContent = "Saving…";
+
+  try {
+    const res = await apiFetch(`/api/addresses/${userId}`, {
+      method: "POST",
+      body: JSON.stringify({ street, city, state, pincode }),
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(err || `Error ${res.status}`);
+    }
+
+    const newAddr = await res.json();
+    savedAddresses.push(newAddr);
+
+    const list = document.getElementById("savedAddressList");
+    renderAddressCard(newAddr, list);
+    document.getElementById("savedAddressesSection").style.display = "block";
+
+    hideAddAddressForm();
+    showToast("success", "📍", "Address saved!");
+  } catch (err) {
+    showToast("error", "❌", err.message || "Failed to save address.");
+  } finally {
+    btn.disabled    = false;
+    btn.textContent = "Save Address";
+  }
+}
+
+async function deleteAddress(event, addressId) {
+  event.stopPropagation();
+  const userId = getUserId();
+  if (!userId) return;
+
+  const card = document.getElementById(`addr-card-${addressId}`);
+  if (card) { card.style.opacity = "0.4"; card.style.pointerEvents = "none"; }
+
+  try {
+    const res = await apiFetch(`/api/addresses/${userId}/${addressId}`, { method: "DELETE" });
+    if (!res.ok) throw new Error(`Error ${res.status}`);
+
+    savedAddresses = savedAddresses.filter(a => a.id !== addressId);
+    if (card) card.remove();
+
+    if (selectedAddressId === addressId) {
+      selectedAddressId = null;
+      document.getElementById("orderAddressInput").value = "";
+    }
+
+    if (savedAddresses.length === 0) {
+      document.getElementById("savedAddressesSection").style.display = "none";
+    }
+
+    showToast("info", "🗑️", "Address removed.");
+  } catch (err) {
+    if (card) { card.style.opacity = "1"; card.style.pointerEvents = ""; }
+    showToast("error", "❌", err.message || "Failed to delete address.");
+  }
 }

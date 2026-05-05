@@ -39,7 +39,7 @@ public class OrderController {
     }
 
     /**
-     * Places a new order (checkout process).
+     * Places a new order.
      */
     @PostMapping
     public OrderResponse placeOrder(@RequestBody PlaceOrderRequest request) {

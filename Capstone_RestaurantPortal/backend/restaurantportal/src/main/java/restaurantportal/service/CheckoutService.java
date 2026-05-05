@@ -21,7 +21,9 @@ import java.util.stream.Collectors;
 public class CheckoutService {
     /**
      * CheckoutService handles the checkout process for users.
-     * It calculates the total amount of the cart and checks if the user has sufficient wallet balance to place the order.
+     * It calculates the total amount of the cart and checks if the user has
+     *
+     * sufficient wallet balance to place the order.
      */
     private static final Logger logger = LoggerFactory.getLogger(CheckoutService.class);
 

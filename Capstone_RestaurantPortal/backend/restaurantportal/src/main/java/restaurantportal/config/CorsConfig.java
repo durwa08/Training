@@ -15,8 +15,8 @@ import org.springframework.web.filter.CorsFilter;
  */
 @Configuration
 /**
- * CORS (Cross-Origin Resource Sharing) is a security feature that helps in setting up the communication between different ports .
- * example our backend runs on a port 8080 while frontend on 6000,so cors helps in allowing the frontend to access the backend resources without any issues.
+ * CORS (Cross-Origin Resource Sharing) is a security feature that helps in setting up the communication
+ * between different ports .
  */
 public class CorsConfig {
 
@@ -33,10 +33,10 @@ public class CorsConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        /*
-         Allow ALL origins (any localhost port, any frontend)
+        /**
+         *Allow ALL origins (any localhost port, any frontend)
          */
-        // In production you would restrict this to your domain
+
         config.addAllowedOriginPattern("*");
         logger.debug("Allowed origin pattern set to *");
 
@@ -66,7 +66,7 @@ public class CorsConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 
-        // Apply to ALL routes
+
         source.registerCorsConfiguration("/**", config);
         logger.info("CORS configuration applied to all routes");
 

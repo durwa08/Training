@@ -15,7 +15,7 @@ import java.io.IOException;
 /**
  * JWT filter that intercepts every HTTP request to validate authentication.
  * Extracts JWT token from Authorization header, validates it,
- * and sets authenticated user in Spring Security context.
+ * and sets authenticated user.
  */
 @Component
 public class JwtFilter extends OncePerRequestFilter {

@@ -69,7 +69,6 @@ public class MenuItemController {
 
     /**
      * Deletes a menu item by its ID.
-     *
      */
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {

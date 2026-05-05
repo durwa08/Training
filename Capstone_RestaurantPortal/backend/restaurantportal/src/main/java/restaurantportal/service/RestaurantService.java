@@ -39,7 +39,7 @@ public class RestaurantService {
     }
 
     /**
-     * Creates a new restaurant for the logged-in user.
+     * Creates a new restaurant for the currently logged-in user.
      */
     public RestaurantResponse create(RestaurantRequest request) {
 
@@ -79,8 +79,6 @@ public class RestaurantService {
 
     /**
      * Retrieves all restaurants in the system.
-     *
-     * @return list of restaurant responses
      */
     public List<RestaurantResponse> getAll() {
 
@@ -97,7 +95,7 @@ public class RestaurantService {
     }
 
     /**
-     * Retrieves a restaurant by its ID.
+     * Retrieves a restaurant by its unique ID.
      */
     public RestaurantResponse getById(Long id) {
 
@@ -115,8 +113,24 @@ public class RestaurantService {
     }
 
     /**
+     * Retrieves all restaurants owned by a specific user.
+     */
+    public List<RestaurantResponse> getByOwnerId(Long ownerId) {
+
+        logger.info("Fetching restaurants for owner id: {}", ownerId);
+
+        List<RestaurantResponse> response = restaurantRepository.findByOwnerId(ownerId)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+
+        logger.info("Restaurants fetched successfully for owner id: {}", ownerId);
+
+        return response;
+    }
+
+    /**
      * Updates an existing restaurant if the logged-in user is the owner.
-     *
      */
     public RestaurantResponse update(Long id, RestaurantRequest request) {
 
@@ -160,7 +174,7 @@ public class RestaurantService {
     }
 
     /**
-     * Deletes a restaurant if the logged-in user is the owner.
+     * Deletes a restaurant if the logged-in user is the owner
      */
     public void delete(Long id) {
 
@@ -188,6 +202,9 @@ public class RestaurantService {
         logger.info("Restaurant deleted successfully with id: {}", id);
     }
 
+    /**
+     * Maps a Restaurant entity to a RestaurantResponse DTO.
+     */
     private RestaurantResponse mapToResponse(Restaurant restaurant) {
 
         logger.debug("Mapping Restaurant to RestaurantResponse with id: {}", restaurant.getId());

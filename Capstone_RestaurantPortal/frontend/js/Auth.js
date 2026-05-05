@@ -117,7 +117,7 @@ async function handleLogin() {
 
         if (!response.ok) {
             // 401 → wrong credentials, 500 → server error
-            if (response.status === 401 || response.status === 403) {
+            if (response.status === 400 || response.status === 401 || response.status === 403 ) {
                 showAlert('error', '❌', 'Invalid email or password. Please try again.');
             } else {
                 showAlert('error', '❌', `Server error (${response.status}). Please try again.`);

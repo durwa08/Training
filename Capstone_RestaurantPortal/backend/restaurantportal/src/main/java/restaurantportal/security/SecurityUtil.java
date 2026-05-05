@@ -53,7 +53,6 @@ public class SecurityUtil {
 
     /**
      * Retrieves the user ID of the currently logged-in user.
-     *
      * This method returns null unless CustomUserDetails is implemented.
      */
     public static Long getCurrentUserId() {
