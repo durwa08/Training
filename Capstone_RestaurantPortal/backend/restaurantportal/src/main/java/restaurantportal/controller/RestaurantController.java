@@ -95,8 +95,6 @@ public class RestaurantController {
     /**
      * Deletes a restaurant by its ID.
      * Only the owner of the restaurant is permitted to delete it.
-     *
-     * @param id the restaurant ID to delete
      */
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
