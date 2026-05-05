@@ -54,7 +54,7 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- ✅ FIXED LOMBOK -->
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -115,7 +115,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 
-			<!-- ✅ FIXED COMPILER PLUGIN -->
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
