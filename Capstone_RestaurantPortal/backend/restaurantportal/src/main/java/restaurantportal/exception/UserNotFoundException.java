@@ -9,6 +9,7 @@ public class UserNotFoundException extends RuntimeException {
      * Creates a new UserNotFoundException with a custom message.
      */
     public UserNotFoundException(String message) {
+
         super(message);
     }
 }

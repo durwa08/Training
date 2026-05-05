@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * REST controller for Address management.
- * All endpoints require the user to be authenticated (USER role).
+ * All endpoints require the user to be authenticated.
  *
  * Base URL: /api/addresses
  */

@@ -30,6 +30,9 @@ public class RestaurantService {
 
     /**
      * Constructs RestaurantService with required dependencies.
+     *
+     * @param restaurantRepository repository for restaurant data access
+     * @param userRepository       repository for user data access
      */
     public RestaurantService(RestaurantRepository restaurantRepository,
                              UserRepository userRepository) {
@@ -39,7 +42,10 @@ public class RestaurantService {
     }
 
     /**
-     * Creates a new restaurant for the logged-in user.
+     * Creates a new restaurant for the currently logged-in user.
+     *
+     * @param request the restaurant creation request containing name, address, and status
+     * @return the created restaurant as a response DTO
      */
     public RestaurantResponse create(RestaurantRequest request) {
 
@@ -80,7 +86,7 @@ public class RestaurantService {
     /**
      * Retrieves all restaurants in the system.
      *
-     * @return list of restaurant responses
+     * @return list of all restaurant response DTOs
      */
     public List<RestaurantResponse> getAll() {
 
@@ -97,7 +103,11 @@ public class RestaurantService {
     }
 
     /**
-     * Retrieves a restaurant by its ID.
+     * Retrieves a restaurant by its unique ID.
+     *
+     * @param id the restaurant ID
+     * @return the matching restaurant as a response DTO
+     * @throws RuntimeException if no restaurant is found with the given ID
      */
     public RestaurantResponse getById(Long id) {
 
@@ -115,8 +125,32 @@ public class RestaurantService {
     }
 
     /**
+     * Retrieves all restaurants owned by a specific user.
+     *
+     * @param ownerId the ID of the owner whose restaurants are to be fetched
+     * @return list of restaurant response DTOs belonging to the owner
+     */
+    public List<RestaurantResponse> getByOwnerId(Long ownerId) {
+
+        logger.info("Fetching restaurants for owner id: {}", ownerId);
+
+        List<RestaurantResponse> response = restaurantRepository.findByOwnerId(ownerId)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+
+        logger.info("Restaurants fetched successfully for owner id: {}", ownerId);
+
+        return response;
+    }
+
+    /**
      * Updates an existing restaurant if the logged-in user is the owner.
      *
+     * @param id      the ID of the restaurant to update
+     * @param request the updated restaurant details
+     * @return the updated restaurant as a response DTO
+     * @throws RuntimeException if restaurant not found or user is not the owner
      */
     public RestaurantResponse update(Long id, RestaurantRequest request) {
 
@@ -161,6 +195,9 @@ public class RestaurantService {
 
     /**
      * Deletes a restaurant if the logged-in user is the owner.
+     *
+     * @param id the ID of the restaurant to delete
+     * @throws RuntimeException if restaurant not found or user is not the owner
      */
     public void delete(Long id) {
 
@@ -188,6 +225,12 @@ public class RestaurantService {
         logger.info("Restaurant deleted successfully with id: {}", id);
     }
 
+    /**
+     * Maps a Restaurant entity to a RestaurantResponse DTO.
+     *
+     * @param restaurant the restaurant entity to map
+     * @return the mapped RestaurantResponse DTO
+     */
     private RestaurantResponse mapToResponse(Restaurant restaurant) {
 
         logger.debug("Mapping Restaurant to RestaurantResponse with id: {}", restaurant.getId());

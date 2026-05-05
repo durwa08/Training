@@ -8,4 +8,5 @@ import restaurantportal.entity.CartItem;
  * Handles database operations related to cart items.
  */
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
+
 }

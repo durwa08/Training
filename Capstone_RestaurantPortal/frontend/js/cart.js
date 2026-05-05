@@ -346,8 +346,8 @@ async function submitOrder() {
     });
 
     if (!res.ok) {
-      const err = await res.text();
-      throw new Error(err || `Server error ${res.status}`);
+        const err = await res.json().catch(() => null);
+        throw new Error(err?.error || err?.message || `Server error ${res.status}`);
     }
 
     await res.json();

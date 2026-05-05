@@ -15,9 +15,6 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
 
     /**
      * Fetch all addresses belonging to a specific user.
-     *
-     * @param userId the ID of the user
-     * @return list of addresses for the user
      */
     List<Address> findByUserId(Long userId);
 }

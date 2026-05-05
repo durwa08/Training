@@ -110,7 +110,7 @@ public class AddressService {
         log.info("Address deleted successfully for id: {}", addressId);
     }
 
-    // ──────────────────────── helpers ────────────────────────
+    // helpers
 
     /**
      * Fetch address by ID and verify it belongs to the given user.

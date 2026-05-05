@@ -13,11 +13,10 @@ import java.util.List;
 /**
  * REST controller for managing restaurant operations.
  * Provides endpoints for creating, retrieving, updating, and deleting restaurants.
- * All endpoints are secured based on Spring Security configuration.
  */
 @RestController
 @RequestMapping("/api/restaurants")
-@CrossOrigin(origins = "*", allowedHeaders = "*") // Allow CORS for all origins and headers
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class RestaurantController {
 
     private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
@@ -26,7 +25,6 @@ public class RestaurantController {
 
     /**
      * Constructs RestaurantController with RestaurantService dependency.
-     *
      */
     public RestaurantController(RestaurantService service) {
         this.service = service;
@@ -35,6 +33,7 @@ public class RestaurantController {
 
     /**
      * Creates a new restaurant in the system.
+     * The owner is derived from the authenticated user's JWT token.
      */
     @PostMapping
     public RestaurantResponse create(@Valid @RequestBody RestaurantRequest request) {
@@ -68,8 +67,20 @@ public class RestaurantController {
     }
 
     /**
-     * Updates an existing restaurant by ID.
+     * Retrieves all restaurants belonging to a specific owner.
+     * Used by the owner dashboard to load only the current user's restaurants.
+     */
+    @GetMapping("/owner/{ownerId}")
+    public List<RestaurantResponse> getByOwner(@PathVariable Long ownerId) {
+        logger.info("Received request to fetch restaurants for owner id: {}", ownerId);
+        List<RestaurantResponse> response = service.getByOwnerId(ownerId);
+        logger.info("Restaurants fetched successfully for owner id: {}", ownerId);
+        return response;
+    }
 
+    /**
+     * Updates an existing restaurant by ID.
+     * Only the owner of the restaurant is permitted to update it.
      */
     @PutMapping("/{id}")
     public RestaurantResponse update(@PathVariable Long id,
@@ -83,7 +94,9 @@ public class RestaurantController {
 
     /**
      * Deletes a restaurant by its ID.
+     * Only the owner of the restaurant is permitted to delete it.
      *
+     * @param id the restaurant ID to delete
      */
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {

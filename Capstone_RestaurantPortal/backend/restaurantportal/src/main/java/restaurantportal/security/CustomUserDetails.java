@@ -12,7 +12,6 @@ import java.util.Collections;
 
 /**
  * Custom implementation of UserDetails for Spring Security.
- * Maps application User entity into Spring Security authentication model.
  * Ensures proper role formatting for authorization checks.
  */
 public class CustomUserDetails implements UserDetails {
