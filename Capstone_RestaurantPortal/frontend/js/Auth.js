@@ -4,6 +4,7 @@
  *   Login and Register Page JS
  * ============================================
  */
+ // backend ka base url ddress hai
 
 const BASE_URL = 'http://localhost:8080';
 
@@ -11,12 +12,14 @@ const BASE_URL = 'http://localhost:8080';
 //   PAGE INIT
 // ─────────────────────────────────────────
 
+// This first loads the html page and then js is applied
 document.addEventListener('DOMContentLoaded', () => {
 
     const isAuthPage = window.location.pathname.includes('pages/Auth');
 
     if (!isAuthPage) return;
 
+// Browse memory se token fetch hota h
     const token = localStorage.getItem('fm_token');
 
     if (token && isTokenValid(token)) {
