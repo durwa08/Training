@@ -115,7 +115,7 @@ class UserServiceTest {
 
         when(userRepository.findByEmail("durwa@mail.com")).thenReturn(Optional.of(u));
         when(passwordEncoder.matches("123", "encoded")).thenReturn(true);
-        when(jwtUtil.generateToken("durwa@mail.com", "USER")).thenReturn("token");
+        when(jwtUtil.generateToken("durwa@mail.com", "USER",1L)).thenReturn("token");
 
         String token = userService.login("durwa@mail.com", "123");
 
