@@ -3,8 +3,6 @@ Introduction to Python
 
 Question:
 1. Print welcome message
-2. Display Python version
-3. Take user input (name and age) and display formatted message
 """
 
 import sys
@@ -15,7 +13,7 @@ def print_welcome_message() -> None:
     """
     print("Welcome to Python Training")
 
-# Question 2
+# Question 2. Display Python version
 def display_python_version() -> None:
     """
     Display the installed Python version.
@@ -24,7 +22,7 @@ def display_python_version() -> None:
     print(f"Python Version: {sys.version}")
 
 
-# Question 3
+# Question 3. Take user input (name and age) and display formatted message
 def display_user_information() -> None:
     """
     Take username and age as input
