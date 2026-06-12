@@ -6,7 +6,7 @@ Object-Oriented Programming (OOP)
 # Question 40: Create a Student class with attributes and display details.
 class Student:
     """
-    Stores basic information about a student.
+    Stores basic information about a student like name,age course.
     """
 
     def __init__(
