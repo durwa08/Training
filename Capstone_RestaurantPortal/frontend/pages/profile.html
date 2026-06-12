@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Green Bite — My Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="../css/main.css"/>
+    <link rel="stylesheet" href="../css/profile.css"/>
+</head>
+<body class="page-wrapper">
+
+<!-- ══ NAVBAR ══ -->
+<nav style="position:sticky;top:0;z-index:100;background:white;border-bottom:1px solid var(--green-light);box-shadow:0 2px 8px rgba(16,185,129,.07);">
+    <div style="max-width:1100px;margin:0 auto;padding:0 24px;height:72px;display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:14px;flex-shrink:0;">
+            <a href="restaurants.html"
+               style="display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:10px;border:1.5px solid var(--green-light);background:var(--green-light);font-size:13px;font-weight:500;color:var(--green-dk);text-decoration:none;"
+               onmouseover="this.style.borderColor='var(--green-dk)';this.style.color='var(--green-dk)'"
+               onmouseout="this.style.borderColor='var(--green-light)';this.style.color='var(--green-dk)'">
+                ← Back
+            </a>
+            <div style="width:1px;height:22px;background:var(--green-light);"></div>
+            <a href="restaurants.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
+                <span style="font-size:26px;">🍽️</span>
+                <span style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--green-dk);">
+                    Green<span style="color:var(--green);">Bite</span>
+                </span>
+            </a>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <a href="orders.html" style="font-size:13.5px;font-weight:500;color:var(--gray-700);text-decoration:none;display:flex;align-items:center;gap:5px;"
+               onmouseover="this.style.color='var(--green-dk)'"
+               onmouseout="this.style.color='var(--gray-700)'">
+                📦 My Orders
+            </a>
+            <button onclick="logout()"
+                    style="display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:500;color:var(--gray-700);background:none;border:none;cursor:pointer;"
+                    onmouseover="this.style.color='#dc2626'"
+                    onmouseout="this.style.color='var(--gray-700)'">
+                🚪 Sign Out
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<div class="fm-hero" style="background: linear-gradient(135deg, var(--green-dk), var(--green)); padding: 40px 24px;">
+    <div class="fm-hero-inner" style="max-width:1100px;margin:0 auto;">
+        <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+            <div class="profile-avatar" id="avatarInitials">--</div>
+            <div>
+                <h1 id="heroName" style="font-family:'Playfair Display',serif;font-size:34px;font-weight:700;color:#ffffff;margin-bottom:4px;">
+                    Loading...
+                </h1>
+                <p id="heroEmail" style="color:rgba(255,255,255,.7);font-size:14px;"></p>
+                <div id="heroRole" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:white;padding:4px 14px;border-radius:99px;font-size:12px;font-weight:600;margin-top:10px;">
+                    Loading...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<main style="max-width:1100px;margin:0 auto;padding:36px 24px 60px;flex:1;">
+
+    <!-- Loading skeleton -->
+    <div id="profileLoading">
+        <div style="display:grid;grid-template-columns:1fr 340px;gap:24px;">
+            <div>
+                <div style="background:white;border-radius:18px;padding:28px;border:1px solid var(--border);margin-bottom:20px;">
+                    <div class="skel-line" style="width:40%;margin-bottom:20px;"></div>
+                    <div class="skel-line" style="width:80%;margin-bottom:14px;"></div>
+                    <div class="skel-line" style="width:70%;margin-bottom:14px;"></div>
+                    <div class="skel-line" style="width:60%;"></div>
+                </div>
+            </div>
+            <div>
+                <div style="background:linear-gradient(135deg,#4A1020,#8B2D40);border-radius:20px;height:160px;animation:pulse 1.4s ease-in-out infinite;margin-bottom:20px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile content -->
+    <div id="profileContent" style="display:none;">
+        <div style="display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start;">
+
+            <!-- LEFT COLUMN -->
+            <div>
+                <!-- Personal Info -->
+                <div class="info-card">
+                    <div class="info-card-title">👤 Personal Information</div>
+                    <div class="info-row">
+                        <span class="info-label">Full Name</span>
+                        <span class="info-value" id="profileFullName">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Email</span>
+                        <span class="info-value" id="profileEmail">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Phone</span>
+                        <span class="info-value" id="profilePhone">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Account Type</span>
+                        <span class="info-value" id="profileRole">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Member Since</span>
+                        <span class="info-value">Green Bite Member</span>
+                    </div>
+                </div>
+
+                <!-- Recent Orders -->
+                <div class="info-card">
+                    <div class="info-card-title">📦 Recent Orders</div>
+                    <div id="recentOrdersList">
+                        <div style="text-align:center;padding:30px;color:var(--ash);font-size:14px;">
+                            Loading orders...
+                        </div>
+                    </div>
+                    <a href="orders.html"
+                       style="display:inline-flex;align-items:center;gap:6px;color:var(--burgundy);font-size:13.5px;font-weight:600;text-decoration:none;margin-top:14px;border-bottom:1px solid transparent;padding-bottom:1px;transition:border-color .18s;"
+                       onmouseover="this.style.borderColor='var(--burgundy)'"
+                       onmouseout="this.style.borderColor='transparent'">
+                        View all orders →
+                    </a>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN -->
+            <div>
+                <!-- Wallet Card -->
+                <div class="wallet-card">
+                    <div style="position:relative;z-index:1;">
+                        <div class="wallet-label">💰 Wallet Balance</div>
+                        <div class="wallet-amount" id="profileWallet">₹--</div>
+                        <div class="wallet-sub">Available for food orders</div>
+                        <div class="role-badge" id="profileRoleBadge">🍽️ Customer</div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="info-card">
+                    <div class="info-card-title">📊 Quick Stats</div>
+                    <div class="info-row">
+                        <span class="info-label">Total Orders</span>
+                        <span class="info-value" id="statTotalOrders">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Completed</span>
+                        <span class="info-value" style="color:var(--green);" id="statCompleted">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Cancelled</span>
+                        <span class="info-value" style="color:#c0392b;" id="statCancelled">--</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Total Spent</span>
+                        <span class="info-value" style="font-family:'Playfair Display',serif;color:var(--burgundy);" id="statTotalSpent">₹--</span>
+                    </div>
+                </div>
+
+                <!-- Account Actions -->
+                <div class="info-card">
+                    <div class="info-card-title">⚙️ Account</div>
+                    <a href="orders.html"
+                       style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;text-decoration:none;color:var(--ink);transition:background .18s;margin-bottom:4px;"
+                       onmouseover="this.style.background='var(--cream)'"
+                       onmouseout="this.style.background='transparent'">
+                        <span style="font-size:20px;">📦</span>
+                        <div>
+                            <div style="font-size:14px;font-weight:600;">My Orders</div>
+                            <div style="font-size:12px;color:var(--ash);">View order history</div>
+                        </div>
+                        <span style="margin-left:auto;color:var(--ash);">→</span>
+                    </a>
+                    <a href="cart.html"
+                       style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;text-decoration:none;color:var(--ink);transition:background .18s;margin-bottom:4px;"
+                       onmouseover="this.style.background='var(--cream)'"
+                       onmouseout="this.style.background='transparent'">
+                        <span style="font-size:20px;">🛒</span>
+                        <div>
+                            <div style="font-size:14px;font-weight:600;">My Cart</div>
+                            <div style="font-size:12px;color:var(--ash);">View current cart</div>
+                        </div>
+                        <span style="margin-left:auto;color:var(--ash);">→</span>
+                    </a>
+                    <button onclick="logout()"
+                            style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;width:100%;background:none;border:none;cursor:pointer;color:#c0392b;transition:background .18s;"
+                            onmouseover="this.style.background='#fdf0ef'"
+                            onmouseout="this.style.background='transparent'">
+                        <span style="font-size:20px;">🚪</span>
+                        <div style="text-align:left;">
+                            <div style="font-size:14px;font-weight:600;">Sign Out</div>
+                            <div style="font-size:12px;color:#e88080;">Log out of your account</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error state -->
+    <div id="profileError" style="display:none;text-align:center;padding:60px 20px;">
+        <div style="font-size:60px;margin-bottom:16px;">⚠️</div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:8px;">Could not load profile</h3>
+        <button onclick="loadProfile()" style="background:var(--burgundy);color:white;border:none;padding:11px 28px;border-radius:99px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:14px;margin-top:16px;">Try Again</button>
+    </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="fm-footer" style="background: var(--gray-800); color: rgba(255,255,255,.6); padding: 28px 24px; text-align: center;">
+    <span class="fb" style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:white;display:block;margin-bottom:6px;">🍽️ Green<em style="color:var(--green);font-style:normal;">Bite</em></span>
+    <p style="font-family:'DM Sans',sans-serif;font-size:13px;">© 2026 Green Bite. Made with ❤️ for food lovers.</p>
+</footer>
+
+<script src="../js/utils.js"></script>
+<script src="../js/profile.js"></script>
+</body>
+</html>

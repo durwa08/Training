@@ -1,4 +1,7 @@
-/* I reset margin and padding to avoid browser inconsistency and make things smooth */
+/*Resetting the margin and padding so that the browser inconsistincies can be avoided*/
+
+/* Reset default spacing because different browsers apply their own margins and paddings,
+   which can break layout consistency */
 * {
     margin: 0;
     padding: 0;
@@ -22,7 +25,7 @@ header {
     padding: 22px;
 }
 
-/* Giving image circular shape so that it can appear like profile picture */
+/* Making the profile image circular gives it a professional  look */
 header img {
     border-radius: 50%;
     margin-top: 10px;

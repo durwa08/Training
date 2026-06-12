@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Green Bite — My Cart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="../css/main.css"/>
+    <link rel="stylesheet" href="../css/cart.css"/>
+</head>
+<body>
+
+<nav class="fm-navbar">
+    <div class="fm-navbar-inner">
+        <div class="fm-nav-left">
+            <a href="restaurants.html" class="fm-back-btn">← Back</a>
+            <div class="fm-nav-divider"></div>
+            <a href="restaurants.html" class="fm-brand">
+                <span style="font-size:26px">🌿</span>
+                <span class="fm-brand-text">Green<em>Bite</em></span>
+            </a>
+        </div>
+        <div style="position:relative" id="userMenu">
+            <button class="fm-user-btn" onclick="toggleUserMenu()">
+                <span>👤</span>
+                <span id="userEmailNav">Account</span>
+                <span style="font-size:10px">▼</span>
+            </button>
+            <div id="userDropdown" class="fm-dropdown hidden">
+                <div class="fm-dropdown-header">
+                    <div class="label">Signed in as</div>
+                    <div class="email" id="userEmailDrop"></div>
+                </div>
+                <a href="orders.html"><span>📦</span> My Orders</a>
+                <button onclick="logout()"><span>🚪</span> Sign Out</button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="fm-hero">
+    <div class="fm-hero-inner">
+        <h1>My Cart 🛒</h1>
+        <p>Review your items and place your order</p>
+    </div>
+</div>
+
+<div class="fm-main">
+
+    <div id="skeletonCart" class="fm-grid">
+        <div>
+            <div class="skel-card"></div>
+            <div class="skel-card"></div>
+            <div class="skel-card"></div>
+        </div>
+        <div class="skel-box" style="height:300px"></div>
+    </div>
+
+    <div id="emptyCart" style="display:none" class="fm-grid">
+        <div class="empty-wrap">
+            <span class="empty-icon">🛒</span>
+            <div class="empty-title">Your cart is empty</div>
+            <p class="empty-sub">Looks like you haven't added anything yet.<br>Browse our restaurants and find something delicious!</p>
+            <a href="restaurants.html" class="btn-browse">🍽️ Browse Restaurants →</a>
+        </div>
+    </div>
+
+    <div id="errorCart" style="display:none" class="fm-grid">
+        <div style="grid-column:1/-1;text-align:center;padding:60px 20px">
+            <div style="font-size:60px;margin-bottom:16px">⚠️</div>
+            <div style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--ink);margin-bottom:8px">Something went wrong</div>
+            <p style="font-family:'DM Sans',sans-serif;color:var(--ash);margin-bottom:20px" id="errorMsg">Could not load cart</p>
+            <button onclick="loadCart()" style="background:var(--burgundy);color:white;border:none;padding:11px 28px;border-radius:99px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:14px">Try Again</button>
+        </div>
+    </div>
+
+    <div id="cartContent" style="display:none" class="fm-grid">
+        <div>
+            <div class="rest-badge">
+                <span>🏪</span>
+                <span id="restaurantBadgeName">--</span>
+            </div>
+            <div id="cartItemsList"></div>
+            <a href="restaurants.html" class="continue-link">← Continue Shopping</a>
+        </div>
+        <div>
+            <div class="summary-box">
+                <div class="summary-title">Order Summary</div>
+                <div class="s-row">
+                    <span>Subtotal (<span id="summaryCount">0</span> items)</span>
+                    <span class="val" id="summarySubtotal">₹0.00</span>
+                </div>
+                <div class="s-row">
+                    <span>Delivery</span>
+                    <span class="free">FREE</span>
+                </div>
+                <div class="s-row">
+                    <span>Taxes (5%)</span>
+                    <span class="val" id="summaryTax">₹0.00</span>
+                </div>
+                <div class="s-row" id="walletRow" style="display:none;">
+                    <span>💰 Wallet Balance</span>
+                    <span class="val" id="walletBalanceDisplay" style="color:var(--green-dark);font-weight:600;">₹0.00</span>
+                </div>
+                <div class="s-total">
+                    <span class="lbl">Total</span>
+                    <span class="amt" id="summaryTotal">₹0.00</span>
+                </div>
+                <button class="btn-checkout" onclick="placeOrder()">Place Order →</button>
+                <button class="btn-add-wallet" onclick="openWalletModal()">💰 Add Wallet Amount</button>
+                <button class="btn-clear" onclick="openClearModal()">🗑️ Clear Cart</button>
+                <p class="secure-note">🔒 Secure checkout. Orders coming soon!</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<footer class="fm-footer">
+    <span class="fb">🌿 Green<em>Bite</em></span>
+    <p>© 2025 Green Bite. Made with ❤ for food lovers.</p>
+</footer>
+
+<div id="modalClear" class="modal-bg hidden">
+    <div class="modal-box">
+        <div style="text-align:center;font-size:48px;margin-bottom:14px">🗑️</div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--ink);text-align:center;margin-bottom:8px">Clear Cart?</div>
+        <p style="font-family:'DM Sans',sans-serif;font-size:13.5px;color:var(--ash);text-align:center;margin-bottom:22px">All items will be removed. This cannot be undone.</p>
+        <div style="display:flex;gap:10px">
+            <button onclick="clearCart()" style="flex:1;background:#c0392b;color:white;border:none;padding:12px;border-radius:12px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:14px">Yes, Clear</button>
+            <button onclick="closeClearModal()" style="flex:1;background:var(--cream);border:1.5px solid var(--border);padding:12px;border-radius:12px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:14px;color:var(--ink)">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalWallet" class="modal-bg hidden">
+    <div class="modal-box">
+        <div style="text-align:center;font-size:48px;margin-bottom:14px">💰</div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#1f2937;text-align:center;margin-bottom:6px">Add Wallet Amount</div>
+        <p style="font-family:'DM Sans',sans-serif;font-size:13.5px;color:#6b7280;text-align:center;margin-bottom:20px">Enter the amount you want to add to your wallet.</p>
+        <input
+                type="number"
+                id="walletAmountInput"
+                class="wallet-input"
+                placeholder="Enter amount (₹)"
+                min="1"
+                step="1"
+        />
+        <div style="display:flex;gap:10px">
+            <button id="walletAddBtn" onclick="addWalletAmount()" style="flex:1;background:linear-gradient(135deg,var(--green-dark),var(--green));color:white;border:none;padding:12px;border-radius:12px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:14px">Add Amount</button>
+            <button onclick="closeWalletModal()" style="flex:1;background:#f3f4f6;border:1.5px solid #e5e7eb;padding:12px;border-radius:12px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:14px;color:#1f2937">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalOrder" class="modal-bg hidden">
+    <div class="modal-box" style="max-height:90vh;overflow-y:auto;">
+        <div style="text-align:center;font-size:48px;margin-bottom:14px">🛵</div>
+        <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#1f2937;text-align:center;margin-bottom:6px">Delivery Details</div>
+        <p style="font-family:'DM Sans',sans-serif;font-size:13.5px;color:#6b7280;text-align:center;margin-bottom:22px">Tell us where to deliver your order.</p>
+
+        <div id="addrSkeleton" style="display:none;margin-bottom:14px;">
+            <div style="height:52px;background:#f3f4f6;border-radius:10px;margin-bottom:8px;"></div>
+            <div style="height:52px;background:#f3f4f6;border-radius:10px;"></div>
+        </div>
+
+        <div id="savedAddressesSection" style="display:none;margin-bottom:16px;">
+            <label class="order-label">Saved Addresses</label>
+            <div id="savedAddressList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px;max-height:180px;overflow-y:auto;"></div>
+        </div>
+
+        <button
+                onclick="showAddAddressForm()"
+                id="showAddAddressBtn"
+                style="width:100%;padding:9px;border:1.5px dashed #10b981;border-radius:10px;background:transparent;color:#10b981;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:13px;margin-bottom:14px;">
+            + Add New Address
+        </button>
+
+        <div id="addAddressForm" style="display:none;background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:12px;padding:14px;margin-bottom:14px;">
+            <div style="font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;color:#374151;margin-bottom:10px;">📍 New Address</div>
+            <input id="addrStreet"  class="order-input" placeholder="Street / House No." style="margin-bottom:8px;" />
+            <input id="addrCity"    class="order-input" placeholder="City"                style="margin-bottom:8px;" />
+            <input id="addrState"   class="order-input" placeholder="State"               style="margin-bottom:8px;" />
+            <input id="addrPincode" class="order-input" placeholder="Pincode (6 digits)"  style="margin-bottom:10px;" maxlength="6" />
+            <div style="display:flex;gap:8px;">
+                <button onclick="saveNewAddress()" id="saveAddrBtn"
+                        style="flex:1;background:linear-gradient(135deg,#059669,#10b981);color:white;border:none;padding:10px;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:13px;">
+                    Save Address
+                </button>
+                <button onclick="hideAddAddressForm()"
+                        style="flex:0 0 auto;padding:10px 14px;background:#f3f4f6;border:1.5px solid #e5e7eb;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:13px;color:#374151;">
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        <label class="order-label" for="orderAddressInput">Delivery Address</label>
+        <textarea
+                id="orderAddressInput"
+                class="order-input"
+                placeholder="e.g. 12, MG Road, Bhopal, MP 462001"
+                rows="3"
+                style="resize:none;line-height:1.5;"
+        ></textarea>
+
+        <label class="order-label" for="orderPhoneInput">Phone Number</label>
+        <input
+                type="tel"
+                id="orderPhoneInput"
+                class="order-input"
+                placeholder="e.g. 9876543210"
+                maxlength="15"
+        />
+
+        <div style="display:flex;gap:10px;margin-top:4px">
+            <button
+                    id="orderSubmitBtn"
+                    onclick="submitOrder()"
+                    style="flex:1;background:linear-gradient(135deg,var(--green-dark),var(--green));color:white;border:none;padding:13px;border-radius:12px;font-family:'DM Sans',sans-serif;font-weight:700;cursor:pointer;font-size:14.5px;box-shadow:0 6px 20px rgba(16,185,129,.28);transition:all .2s;"
+            >Confirm Order →</button>
+            <button
+                    onclick="closeOrderModal()"
+                    style="flex:0 0 auto;padding:13px 18px;background:#f3f4f6;border:1.5px solid #e5e7eb;border-radius:12px;font-family:'DM Sans',sans-serif;font-weight:600;cursor:pointer;font-size:14px;color:#1f2937;"
+            >Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast"><span id="toastIcon">✅</span><span id="toastMsg">Done!</span></div>
+
+<script src="../js/cart.js"></script>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('modalWallet').addEventListener('click', function(e) {
+            if (e.target === this) closeWalletModal();
+        });
+        document.getElementById('modalOrder').addEventListener('click', function(e) {
+            if (e.target === this) closeOrderModal();
+        });
+    });
+</script>
+</body>
+</html>
