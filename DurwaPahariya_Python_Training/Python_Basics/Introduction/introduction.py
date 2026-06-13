@@ -31,7 +31,7 @@ def display_user_information() -> None:
     user_name = input("Enter your name: ").strip().title()
     user_age = int(input("Enter your age: "))
 
-    # Handle invalid age edge case
+    # it will Handle invalid age edge case
     if user_age < 0:
         print("Age cannot be negative.")
     else:

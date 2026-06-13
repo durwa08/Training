@@ -1,85 +1,180 @@
 """
-Data Structures - Dictionary
+Functions
 """
 
+# Question 17
+# Write a function to calculate square of a number.
 
-# Question 32: Create a student dictionary and access values.
-def access_student_details(
-        student: dict[str, str | int]
-) -> None:
+
+def calculate_square(number: float) -> float:
     """
-    Access dictionary values using keys.
+    Calculate square of a number.
     """
-    print(f"Name: {student['name']}")
-    print(f"Age: {student['age']}")
-    print(f"Course: {student['course']}")
-
-
-# Question 33: Count frequency of characters in a string using dictionary.
-def count_character_frequency(
-        text: str
-) -> dict[str, int]:
-    """
-    Count frequency of characters
-    in a string.
-    """
-    # Convert text to lowercase for case-insensitive counting
-    text = text.lower()
-
-    frequency = {}
-
-    # Count occurrences of each character
-    for character in text:
-        frequency[character] = (
-                frequency.get(character, 0) + 1
-        )
-
-    return frequency
-
-
-# Question 34: Merge two dictionaries.
-def merge_dictionaries(
-        first_dictionary: dict,
-        second_dictionary: dict
-) -> dict:
-    """
-    Merge two dictionaries.
-    """
-
-    # Combine key-value pairs from both dictionaries
-    return first_dictionary | second_dictionary
+    return number ** 2
 
 
 if __name__ == "__main__":
 
-    print("\n--- Student Dictionary ---")
+    print("\n--- Square of a Number ---")
 
-    student = {
-        "name": "Durwa",
-        "age": 22,
-        "course": "Python"
-    }
+    number = float(input("Enter a number: "))
 
-    access_student_details(student)
-
-    print("\n--- Character Frequency ---")
-
-    text = "python"
-    frequency = count_character_frequency(text)
-
-    print(f"String: {text}")
-    print(f"Frequency: {frequency}")
-
-    print("\n--- Merge Dictionaries ---")
-
-    first_dictionary = {"name": "Durwa"}
-    second_dictionary = {"course": "Python"}
-
-    merged_dictionary = merge_dictionaries(
-        first_dictionary,
-        second_dictionary
+    print(
+        f"Square: "
+        f"{calculate_square(number)}"
     )
 
-    print(f"First Dictionary: {first_dictionary}")
-    print(f"Second Dictionary: {second_dictionary}")
-    print(f"Merged Dictionary: {merged_dictionary}")
+
+# Question 18
+# Write a function to check palindrome
+# (number and string).
+
+
+def is_number_palindrome(number: int) -> bool:
+    """
+    Check whether a number is palindrome.
+    """
+    original_number = number
+    reversed_number = 0
+
+    while number > 0:
+        digit = number % 10
+        reversed_number = (
+                                  reversed_number * 10
+                          ) + digit
+        number //= 10
+
+    return (
+            original_number
+            == reversed_number
+    )
+
+
+def is_string_palindrome(
+        text: str
+) -> bool:
+    """
+    Check whether a string is palindrome.
+    """
+    text = text.lower()
+    text = text.replace(" ", "")
+
+    return text == text[::-1]
+
+
+if __name__ == "__main__":
+
+    print(
+        "\n--- Number Palindrome "
+        "Checker ---"
+    )
+
+    palindrome_number = int(
+        input("Enter a number: ")
+    )
+
+    if is_number_palindrome(
+            palindrome_number
+    ):
+        print(
+            f"{palindrome_number} "
+            f"is a palindrome number."
+        )
+    else:
+        print(
+            f"{palindrome_number} "
+            f"is not a palindrome number."
+        )
+
+    print(
+        "\n--- String Palindrome "
+        "Checker ---"
+    )
+
+    palindrome_text = input(
+        "Enter a string: "
+    )
+
+    if is_string_palindrome(
+            palindrome_text
+    ):
+        print(
+            f"{palindrome_text} "
+            f"is a palindrome string."
+        )
+    else:
+        print(
+            f"{palindrome_text} "
+            f"is not a palindrome string."
+        )
+
+
+# Question 19
+# Write a function that returns maximum
+# number from a list.
+
+
+def find_maximum_number(
+        numbers: list[int]
+) -> int:
+    """
+    Return the maximum number
+    from a list.
+    """
+
+    if not numbers:
+        raise ValueError(
+            "List cannot be empty."
+        )
+
+    maximum_number = numbers[0]
+
+    for number in numbers:
+        if number > maximum_number:
+            maximum_number = number
+
+    return maximum_number
+
+
+if __name__ == "__main__":
+
+    print(
+        "\n--- Maximum Number "
+        "from a List ---"
+    )
+
+    numbers = [10, 25, 5, 40, 15]
+
+    print(f"Numbers: {numbers}")
+
+    print(
+        f"Maximum Number: "
+        f"{find_maximum_number(numbers)}"
+    )
+
+
+# Question 20
+# Write a function using default
+# parameters.
+
+
+def greet_user(
+        user_name: str = "Durwa"
+) -> str:
+    """
+    Greet user using a default
+    parameter.
+    """
+    return (
+        f"Welcome, {user_name}!"
+    )
+
+
+if __name__ == "__main__":
+
+    print(
+        "\n--- Default Parameters ---"
+    )
+
+    print(greet_user())
+    print(greet_user("Durwa"))

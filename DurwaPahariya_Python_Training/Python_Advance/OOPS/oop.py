@@ -181,6 +181,6 @@ if __name__ == "__main__":
     animals = [Dog(), Cat()]
 
     # Both objects respond to the same
-    # method call in their own way.
+    # method call in their own respective way .
     for animal in animals:
         animal.make_sound()

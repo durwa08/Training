@@ -47,7 +47,7 @@ def swap_two_numbers(
     )
 
 
-# Question 6Take two numbers and print sum, difference,
+# Question 6 Take two numbers and print sum, difference,
 #    multiplication, and division.
 
 def perform_arithmetic_operations(
