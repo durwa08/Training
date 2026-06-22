@@ -25,24 +25,30 @@ if __name__ == "__main__":
     )
 
     # -----------------------------------
-    # Question 1: Detect Missing Values
+    # Question 1: Check for missing data
     # -----------------------------------
 
     print("Question 1: Original DataFrame")
     print(employee_dataframe)
 
     print("\nMissing Values:")
+
+    # Shows which cells have missing values.
     print(employee_dataframe.isnull())
 
     # -----------------------------------
-    # Question 2: Replace Missing Age
-    # with Mean Age
+    # Question 2: Fill missing Age values
+    # with the average age
     # -----------------------------------
 
+    # Calculate the average age
+    # from the available records.
     average_age = employee_dataframe[
         "Age"
     ].mean()
 
+    # Replace empty age values
+    # with the calculated average.
     employee_dataframe["Age"] = (
         employee_dataframe["Age"].fillna(
             average_age
@@ -50,10 +56,12 @@ if __name__ == "__main__":
     )
 
     # -----------------------------------
-    # Question 3: Replace Missing Salary
-    # with 0
+    # Question 3: Fill missing Salary
+    # values with 0
     # -----------------------------------
 
+    # Replace missing salary entries
+    # with the default value.
     employee_dataframe["Salary"] = (
         employee_dataframe["Salary"].fillna(
             DEFAULT_SALARY
