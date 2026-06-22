@@ -40,7 +40,7 @@ def show_all_visualizations() -> None:
 
     # Question 2: Boxplot
 
-    # Box plots show data distribution,
+    # Boxplots show data distribution,
     # median, and potential outliers.
     plt.figure(figsize=(6, 4))
     sns.boxplot(data=employee_dataframe, y="Salary")
