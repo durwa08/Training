@@ -6,7 +6,7 @@ Tasks:
 2. Add Performance column.
 3. Create Line Chart.
 4. Create Scatter Plot.
-5. Create Seaborn Barplot.
+5. Create Seaborn Bar plot.
 """
 
 import pandas as pd
