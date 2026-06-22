@@ -32,3 +32,33 @@ print("\nQuestion 2: First Two Records")
 print(employees_df.head(2))
 
 
+# -----------------------------------
+# Question 3: Summary Statistics
+# -----------------------------------
+
+print("\nQuestion 3: Statistical Summary")
+print(employees_df.describe())
+
+
+# -----------------------------------
+# Question 4: Display IT Employees
+# -----------------------------------
+
+it_staff = employees_df[
+    employees_df["Department"] == "IT"
+    ]
+
+print("\nQuestion 4: Employees from IT Department")
+print(it_staff)
+
+
+# -----------------------------------
+# Question 5: Add Bonus Column
+# -----------------------------------
+
+employees_df["Bonus"] = (
+        employees_df["Salary"] * BONUS_RATE
+)
+
+print("\nQuestion 5: Data After Adding Bonus")
+print(employees_df)
