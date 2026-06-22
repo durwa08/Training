@@ -8,7 +8,6 @@ import numpy as np
 # -----------------------------------
 # Question 1: Create a NumPy Array
 # -----------------------------------
-
 array_values = [5, 15, 25, 35, 45]
 
 # Convert the list into a NumPy array.
