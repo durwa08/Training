@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>GreenBite — Sign In</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="../css/Auth.css"/>
+</head>
+<body>
+
+<div class="split-container">
+    <!-- LEFT PANEL - Decorative -->
+    <div class="left-panel">
+        <!-- Floating food icons -->
+        <div class="floating-icons">
+            <span class="float-icon">🥗</span>
+            <span class="float-icon">🍕</span>
+            <span class="float-icon">🍜</span>
+            <span class="float-icon"></span>
+            <span class="float-icon">🍰</span>
+            <span class="float-icon">🍱</span>
+        </div>
+
+        <div class="left-content">
+            <div class="brand-icon">🌿</div>
+            <h1 class="left-title">Fresh meals, delivered to your door</h1>
+            <p class="left-subtitle">Thousands already trust GreenBite for healthy, delicious food—why not you?.</p>
+
+            <div class="features">
+                <div class="feature-item">
+                    <div class="feature-icon">🎯</div>
+                    <span class="feature-text">Lightning-fast delivery in 20 mins</span>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🌱</div>
+                    <span class="feature-text">100% fresh, quality ingredients</span>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">💰</div>
+                    <span class="feature-text">Best prices, no hidden fees</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL - Form -->
+    <div class="right-panel">
+        <div class="form-wrapper">
+            <!-- Brand -->
+            <div class="form-header">
+                <div class="form-brand">
+                    <span class="form-brand-icon">🌿</span>
+                    <span class="form-brand-name">Green<strong>Bite</strong></span>
+                </div>
+            </div>
+
+            <!-- TAB SWITCHER -->
+            <div class="tab-bar">
+                <button class="tab active" id="tabLogin" onclick="switchTab('login')">Login</button>
+                <button class="tab" id="tabRegister" onclick="switchTab('register')">Register</button>
+                <div class="tab-indicator" id="tabIndicator"></div>
+            </div>
+
+            <!-- ALERT -->
+            <div class="alert hidden" id="alertBox">
+                <span id="alertIcon"></span>
+                <span id="alertMsg"></span>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <form class="form-body active" id="loginForm" onsubmit="return false">
+                <div class="form-title">Welcome back! Great to see you again.</div>
+                <div class="form-subtitle">Sign in to continue ordering your favorites</div>
+
+                <div class="field">
+                    <label class="field-label">Email Address</label>
+                    <div class="field-wrap">
+                        <span class="field-icon">&#128231;</span>
+                        <input class="field-input" type="email" id="loginEmail" placeholder="name@gmail.com" autocomplete="email"/>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">Password</label>
+                    <div class="field-wrap">
+                        <span class="field-icon">&#128275;</span>
+                        <input class="field-input" type="password" id="loginPassword" placeholder="Password" autocomplete="current-password"/>
+                        <button type="button" class="toggle-pw" onclick="togglePw('loginPassword', this)">&#128584;</button>
+                    </div>
+                </div>
+
+                <button class="btn-primary" id="loginBtn" type="button" onclick="handleLogin()">
+                    <span class="btn-text">Sign In</span>
+                    <span class="btn-icon">&#8594;</span>
+                    <span class="btn-loader hidden"></span>
+                </button>
+
+                <p class="form-footer">New here? <a href="#" onclick="switchTab('register')">Create a free account</a></p>
+            </form>
+
+            <!-- REGISTER FORM -->
+            <form class="form-body" id="registerForm" onsubmit="return false">
+                <div class="form-title">Create your account</div>
+                <div class="form-subtitle">Get started with free delivery on your first order</div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label class="field-label">First Name</label>
+                        <div class="field-wrap">
+                            <span class="field-icon">&#128100;</span>
+                            <input class="field-input" type="text" id="regFirstName" placeholder="Durwa" autocomplete="given-name"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="field-label">Last Name</label>
+                        <div class="field-wrap">
+                            <span class="field-icon">&#128100;</span>
+                            <input class="field-input" type="text" id="regLastName" placeholder="Pahariya" autocomplete="family-name"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">Email Address</label>
+                    <div class="field-wrap">
+                        <span class="field-icon">&#9993;</span>
+                        <input class="field-input" type="email" id="regEmail" placeholder="durwa@gmail.com" autocomplete="email"/>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">Phone Number</label>
+                    <div class="field-wrap">
+                        <span class="field-icon">&#128241;</span>
+                        <input class="field-input" type="tel" id="regPhone" placeholder="9744588902" autocomplete="tel"/>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">Password</label>
+                    <div class="field-wrap">
+                        <span class="field-icon">&#128275;</span>
+                        <input class="field-input" type="password" id="regPassword" placeholder="Minimum 8 characters" autocomplete="new-password"/>
+                        <button type="button" class="toggle-pw" onclick="togglePw('regPassword', this)">&#128584;</button>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="field-label">I am joining as</label>
+                    <div class="role-grid">
+                        <label class="role-option">
+                            <input type="radio" name="role" value="USER" checked/>
+                            <div class="role-box">
+                                <span class="role-emoji">&#127859;</span>
+                                <span class="role-name">Customer</span>
+                                <span class="role-desc">Order food fast and fresh</span>
+                            </div>
+                        </label>
+                        <label class="role-option">
+                            <input type="radio" name="role" value="RESTAURANT_OWNER"/>
+                            <div class="role-box">
+                                <span class="role-emoji">&#129489;&#8205;&#127859;</span>
+                                <span class="role-name">Restaurant Owner</span>
+                                <span class="role-desc">Manage your Restaurant</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn-primary" id="registerBtn" type="button" onclick="handleRegister()">
+                    <span class="btn-text">Create My Account</span>
+                    <span class="btn-icon">&#8594;</span>
+                    <span class="btn-loader hidden"></span>
+                </button>
+
+                <p class="form-footer">Already have an account? <a href="#" onclick="switchTab('login')">Sign in here</a></p>
+            </form>
+
+            <div class="bottom-brand">
+                &copy; 2026 GreenBite. Made with care for food lovers.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../js/auth.js"></script>
+</body>
+</html>
