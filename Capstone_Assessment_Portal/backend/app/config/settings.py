@@ -6,8 +6,9 @@ class Settings(BaseSettings):
     mongo_uri: str
     database_name: str
     jwt_secret_key: str
-    jwt_algorithm: str = "HS256"  # default if not in .env
-    access_token_expire_minutes: int = 60  # token validity in mins
+    jwt_algorithm: str = "HS256"
+    access_token_expire_minutes: int = 60
+    refresh_token_expire_days: int = 7
 
     class Config:
         env_file = ".env"

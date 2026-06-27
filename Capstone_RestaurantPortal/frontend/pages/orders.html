@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Green Bite — My Orders</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="../css/main.css"/>
+    <link rel="stylesheet" href="../css/orders.css"/>
+</head>
+<body class="min-h-screen">
+
+<nav class="sticky top-0 z-50 bg-white border-b border-green-200 shadow-sm">
+    <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <a href="restaurants.html" class="text-gray-700 hover:text-green-600 transition text-sm font-dm font-medium">← Home</a>
+            <span class="text-green-200">|</span>
+            <span class="text-2xl">🍽️</span>
+            <span class="font-playfair text-2xl font-bold text-green-600">Green<span class="text-green-500">Bite</span></span>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="cart.html" class="flex items-center gap-2 text-sm font-dm text-gray-700 hover:text-green-600 transition">🛒 Cart</a>
+            <button onclick="logout()" class="text-sm text-gray-700 hover:text-red-600 font-dm transition">🚪 Sign Out</button>
+        </div>
+    </div>
+</nav>
+
+<div class="bg-gradient-to-br from-green-600 via-green-500 to-green-700 text-white py-10 px-6">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="font-playfair text-4xl font-bold mb-1">My Orders 📦</h1>
+        <p class="text-white/70 font-dm">Track all your past and current orders</p>
+    </div>
+</div>
+
+<main class="max-w-4xl mx-auto px-6 py-10 space-y-6">
+
+    <div id="ordersLoading" class="space-y-4">
+        <div class="animate-pulse bg-white rounded-2xl h-36 border border-gold/10"></div>
+        <div class="animate-pulse bg-white rounded-2xl h-36 border border-gold/10"></div>
+        <div class="animate-pulse bg-white rounded-2xl h-36 border border-gold/10"></div>
+    </div>
+
+    <div id="ordersEmpty" class="hidden text-center py-24 bg-white rounded-2xl border border-green-200">
+        <div class="text-6xl mb-4">📦</div>
+        <h3 class="font-playfair text-2xl font-bold text-gray-800 mb-2">No orders yet</h3>
+        <p class="text-gray-700 font-dm mb-6">Place your first order from our restaurants</p>
+        <a href="restaurants.html" class="inline-block bg-green-600 text-white px-6 py-3 rounded-full font-dm font-semibold hover:bg-green-700 transition">
+            Browse Restaurants →
+        </a>
+    </div>
+
+    <div id="ordersList" class="hidden space-y-5"></div>
+
+</main>
+
+<footer class="bg-gray-800 text-white/60 py-6 mt-16">
+    <div class="max-w-4xl mx-auto px-6 text-center text-sm font-dm">
+        © 2026 Green Bite. Made with ❤️ for food lovers.
+    </div>
+</footer>
+
+<div id="toast"><span id="toastIcon"></span><span id="toastMsg"></span></div>
+
+<script src="../js/utils.js"></script>
+<script src="../js/orders.js"></script>
+</body>
+</html>

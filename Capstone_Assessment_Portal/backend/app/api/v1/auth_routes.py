@@ -1,6 +1,6 @@
 from fastapi import APIRouter, status
 from app.schemas.user_schema import UserRegisterRequest, UserResponse
-from app.schemas.auth_schema import LoginRequest, TokenResponse
+from app.schemas.auth_schema import LoginRequest, TokenResponse, RefreshRequest, RefreshResponse
 from app.services.auth_service import AuthService
 
 # all auth related routes go here, mounted with /auth prefix in main.py
@@ -31,6 +31,16 @@ async def login(request: LoginRequest):
     # logs the user in and returns a jwt + role
     # wrong email/password gets handled as 401 inside the service
     result = await auth_service.login_user(request)
+    return result
+
+@router.post(
+    "/refresh",
+    response_model=RefreshResponse,
+    status_code=status.HTTP_200_OK,
+)
+async def refresh(request: RefreshRequest):
+    # client sends refresh token here when access token expires, gets a new access token back
+    result = await auth_service.refresh_access_token(request.refresh_token)
     return result
 
 

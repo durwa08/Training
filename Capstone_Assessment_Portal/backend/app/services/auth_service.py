@@ -7,7 +7,13 @@ from app.repositories.user_repository import (
 from app.models.user_model import UserModel
 from app.schemas.user_schema import UserRegisterRequest
 from app.schemas.auth_schema import LoginRequest
-from app.utils.security import hash_password, verify_password, create_access_token
+from app.utils.security import (
+    hash_password,
+    verify_password,
+    create_access_token,
+    create_refresh_token,
+    decode_refresh_token,
+)
 
 
 class AuthService:
@@ -53,13 +59,39 @@ class AuthService:
                 detail="Invalid email or password.",
             )
 
-        # sub is the standard jwt field for "who this belongs to"
-        token = create_access_token(
+        # issue both tokens - access for normal use, refresh for getting new access tokens later
+        token_data = {"sub": user["email"], "role": user["role"]}
+        access_token = create_access_token(data=token_data)
+        refresh_token = create_refresh_token(data=token_data)
+
+        return {
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "token_type": "bearer",
+            "role": user["role"],
+        }
+    async def refresh_access_token(self, refresh_token: str) -> dict:
+        # takes a refresh token, gives back a fresh access token
+        payload = decode_refresh_token(refresh_token)
+        if payload is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid or expired refresh token.",
+            )
+
+        # make sure user still exists (in case account got deleted after token was issued)
+        user = await get_user_by_email(payload["sub"])
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="User no longer exists.",
+            )
+
+        new_access_token = create_access_token(
             data={"sub": user["email"], "role": user["role"]}
         )
 
         return {
-            "access_token": token,
+            "access_token": new_access_token,
             "token_type": "bearer",
-            "role": user["role"],
         }

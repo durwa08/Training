@@ -1,0 +1,131 @@
+package restaurantportal.service;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import restaurantportal.dto.CategoryRequest;
+import restaurantportal.dto.CategoryResponse;
+import restaurantportal.entity.Category;
+import restaurantportal.entity.Restaurant;
+import restaurantportal.repository.CategoryRepository;
+import restaurantportal.repository.RestaurantRepository;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * Service layer responsible for category-related business logic.
+ */
+@Service
+public class CategoryService {
+
+    private static final Logger logger = LoggerFactory.getLogger(CategoryService.class);
+
+    private final CategoryRepository categoryRepository;
+    private final RestaurantRepository restaurantRepository;
+
+    public CategoryService(CategoryRepository categoryRepository,
+                           RestaurantRepository restaurantRepository) {
+        this.categoryRepository = categoryRepository;
+        this.restaurantRepository = restaurantRepository;
+        logger.info("CategoryService initialized");
+    }
+
+    /**
+     * Creates a new category for a restaurant.
+     */
+    public CategoryResponse create(Long restaurantId, CategoryRequest request) {
+
+        logger.info("Creating category for restaurantId: {}", restaurantId);
+        logger.debug("CategoryRequest: {}", request);
+
+        Restaurant restaurant = restaurantRepository.findById(restaurantId)
+                .orElseThrow(() -> {
+                    logger.error("Restaurant not found with id: {}", restaurantId);
+                    return new RuntimeException("Restaurant not found");
+                });
+
+        Category category = new Category();
+        category.setName(request.getName());
+        category.setRestaurant(restaurant);
+
+        Category saved = categoryRepository.save(category);
+
+        logger.info("Category created successfully with id: {}", saved.getId());
+
+        return mapToResponse(saved);
+    }
+
+    /**
+     * Fetches all categories of a given restaurant.
+     */
+    public List<CategoryResponse> getByRestaurant(Long restaurantId) {
+
+        logger.info("Fetching categories for restaurantId: {}", restaurantId);
+
+        List<CategoryResponse> response = categoryRepository.findByRestaurantId(restaurantId)
+                .stream()
+                .filter(category -> !Boolean.TRUE.equals(category.getDeleted()))
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+
+        logger.info("Categories fetched successfully for restaurantId: {}", restaurantId);
+
+        return response;
+    }
+
+    /**
+     * Updates an existing category.
+     */
+    public CategoryResponse update(Long id, CategoryRequest request) {
+
+        logger.info("Updating category with id: {}", id);
+        logger.debug("CategoryRequest: {}", request);
+
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> {
+                    logger.error("Category not found with id: {}", id);
+                    return new RuntimeException("Category not found");
+                });
+
+        category.setName(request.getName());
+
+        Category updated = categoryRepository.save(category);
+
+        logger.info("Category updated successfully with id: {}", id);
+
+        return mapToResponse(updated);
+    }
+
+    /**
+     * Soft deletes a category by its ID (marks as deleted).
+     */
+    public void delete(Long id) {
+
+        logger.info("Deleting category with id: {}", id);
+
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> {
+                    logger.error("Category not found with id: {}", id);
+                    return new RuntimeException("Category not found");
+                });
+
+        category.setDeleted(true);
+        categoryRepository.save(category);
+
+        logger.info("Category soft deleted successfully with id: {}", id);
+    }
+
+    /**
+     * Maps Category entity to CategoryResponse DTO.
+     */
+    private CategoryResponse mapToResponse(Category category) {
+
+        logger.debug("Mapping Category to CategoryResponse with id: {}", category.getId());
+
+        return new CategoryResponse(
+                category.getId(),
+                category.getName(),
+                category.getRestaurant().getId());
+    }
+}

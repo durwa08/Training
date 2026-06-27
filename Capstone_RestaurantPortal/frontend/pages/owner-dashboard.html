@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>GreenBite — Restaurant Control Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            DEFAULT: '#166534',
+                            light: '#22c55e',
+                            dark: '#14532d',
+                        },
+                        forest: '#15803d',
+                        mint: '#dcfce7',
+                        sage: '#f0fdf4',
+                        ink: '#1f2937',
+                        ash: '#6b7280',
+                        border: '#e2e8e4',
+                    },
+                    fontFamily: {
+                        playfair: ['Playfair Display', 'serif'],
+                        dm: ['DM Sans', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="../css/owner-dashboard.css"/>
+</head>
+<body class="bg-cream min-h-screen">
+
+<nav class="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm" style="height:73px;">
+    <div class="max-w-full px-6 h-full flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <span class="text-3xl">&#127807;</span>
+            <span class="font-playfair text-2xl font-bold text-emerald">
+                Green<span class="text-emerald-light">Bite</span>
+            </span>
+            <span class="ml-3 text-xs font-dm font-semibold bg-emerald text-white px-3 py-1.5 rounded-full">Control Panel</span>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="relative" id="userMenu">
+                <button onclick="toggleUserMenu()" class="flex items-center gap-2 bg-emerald text-white rounded-full px-4 py-2 text-sm font-semibold hover:bg-emerald-dark transition">
+                    <span>&#128100;</span>
+                    <span id="userEmailNav">Account</span>
+                    <span class="text-xs">&#9660;</span>
+                </button>
+                <div id="userDropdown" class="hidden absolute right-0 top-12 bg-white border border-gray-100 rounded-2xl shadow-xl w-52 py-2 z-50">
+                    <div class="px-4 py-3 border-b border-gray-100">
+                        <p class="text-xs text-ash">Signed in as</p>
+                        <p class="text-sm font-semibold text-ink truncate" id="userEmailDrop"></p>
+                    </div>
+                    <button onclick="logout()" class="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition">
+                        <span>&#128682;</span> Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div id="topNav" class="hidden bg-white border-b border-gray-100 shadow-sm">
+    <div class="max-w-full px-6 py-3">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="text-sm font-dm text-ash">Managing:</span>
+                <span class="font-semibold text-emerald" id="topNavRestName">--</span>
+            </div>
+            <nav class="flex items-center gap-1">
+                <button class="nav-tab active" id="navOverviewTop" onclick="switchPanel('overview')">
+                    <span class="nav-icon">&#128202;</span>
+                    <span>Dashboard</span>
+                </button>
+                <button class="nav-tab" id="navCategoriesTop" onclick="switchPanel('categories')">
+                    <span class="nav-icon">&#127991;</span>
+                    <span>Categories</span>
+                </button>
+                <button class="nav-tab" id="navMenuTop" onclick="switchPanel('menu')">
+                    <span class="nav-icon">&#127869;</span>
+                    <span>Menu Items</span>
+                </button>
+                <button class="nav-tab" onclick="window.open('ownerOrders.html', '_blank')">
+                    <span class="nav-icon">📦</span>
+                    <span>Orders</span>
+                </button>
+                <button class="nav-tab" id="navRestaurantTop" onclick="switchPanel('restaurant')">
+                    <span class="nav-icon">&#127978;</span>
+                    <span>Settings</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div class="flex">
+
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <div class="sidebar-label">Your Restaurants</div>
+            <button class="sidebar-btn mb-3" onclick="openAddRestaurantModal()">
+                <span class="sb-icon">&#10133;</span> Add New Restaurant
+            </button>
+            <div id="sidebarRestaurantList">
+                <div class="skel h-14 mb-2" style="background: rgba(255,255,255,0.1);"></div>
+                <div class="skel h-14 mb-2" style="background: rgba(255,255,255,0.1);"></div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-panel">
+
+        <div id="panelSelectPrompt" class="no-restaurant">
+            <div class="w-32 h-32 rounded-full bg-mint flex items-center justify-center mb-6">
+                <span class="text-6xl">&#128105;&#8205;&#127859;</span>
+            </div>
+            <h2 class="font-playfair text-4xl font-bold text-ink mb-3">Welcome to GreenBite</h2>
+            <p class="text-ash font-dm text-lg mb-8 max-w-md">Select a restaurant from the sidebar to start managing your menu, or add your first restaurant to get started.</p>
+            <button onclick="openAddRestaurantModal()" class="btn-primary-sm text-base px-8 py-4">
+                &#10133; Add Your Restaurant
+            </button>
+        </div>
+
+        <div id="panelOverview" class="panel hidden">
+            <div class="mb-8">
+                <h2 class="font-playfair text-4xl font-bold text-ink mb-2">Dashboard</h2>
+                <p class="text-ash font-dm text-base">Currently managing: <strong id="overviewRestName" class="text-emerald">--</strong></p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: var(--mint);">&#127991;</div>
+                    <div>
+                        <div class="stat-val" id="statCategories">--</div>
+                        <div class="stat-lbl">Menu Categories</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #d1fae5;">&#127869;</div>
+                    <div>
+                        <div class="stat-val" id="statMenuItems">--</div>
+                        <div class="stat-lbl">Food Items</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: #bbf7d0;">&#9989;</div>
+                    <div>
+                        <div class="stat-val" id="statAvailable">--</div>
+                        <div class="stat-lbl">Available Now</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-card-title">&#9889; Quick Actions</div>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="switchPanel('categories'); openAddCategoryModal()" class="btn-secondary-sm">&#127991; New Category</button>
+                    <button onclick="switchPanel('menu'); openAddMenuItemModal()" class="btn-secondary-sm">&#127869; New Food Item</button>
+                    <button onclick="switchPanel('restaurant')" class="btn-secondary-sm">&#9998; Edit Settings</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="panelCategories" class="panel hidden">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="font-playfair text-4xl font-bold text-ink">Menu Categories</h2>
+                    <p class="text-ash font-dm text-base mt-1">Organize your menu into sections for easier browsing</p>
+                </div>
+                <button onclick="openAddCategoryModal()" class="btn-primary-sm">&#10133; Add Category</button>
+            </div>
+
+            <div class="section-card">
+                <div id="categoriesTableWrap">
+                    <div class="skel h-8 mb-3"></div>
+                    <div class="skel h-8 mb-3"></div>
+                    <div class="skel h-8"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="panelMenu" class="panel hidden">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="font-playfair text-4xl font-bold text-ink">Food Items</h2>
+                    <p class="text-ash font-dm text-base mt-1">Manage your dishes, prices, and availability</p>
+                </div>
+                <button onclick="openAddMenuItemModal()" class="btn-primary-sm">&#10133; Add Item</button>
+            </div>
+
+            <div class="section-card overflow-x-auto">
+                <div id="menuTableWrap">
+                    <div class="skel h-8 mb-3"></div>
+                    <div class="skel h-8 mb-3"></div>
+                    <div class="skel h-8"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="panelRestaurant" class="panel hidden">
+            <h2 class="font-playfair text-4xl font-bold text-ink mb-8">Restaurant Settings</h2>
+            <div class="section-card max-w-xl">
+                <div class="section-card-title">&#9998; Edit Details</div>
+                <div class="form-group">
+                    <label class="form-label">Restaurant Name</label>
+                    <input type="text" class="form-input" id="editRestName" placeholder="e.g. Green Garden Kitchen"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-input" id="editRestDesc" rows="3" placeholder="Tell customers what makes your food special..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Address</label>
+                    <input type="text" class="form-input" id="editRestAddress" placeholder="Full address"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input type="tel" class="form-input" id="editRestPhone" placeholder="10-digit phone"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-input" id="editRestStatus">
+                        <option value="OPEN">🟢 OPEN</option>
+                        <option value="CLOSED">🔴 CLOSED</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 mt-6">
+                    <button onclick="updateRestaurant()" class="btn-primary-sm">&#128190; Save Changes</button>
+                    <button onclick="confirmDeleteRestaurant()" class="btn-danger-sm">&#128465; Delete Restaurant</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<div id="modalRestaurant" class="modal-overlay hidden">
+    <div class="modal-box">
+        <div class="modal-title" id="modalRestaurantTitle">Add Restaurant</div>
+        <div class="form-group">
+            <label class="form-label">Name *</label>
+            <input type="text" class="form-input" id="mRestName" placeholder="Restaurant name"/>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-input" id="mRestDesc" rows="2" placeholder="Brief description"></textarea>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Address *</label>
+            <input type="text" class="form-input" id="mRestAddress" placeholder="Full address"/>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Phone *</label>
+            <input type="tel" class="form-input" id="mRestPhone" placeholder="9876543210"/>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Status *</label>
+            <select class="form-input" id="mRestStatus">
+                <option value="OPEN">🟢 OPEN</option>
+                <option value="CLOSED">🔴 CLOSED</option>
+            </select>
+        </div>
+        <div class="modal-actions">
+            <button onclick="submitRestaurant()" class="btn-primary-sm">&#9993; Save</button>
+            <button onclick="closeModal('modalRestaurant')" class="btn-secondary-sm">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalCategory" class="modal-overlay hidden">
+    <div class="modal-box">
+        <div class="modal-title" id="modalCategoryTitle">Add Category</div>
+        <div class="form-group">
+            <label class="form-label">Category*</label>
+            <input type="text" class="form-input" id="mCatName" placeholder="e.g. Appetizers, Main Course, Desserts"/>
+        </div>
+        <div class="modal-actions">
+            <button onclick="submitCategory()" class="btn-primary-sm">&#128190; Save</button>
+            <button onclick="closeModal('modalCategory')" class="btn-secondary-sm">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalMenuItem" class="modal-overlay hidden">
+    <div class="modal-box">
+        <div class="modal-title" id="modalMenuItemTitle">Add Food Item</div>
+        <div class="form-group">
+            <label class="form-label">Item Name *</label>
+            <input type="text" class="form-input" id="mItemName" placeholder="e.g. Garden Fresh Salad"/>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea class="form-input" id="mItemDesc" rows="2" placeholder="Describe this dish..."></textarea>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Price (₹) *</label>
+            <input type="number" class="form-input" id="mItemPrice" placeholder="0.00" min="0" step="0.01"/>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Category</label>
+            <select class="form-input" id="mItemCategory">
+                <option value="">-- No Category --</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Availability</label>
+            <select class="form-input" id="mItemAvailable">
+                <option value="true">&#9989; Available</option>
+                <option value="false">&#128683; Unavailable</option>
+            </select>
+        </div>
+        <div class="modal-actions">
+            <button onclick="submitMenuItem()" class="btn-primary-sm">&#128190; Save</button>
+            <button onclick="closeModal('modalMenuItem')" class="btn-secondary-sm">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalConfirm" class="modal-overlay hidden">
+    <div class="modal-box">
+        <div class="modal-title">&#9888; Confirm Delete</div>
+        <p class="text-ink font-dm mb-6" id="confirmMsg">Are you sure you want to delete this?</p>
+        <div class="modal-actions">
+            <button onclick="executeConfirm()" class="btn-danger-sm" id="confirmBtn">&#128465; Yes, Delete</button>
+            <button onclick="closeModal('modalConfirm')" class="btn-secondary-sm">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast">
+    <span id="toastIcon">&#9989;</span>
+    <span id="toastMsg">Done!</span>
+</div>
+
+<script src="../js/utils.js"></script>
+<script src="../js/owner-dashboard.js"></script>
+</body>
+</html>

@@ -1,3 +1,5 @@
+# handles password hashing + JWT access/refresh tokens
+
 import bcrypt
 from jose import jwt, JWTError
 from datetime import datetime, timedelta, timezone
@@ -24,12 +26,14 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 # ---------- jwt tokens ----------
 
 def create_access_token(data: dict) -> str:
-    # data is usually {"sub": email, "role": role}, just adding expiry on top
+    # short lived token (60 min), sent on every request
+    # type=access so a refresh token cant be reused as this
     payload = data.copy()
     expire_time = datetime.now(timezone.utc) + timedelta(
         minutes=settings.access_token_expire_minutes
     )
     payload["exp"] = expire_time
+    payload["type"] = "access"
 
     token = jwt.encode(
         payload,
@@ -39,8 +43,25 @@ def create_access_token(data: dict) -> str:
     return token
 
 
-def decode_access_token(token: str) -> dict | None:
-    # used on protected routes, returns the payload if valid else None
+def create_refresh_token(data: dict) -> str:
+    # long lived token (7 days), only used to get a new access token
+    payload = data.copy()
+    expire_time = datetime.now(timezone.utc) + timedelta(
+        days=settings.refresh_token_expire_days
+    )
+    payload["exp"] = expire_time
+    payload["type"] = "refresh"
+
+    token = jwt.encode(
+        payload,
+        settings.jwt_secret_key,
+        algorithm=settings.jwt_algorithm,
+    )
+    return token
+
+
+def decode_token(token: str) -> dict | None:
+    # decodes either type of token, doesnt check which type
     try:
         payload = jwt.decode(
             token,
@@ -50,3 +71,23 @@ def decode_access_token(token: str) -> dict | None:
         return payload
     except JWTError:
         return None
+
+
+def decode_access_token(token: str) -> dict | None:
+    # used by protected routes, only accepts access tokens
+    payload = decode_token(token)
+    if payload is None:
+        return None
+    if payload.get("type") != "access":
+        return None
+    return payload
+
+
+def decode_refresh_token(token: str) -> dict | None:
+    # used only by /auth/refresh, only accepts refresh tokens
+    payload = decode_token(token)
+    if payload is None:
+        return None
+    if payload.get("type") != "refresh":
+        return None
+    return payload
