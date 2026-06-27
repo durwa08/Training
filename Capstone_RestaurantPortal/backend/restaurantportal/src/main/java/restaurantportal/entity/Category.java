@@ -29,6 +29,7 @@ public class Category {
     /**
      * Flag to indicate if the category is deleted (soft delete).
      */
+    @Builder.Default
     private Boolean deleted = false;
 
     /**

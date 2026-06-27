@@ -13,11 +13,10 @@ import java.util.List;
 /**
  * REST controller for managing restaurant operations.
  * Provides endpoints for creating, retrieving, updating, and deleting restaurants.
- * All endpoints are secured based on Spring Security configuration.
  */
 @RestController
 @RequestMapping("/api/restaurants")
-@CrossOrigin(origins = "*", allowedHeaders = "*") // Allow CORS for all origins and headers
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class RestaurantController {
 
     private static final Logger logger = LoggerFactory.getLogger(RestaurantController.class);
@@ -26,7 +25,6 @@ public class RestaurantController {
 
     /**
      * Constructs RestaurantController with RestaurantService dependency.
-     *
      */
     public RestaurantController(RestaurantService service) {
         this.service = service;
@@ -35,6 +33,7 @@ public class RestaurantController {
 
     /**
      * Creates a new restaurant in the system.
+     * The owner is derived from the authenticated user's JWT token.
      */
     @PostMapping
     public RestaurantResponse create(@Valid @RequestBody RestaurantRequest request) {

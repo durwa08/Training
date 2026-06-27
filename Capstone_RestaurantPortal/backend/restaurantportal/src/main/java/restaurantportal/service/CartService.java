@@ -9,8 +9,6 @@ import restaurantportal.entity.*;
 import restaurantportal.repository.*;
 import restaurantportal.security.SecurityUtil;
 
-import java.util.List;
-
 /**
  * Service layer responsible for cart-related business logic.
  */

@@ -108,7 +108,11 @@ public class MenuItemService {
     }
 
     /**
+<<<<<<< HEAD
      * Soft deletes a menu item by its ID (marks as deleted).
+=======
+     *  deletes a menu item by its ID
+>>>>>>> 3db4a825f3b8dea865a7181be8417c4599208f71
      */
     public void delete(Long id) {
 

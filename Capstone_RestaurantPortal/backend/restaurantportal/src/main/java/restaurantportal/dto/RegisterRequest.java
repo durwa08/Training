@@ -51,7 +51,11 @@ public class RegisterRequest {
     private String phoneNumber;
 
     /**
+<<<<<<< HEAD
      * Role of the user (e.g., customer, admin, employee).
+=======
+     * Role of the user
+>>>>>>> 3db4a825f3b8dea865a7181be8417c4599208f71
      */
     @NotBlank
     private String role;

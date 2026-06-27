@@ -66,13 +66,10 @@
             pointer-events: none;
         }
 
-        /* Floating food icons */
-        .floating-icons {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
+        /* Floating food icons 
             overflow: hidden;
         }
+            */
         .float-icon {
             position: absolute;
             font-size: 40px;
