@@ -2,7 +2,7 @@ from typing import Literal
 
 from pydantic import BaseModel, EmailStr, Field
 
-from app.constants.constants import ADMIN_ROLE, STUDENT_ROLE
+from app.constants import RoleType, STUDENT_ROLE
 
 
 class UserRegisterRequest(BaseModel):
@@ -11,8 +11,7 @@ class UserRegisterRequest(BaseModel):
     username: str = Field(min_length=3, max_length=50)
     email: EmailStr
     password: str = Field(min_length=6)
-    role: Literal[ADMIN_ROLE, STUDENT_ROLE] = STUDENT_ROLE
-
+    role: RoleType = STUDENT_ROLE
 
 class UserResponse(BaseModel):
     """Response model containing public user information."""
