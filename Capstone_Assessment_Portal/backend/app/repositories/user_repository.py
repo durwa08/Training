@@ -9,25 +9,37 @@ user_collection = database["users"]
 
 
 async def get_user_by_email(email: str) -> dict | None:
-    # used for checking duplicates on register and finding user on login
+    """
+    Retrieve a user by email.
+
+    Used for checking duplicate registrations and finding users during login.
+    """
     user = await user_collection.find_one({"email": email})
     return user
 
 
 async def create_user(user: UserModel) -> dict:
-    # password should already be hashed before it gets here
-    # excluding id since mongo generates its own _id on insert
+    """
+    Create a new user in the database.
+
+    The password is expected to be hashed before this function is called.
+    MongoDB generates the _id automatically, and the created document is
+    fetched again before being returned.
+    """
     user_dict = user.model_dump(by_alias=True, exclude={"id"})
 
     result = await user_collection.insert_one(user_dict)
 
-    # fetching it back so we return the final doc with the real _id
     created_user = await user_collection.find_one({"_id": result.inserted_id})
     return created_user
 
 
 def serialize_user(user: dict) -> dict:
-    # mongo's _id is an ObjectId, but UserResponse expects a plain string
+    """
+    Convert a MongoDB user document into the response format.
+
+    Converts the MongoDB ObjectId to a string for API responses.
+    """
     return {
         "id": str(user["_id"]),
         "username": user["username"],

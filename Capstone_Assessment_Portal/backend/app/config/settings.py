@@ -2,7 +2,6 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    # these map to .env automatically, case doesnt matter
     mongo_uri: str
     database_name: str
     jwt_secret_key: str
@@ -15,5 +14,4 @@ class Settings(BaseSettings):
         case_sensitive = False
 
 
-# single instance, everyone imports this instead of making their own
 settings = Settings()
