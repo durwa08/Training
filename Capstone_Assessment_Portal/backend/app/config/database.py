@@ -9,6 +9,10 @@ database = client[settings.database_name]
 
 
 def get_database():
-    # other files should call this instead of importing database directly
-    # makes it easier to mock in tests later
+    """
+    Return the MongoDB database instance.
+
+    Other files should call this instead of importing the database directly.
+    This makes it easier to mock the database in tests.
+    """
     return database

@@ -1,24 +1,25 @@
-from pydantic import BaseModel, EmailStr, Field
 from typing import Literal
+
+from pydantic import BaseModel, EmailStr, Field
+
+from app.constants import RoleType, STUDENT_ROLE
 
 
 class UserRegisterRequest(BaseModel):
-    # what client sends when registering
+    """Request model for user registration."""
+
     username: str = Field(min_length=3, max_length=50)
     email: EmailStr
-    password: str = Field(min_length=6)  # plain for now, gets hashed before saving
-
-    # only admin or student allowed, defaults to student so no one
-    # can accidentally register as admin
-    role: Literal["admin", "student"] = "student"
-
+    password: str = Field(min_length=6)
+    role: RoleType = STUDENT_ROLE
 
 class UserResponse(BaseModel):
-    # what we send back, no password field even hashed
+    """Response model containing public user information."""
+
     id: str
     username: str
     email: str
     role: str
 
     class Config:
-        from_attributes = True 
+        from_attributes = True

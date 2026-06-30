@@ -2,13 +2,15 @@ from pydantic import BaseModel, EmailStr
 
 
 class LoginRequest(BaseModel):
-    # what client sends to log in
+    """Request model for user login."""
+
     email: EmailStr
     password: str
 
 
 class TokenResponse(BaseModel):
-    # sent back after login - now includes both tokens
+    """Response model returned after successful login."""
+
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
@@ -16,11 +18,13 @@ class TokenResponse(BaseModel):
 
 
 class RefreshRequest(BaseModel):
-    # what client sends to /auth/refresh to get a new access token
+    """Request model for generating a new access token."""
+
     refresh_token: str
 
 
 class RefreshResponse(BaseModel):
-    # what /auth/refresh sends back - just a new access token
+    """Response model containing a newly generated access token."""
+
     access_token: str
     token_type: str = "bearer"
