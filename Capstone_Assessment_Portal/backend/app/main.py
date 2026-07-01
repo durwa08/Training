@@ -1,7 +1,9 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+
 from app.api.v1.auth_routes import router as auth_router
 from app.api.v1.category_routes import router as category_router
+from app.config.database import ensure_indexes
 from app.exceptions.custom_exceptions import (
     UserAlreadyExistsException,
     InvalidCredentialsException,
@@ -14,6 +16,14 @@ app = FastAPI(
     description="Backend APIs for the Assessment Portal capstone project",
     version="1.0.0",
 )
+
+
+@app.on_event("startup")
+async def on_startup():
+    """
+    Run application startup tasks.
+    """
+    await ensure_indexes()
 
 
 @app.exception_handler(UserAlreadyExistsException)
