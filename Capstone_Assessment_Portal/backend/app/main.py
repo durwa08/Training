@@ -1,11 +1,24 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
+
 from app.api.v1.auth_routes import router as auth_router
 from app.api.v1.category_routes import router as category_router
+from app.api.v1.quiz_routes import router as quiz_router
+from app.config.database import ensure_indexes
+from app.constants.constants import (
+    CATEGORY_ALREADY_EXISTS_MESSAGE,
+    CATEGORY_NOT_FOUND_MESSAGE,
+    QUIZ_ALREADY_EXISTS_MESSAGE,
+    QUIZ_NOT_FOUND_MESSAGE,
+)
 from app.exceptions.custom_exceptions import (
-    UserAlreadyExistsException,
+    CategoryAlreadyExistsException,
+    CategoryNotFoundException,
     InvalidCredentialsException,
     InvalidRefreshTokenException,
+    QuizAlreadyExistsException,
+    QuizNotFoundException,
+    UserAlreadyExistsException,
     UserNotFoundException,
 )
 
@@ -16,8 +29,21 @@ app = FastAPI(
 )
 
 
+@app.on_event("startup")
+async def on_startup():
+    """
+    Run application startup tasks.
+
+    Creates the required MongoDB indexes before serving requests.
+    """
+    await ensure_indexes()
+
+
 @app.exception_handler(UserAlreadyExistsException)
-async def user_already_exists_handler(request: Request, exc: UserAlreadyExistsException):
+async def user_already_exists_handler(
+    request: Request,
+    exc: UserAlreadyExistsException,
+):
     return JSONResponse(
         status_code=400,
         content={"detail": "A user with this email already exists."},
@@ -25,7 +51,10 @@ async def user_already_exists_handler(request: Request, exc: UserAlreadyExistsEx
 
 
 @app.exception_handler(InvalidCredentialsException)
-async def invalid_credentials_handler(request: Request, exc: InvalidCredentialsException):
+async def invalid_credentials_handler(
+    request: Request,
+    exc: InvalidCredentialsException,
+):
     return JSONResponse(
         status_code=401,
         content={"detail": "Invalid email or password."},
@@ -33,7 +62,10 @@ async def invalid_credentials_handler(request: Request, exc: InvalidCredentialsE
 
 
 @app.exception_handler(InvalidRefreshTokenException)
-async def invalid_refresh_token_handler(request: Request, exc: InvalidRefreshTokenException):
+async def invalid_refresh_token_handler(
+    request: Request,
+    exc: InvalidRefreshTokenException,
+):
     return JSONResponse(
         status_code=401,
         content={"detail": "Invalid or expired refresh token."},
@@ -41,15 +73,63 @@ async def invalid_refresh_token_handler(request: Request, exc: InvalidRefreshTok
 
 
 @app.exception_handler(UserNotFoundException)
-async def user_not_found_handler(request: Request, exc: UserNotFoundException):
+async def user_not_found_handler(
+    request: Request,
+    exc: UserNotFoundException,
+):
     return JSONResponse(
         status_code=401,
         content={"detail": "User no longer exists."},
     )
 
 
+@app.exception_handler(CategoryAlreadyExistsException)
+async def category_already_exists_handler(
+    request: Request,
+    exc: CategoryAlreadyExistsException,
+):
+    return JSONResponse(
+        status_code=400,
+        content={"detail": CATEGORY_ALREADY_EXISTS_MESSAGE},
+    )
+
+
+@app.exception_handler(CategoryNotFoundException)
+async def category_not_found_handler(
+    request: Request,
+    exc: CategoryNotFoundException,
+):
+    return JSONResponse(
+        status_code=404,
+        content={"detail": CATEGORY_NOT_FOUND_MESSAGE},
+    )
+
+
+@app.exception_handler(QuizAlreadyExistsException)
+async def quiz_already_exists_handler(
+    request: Request,
+    exc: QuizAlreadyExistsException,
+):
+    return JSONResponse(
+        status_code=400,
+        content={"detail": QUIZ_ALREADY_EXISTS_MESSAGE},
+    )
+
+
+@app.exception_handler(QuizNotFoundException)
+async def quiz_not_found_handler(
+    request: Request,
+    exc: QuizNotFoundException,
+):
+    return JSONResponse(
+        status_code=404,
+        content={"detail": QUIZ_NOT_FOUND_MESSAGE},
+    )
+
+
 app.include_router(auth_router)
 app.include_router(category_router)
+app.include_router(quiz_router)
 
 
 @app.get("/")
