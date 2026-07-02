@@ -38,3 +38,12 @@ class UserNotFoundException(Exception):
 
 class InvalidTokenException(Exception):
     """Raised when the JWT token is invalid or expired."""
+
+class CategoryAlreadyExistsException(Exception):
+    """Raised when a category with the given name already exists."""
+    pass
+
+
+class CategoryNotFoundException(Exception):
+    """Raised when the requested category does not exist."""
+    pass    
